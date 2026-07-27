@@ -3,6 +3,9 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+<meta http-equiv="Pragma" content="no-cache">
+<meta http-equiv="Expires" content="0">
 <title>Dashboard · Análise de Odds</title>
 <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
@@ -10,9 +13,9 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 <style>
-/* ═══════════════════════════════════════════════
+/* ===============================================
    TEMAS
-═══════════════════════════════════════════════ */
+=============================================== */
 :root,[data-theme="dark"] {
   --bg:#0d0f12;--bg2:#13161a;--bg3:#1a1e24;
   --border:#252a32;--border2:#2e3440;
@@ -57,9 +60,9 @@
   --tab-active-border:#00bfff;
 }
 
-/* ═══════════════════════════════════════════════
+/* ===============================================
    SELETOR DE TEMA
-═══════════════════════════════════════════════ */
+=============================================== */
 .theme-switcher{display:flex;align-items:center;gap:6px;}
 .theme-btn{
   width:28px;height:28px;border-radius:50%;border:2px solid transparent;
@@ -246,7 +249,7 @@ td{padding:11px 14px;white-space:nowrap;}
 .toast.success{border-color:rgba(34,197,94,0.4);color:var(--green);}
 .toast.error{border-color:rgba(239,68,68,0.4);color:var(--red);}
 
-/* ── Abas de navegação ─────────────────────────────────────── */
+/* -- Abas de navegação --------------------------------------- */
 .tabs-nav{display:flex;margin-bottom:24px;border-bottom:1px solid var(--border);gap:2px;flex-wrap:wrap;}
 .tab-btn{font-family:var(--mono);font-size:11px;letter-spacing:0.07em;text-transform:uppercase;
   padding:10px 20px;background:none;border:none;border-bottom:2px solid transparent;
@@ -257,7 +260,7 @@ td{padding:11px 14px;white-space:nowrap;}
 .tab-panel{display:none;}
 .tab-panel.active{display:block;animation:fadeInRow 0.2s ease both;}
 
-/* ── Aba Top Apostas c/ Links ─────────────────────────────── */
+/* -- Aba Top Apostas c/ Links ------------------------------- */
 .links-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:14px;margin-bottom:28px;}
 .links-card{background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius-lg);padding:20px;position:relative;overflow:visible;box-shadow:var(--shadow);transition:transform 0.2s,box-shadow 0.2s;}
 .links-card:hover{transform:translateY(-2px);box-shadow:0 8px 32px rgba(0,0,0,0.3);}
@@ -279,7 +282,7 @@ td{padding:11px 14px;white-space:nowrap;}
 .links-url-label{color:var(--muted);font-weight:500;display:block;margin-bottom:3px;}
 .links-url-text{color:var(--green);font-family:monospace;font-size:10px;padding:6px;background:var(--bg3);border-radius:4px;display:block;max-width:100%;word-break:break-all;margin-bottom:4px;}
 
-/* ── Aba Lucro Máximo ──────────────────────────────────────── */
+/* -- Aba Lucro Máximo ---------------------------------------- */
 .lm-intro{font-size:13px;color:var(--muted);background:var(--bg2);border:1px solid var(--border);
   border-left:3px solid rgba(34,197,94,0.4);border-radius:var(--radius);
   padding:12px 16px;margin-bottom:22px;line-height:1.7;}
@@ -306,7 +309,7 @@ td{padding:11px 14px;white-space:nowrap;}
 .lm-scen.inviavel .lm-scen-pct{color:var(--muted);font-size:11px;}
 .lm-footer{margin-top:12px;padding-top:10px;border-top:1px solid var(--border);font-size:11px;color:var(--muted);}
 
-/* ── Aba JOGOS ─────────────────────────────────────────────── */
+/* -- Aba JOGOS ----------------------------------------------- */
 .jogos-container{background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius-lg);overflow:hidden;}
 .jogos-table{width:100%;border-collapse:collapse;font-size:13px;}
 .jogos-table thead th{background:var(--bg3);padding:11px 14px;text-align:left;font-size:10px;font-family:var(--mono);color:var(--muted);text-transform:uppercase;letter-spacing:0.07em;border-bottom:1px solid var(--border);white-space:nowrap;}
@@ -334,9 +337,9 @@ td{padding:11px 14px;white-space:nowrap;}
 .jogos-odd.highlight{background:rgba(245,158,11,0.25);color:#000;font-weight:600;border-radius:4px;padding:4px 8px;}
 .jogos-odd.nao{color:var(--muted);}
 
-/* ═══════════════════════════════════════════════════════════════ */
+/* =============================================================== */
 /* HISTORICO - ABA HISTÓRICO */
-/* ═══════════════════════════════════════════════════════════════ */
+/* =============================================================== */
 .historico-jogadores{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:16px;margin-bottom:24px;}
 .historico-card{background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius-lg);padding:16px;}
 .historico-card-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;}
@@ -434,9 +437,9 @@ td{padding:11px 14px;white-space:nowrap;}
 
 #input-arquivo{display:none;}
 
-/* ═══════════════════════════════════════════════
+/* ===============================================
    LOGIN & ADMIN
-═══════════════════════════════════════════════ */
+=============================================== */
 #loginScreen{position:fixed;inset:0;background:var(--bg);z-index:2000;display:flex;align-items:center;justify-content:center;padding:20px;}
 .login-box{background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius-lg);padding:40px;width:100%;max-width:420px;box-shadow:var(--shadow);}
 .login-title{font-family:var(--mono);font-size:22px;margin-bottom:8px;text-align:center;font-weight:600;}
@@ -698,9 +701,9 @@ td{padding:11px 14px;white-space:nowrap;}
       </div>
     </div><!-- /tab-jogos -->
 
-    <!-- ═══════════════════════════════════════════════════════════════ -->
+    <!-- =============================================================== -->
     <!-- ABA ESTATÍSTICAS -->
-    <!-- ═══════════════════════════════════════════════════════════════ -->
+    <!-- =============================================================== -->
     <div class="tab-panel" id="tab-estatisticas">
       <div class="section-header"><span class="section-title">📈 Estatísticas por Casa</span></div>
       <div class="jogos-container">
@@ -722,9 +725,9 @@ td{padding:11px 14px;white-space:nowrap;}
       </div>
     </div><!-- /tab-estatisticas -->
 
-    <!-- ═══════════════════════════════════════════════════════════════ -->
+    <!-- =============================================================== -->
     <!-- ABA HISTÓRICO -->
-    <!-- ═══════════════════════════════════════════════════════════════ -->
+    <!-- =============================================================== -->
     <div class="tab-panel" id="tab-historico">
       <div class="section-header"><span class="section-title">📊 Histórico de Apostas</span></div>
 
@@ -954,11 +957,11 @@ td{padding:11px 14px;white-space:nowrap;}
 <div class="toast" id="toast"></div>
 
 <script>
-/* ═══════════════════════════════════════════════════════════════
-   FIREBASE · AUTH & REALTIME DATABASE
-═══════════════════════════════════════════════════════════════ */
+/* ===============================================================
+   FIREBASE   AUTH & REALTIME DATABASE
+=============================================================== */
 
-// ═══ CONFIGURAÇÃO FIREBASE (PREENCHA COM SEUS DADOS DO CONSOLE) ═══
+// === CONFIGURACAO FIREBASE (PREENCHA COM SEUS DADOS DO CONSOLE) ===
 const firebaseConfig = {
   apiKey: "AIzaSyAkNVAA4nP9K0LYgJQiqJQSXSunMpyYLL0I",
   authDomain: "odds-dashboard-27024.firebaseapp.com",
@@ -989,7 +992,7 @@ function initFirebase() {
     });
   } catch (e) {
     console.error("Firebase init error:", e);
-    document.getElementById('loginError').textContent = "Erro ao conectar com o servidor. Verifique a configuração do Firebase.";
+    document.getElementById('loginError').textContent = "Erro ao conectar com o servidor. Verifique a configuracao do Firebase.";
   }
 }
 
@@ -1009,13 +1012,15 @@ function showApp() {
 
 function toggleRegisterMode() {
   registerMode = !registerMode;
+  console.log('toggleRegisterMode chamado, registerMode =', registerMode);
   const btnReg = document.getElementById('btnRegister');
   const btnMain = document.querySelector('#loginScreen .login-btn');
   const toggleText = document.getElementById('toggleRegText');
+  console.log('btnReg:', btnReg, 'btnMain:', btnMain);
   if (registerMode) {
     btnReg.style.display = 'block';
     btnMain.style.display = 'none';
-    toggleText.textContent = 'Já tem conta? Fazer login';
+    toggleText.textContent = 'Ja tem conta? Fazer login';
   } else {
     btnReg.style.display = 'none';
     btnMain.style.display = 'block';
@@ -1043,7 +1048,7 @@ function doRegister() {
   firebase.auth().createUserWithEmailAndPassword(email, pass)
     .then(() => {
       errEl.style.color = 'var(--green)';
-      errEl.textContent = 'Conta criada! Faça login.';
+      errEl.textContent = 'Conta criada! Faca login.';
       toggleRegisterMode();
     })
     .catch(e => { errEl.style.color = 'var(--red)'; errEl.textContent = e.message; });
@@ -1055,7 +1060,7 @@ function doLogout() {
 
 function checkAdmin(user) {
   if (!db) return;
-  // Verifica no Realtime Database se o email do usuário é o admin configurado
+  // Verifica no Realtime Database se o email do usuario e o admin configurado
   db.ref('config/adminEmail').once('value').then(snap => {
     const adminEmail = snap.val();
     isAdmin = (user.email === adminEmail);
@@ -1063,7 +1068,7 @@ function checkAdmin(user) {
     showApp();
     listenToData();
   }).catch(() => {
-    // Se não conseguir ler config, assume não-admin
+    // Se nao conseguir ler config, assume nao-admin
     isAdmin = false;
     setupUIForRole();
     showApp();
@@ -1085,7 +1090,7 @@ function setupUIForRole() {
     btnAdicionar.style.display = 'inline-flex';
     if (dropAdmin) dropAdmin.style.display = 'block';
     if (dropUser) dropUser.style.display = 'none';
-    fileInput.style.display = 'none'; // mantém hidden, mas funciona via click
+    fileInput.style.display = 'none'; // mantem hidden, mas funciona via click
   } else {
     adminBadge.style.display = 'none';
     btnLimpar.style.display = 'none';
@@ -1095,9 +1100,9 @@ function setupUIForRole() {
   }
 }
 
-/* ═══════════════════════════════════════════════════════════════
-   SINCRONIZAÇÃO DE DADOS COM FIREBASE
-═══════════════════════════════════════════════════════════════ */
+/* ===============================================================
+   SINCRONIZACAO DE DADOS COM FIREBASE
+=============================================================== */
 
 function listenToData() {
   if (!db) return;
@@ -1145,22 +1150,22 @@ function syncToFirebase() {
     uploadedBy: currentUser ? currentUser.email : 'admin'
   };
   db.ref('oddsData').set(payload)
-    .then(() => toast('☁️ Dados salvos na nuvem! Todos os usuários estão vendo agora.', 'success', 4000))
+    .then(() => toast(' Dados salvos na nuvem! Todos os usuarios estao vendo agora.', 'success', 4000))
     .catch(err => toast('Erro ao salvar na nuvem: ' + err.message, 'error', 5000));
 }
 
 function clearDataFromFirebase() {
   if (!isAdmin || !db) return;
-  if (confirm('⚠️ TEM CERTEZA?
+  if (confirm(' TEM CERTEZA?
 
-Isso vai apagar TODOS os dados do dashboard para TODOS os usuários. Esta ação não pode ser desfeita.')) {
+Isso vai apagar TODOS os dados do dashboard para TODOS os usuarios. Esta acao nao pode ser desfeita.')) {
     db.ref('oddsData').remove()
       .then(() => {
         allDataRawMaster = [];
         allSitesDataMaster = [];
         campeonatosCarregados = [];
         resetUINoData();
-        toast('🗑️ Dados removidos.', 'success');
+        toast(' Dados removidos.', 'success');
       })
       .catch(err => toast('Erro ao remover: ' + err.message, 'error'));
   }
@@ -1169,18 +1174,18 @@ Isso vai apagar TODOS os dados do dashboard para TODOS os usuários. Esta ação
 function resetUINoData() {
   document.getElementById('tagJogos').textContent = 'sem dados';
   document.getElementById('tagJogos').className = 'tag tag-gray';
-  document.getElementById('logoSub').textContent = 'aposta holandesa · cobertura total';
-  document.getElementById('top3').innerHTML = '<div class="top-card rank1"><div style="color:var(--muted);font-size:12px;text-align:center;padding:20px 0">—</div></div><div class="top-card rank2"><div style="color:var(--muted);font-size:12px;text-align:center;padding:20px 0">—</div></div><div class="top-card rank3"><div style="color:var(--muted);font-size:12px;text-align:center;padding:20px 0">—</div></div>';
-  document.getElementById('m-lucro').textContent = '—';
+  document.getElementById('logoSub').textContent = 'aposta holandesa   cobertura total';
+  document.getElementById('top3').innerHTML = '<div class="top-card rank1"><div style="color:var(--muted);font-size:12px;text-align:center;padding:20px 0">-</div></div><div class="top-card rank2"><div style="color:var(--muted);font-size:12px;text-align:center;padding:20px 0">-</div></div><div class="top-card rank3"><div style="color:var(--muted);font-size:12px;text-align:center;padding:20px 0">-</div></div>';
+  document.getElementById('m-lucro').textContent = '-';
   document.getElementById('m-lucro-jogo').textContent = 'carregue o arquivo';
-  document.getElementById('m-pct').textContent = '—';
+  document.getElementById('m-pct').textContent = '-';
   document.getElementById('m-pct-jogo').textContent = '';
-  document.getElementById('m-positivos').textContent = '—';
+  document.getElementById('m-positivos').textContent = '-';
   document.getElementById('m-positivos-sub').textContent = '';
-  document.getElementById('m-margem').textContent = '—';
+  document.getElementById('m-margem').textContent = '-';
   document.getElementById('tableBody').innerHTML = '<tr><td colspan="12" class="empty"><strong>Nenhum dado carregado pelo administrador</strong><br>Aguarde o admin atualizar os jogos.</td></tr>';
   document.getElementById('tableCount').textContent = '';
-  document.getElementById('tableFooterLeft').textContent = '—';
+  document.getElementById('tableFooterLeft').textContent = '-';
   document.getElementById('toplinks-cards').innerHTML = '<div style="color:var(--muted);font-size:12px;text-align:center;padding:40px 0">Aguardando dados do administrador.</div>';
   document.getElementById('lucromax-cards').innerHTML = '<div style="color:var(--muted);font-size:12px;text-align:center;padding:40px 0">Aguardando dados do administrador.</div>';
   document.getElementById('jogos-tbody').innerHTML = '<tr><td colspan="7" style="text-align: center; color: var(--muted); padding: 20px;">Aguardando dados do administrador.</td></tr>';
@@ -1233,10 +1238,10 @@ function toast(msg,tipo='info',dur=3000){
 
 function fecharOverlay(){ document.getElementById('dropOverlay').classList.add('hidden'); }
 
-let allSitesData=[];         // view filtrada (usada pelas funções de render existentes)
+let allSitesData=[];         // view filtrada (usada pelas funcoes de render existentes)
 let allSitesDataMaster=[];   // master: linhas brutas (aba 3) de TODOS os arquivos carregados
 let allDataRawMaster=[];     // master: linhas brutas (aba 1) de TODOS os arquivos carregados
-let campeonatosCarregados=[];// nomes dos campeonatos já carregados (na ordem de carregamento)
+let campeonatosCarregados=[];// nomes dos campeonatos ja carregados (na ordem de carregamento)
 let filtroCampeonatoAtual='__todos__';
 
 function nomeCampeonatoDoArquivo(filename){
@@ -1299,13 +1304,13 @@ async function handleFile(input){
   }
 
   if(!carregadosAgora.length){
-    if(!allDataRawMaster.length) return; // nada carregado ainda, mantém overlay aberto
+    if(!allDataRawMaster.length) return; // nada carregado ainda, mantem overlay aberto
   }else{
     fecharOverlay();
     atualizarSelectCampeonatos();
     document.getElementById('btnAdicionar').style.display='inline-flex';
     aplicarFiltroCampeonato(filtroCampeonatoAtual);
-    toast(`✓ Processado(s): ${carregadosAgora.join(', ')}`,'success');
+    toast(` Processado(s): ${carregadosAgora.join(', ')}`,'success');
     syncToFirebase();
   }
   input.value='';
@@ -1357,7 +1362,7 @@ function aplicarFiltroCampeonato(valor){
   renderDados(dadosConsolidados);
 }
 
-// Drag and drop no overlay (e em qualquer lugar da página, pra "adicionar mais")
+// Drag and drop no overlay (e em qualquer lugar da pagina, pra "adicionar mais")
 const dropBox=document.getElementById('dropBox');
 document.addEventListener('dragover',e=>{e.preventDefault();dropBox.classList.add('drag');});
 document.addEventListener('dragleave',()=>dropBox.classList.remove('drag'));
@@ -1384,7 +1389,7 @@ function renderDados(dados){
     };
   }).sort((a,b)=>b.lucro_pct-a.lucro_pct);
 
-  const dataRef=allData[0]?.data?.split(' ')[0]||'—';
+  const dataRef=allData[0]?.data?.split(' ')[0]||'-';
   document.getElementById('tagJogos').textContent=allData.length+' jogos';
   document.getElementById('tagJogos').className='tag tag-green';
   document.getElementById('logoSub').textContent=`atualizado ${dataRef}`;
@@ -1441,7 +1446,7 @@ function recalculateCard(cardIdx){
   document.getElementById(`lucro-val-${cardIdx}`).textContent=(lucro>=0?'+':'')+fmtDec(lucro);
   document.getElementById(`lucro-pct-${cardIdx}`).textContent=(lucro_pct>=0?'+':'')+lucro_pct.toFixed(2)+'%';
 
-  // Atualiza inputs de stake também
+  // Atualiza inputs de stake tambem
   const elStakeCasa = document.getElementById(`stake-casa-${cardIdx}`);
   const elStakeEmp  = document.getElementById(`stake-emp-${cardIdx}`);
   const elStakeFora = document.getElementById(`stake-fora-${cardIdx}`);
@@ -1450,9 +1455,9 @@ function recalculateCard(cardIdx){
   if(elStakeFora) elStakeFora.value = v_fora.toFixed(2);
 }
 
-/* ═══════════════════════════════════════════════════════════════
-   DUTCHING COM STAKES EDITÁVEIS (Casa/Emp/Fora)
-═══════════════════════════════════════════════════════════════ */
+/* ===============================================================
+   DUTCHING COM STAKES EDITAVEIS (Casa/Emp/Fora)
+=============================================================== */
 function recalcDutchingStake(cardIdx, campo){
   const casa   = parseFloat(document.getElementById(`odd-casa-${cardIdx}`)?.value)  || 1;
   const empate = parseFloat(document.getElementById(`odd-emp-${cardIdx}`)?.value)   || 1;
@@ -1474,7 +1479,7 @@ function recalcDutchingStake(cardIdx, campo){
   const lucro   = retorno - total;
   const lucroPct= total > 0 ? (lucro / total) * 100 : 0;
 
-  // Atualiza APENAS os outros dois campos (não o que está sendo editado)
+  // Atualiza APENAS os outros dois campos (nao o que esta sendo editado)
   const elCasa = document.getElementById(`stake-casa-${cardIdx}`);
   const elEmp  = document.getElementById(`stake-emp-${cardIdx}`);
   const elFora = document.getElementById(`stake-fora-${cardIdx}`);
@@ -1567,18 +1572,18 @@ function recalcLucroMaxHedge(cardIdx, scenIdx, tipo){
     const divEl = document.getElementById(`lm-scen-${ci}-${cardIdx}`);
     const alvEl = document.getElementById(`lm-alvo-${ci}-${cardIdx}`);
     if(!divEl) return;
-    if(!c.viavel){ if(retEl) retEl.textContent='—'; return; }
+    if(!c.viavel){ if(retEl) retEl.textContent='-'; return; }
     const isBest=melhor!==null&&Math.abs(c.lucro_pct-melhor)<0.001;
     divEl.className='lm-scen '+(isBest?'best':c.lucro_pct>=0?'normal':'neg');
 
-    // NÃO atualiza o campo que está sendo editado
+    // NAO atualiza o campo que esta sendo editado
     if(ci!==scenIdx && alvEl) alvEl.value=c.alvo.toFixed(2);
     if(ci!==scenIdx || tipo!=='h1') { if(h1El) h1El.value=hedgeVals[ci][0].toFixed(2); }
     if(ci!==scenIdx || tipo!=='h2') { if(h2El) h2El.value=hedgeVals[ci][1].toFixed(2); }
 
     const retornoReal = (ci===scenIdx && tipo==='alvo') ? newCapital : c.retorno;
     const pctReal = (retornoReal - newCapital) / newCapital * 100;
-    if(retEl) retEl.textContent='R$ '+fmtDec(retornoReal);
+    if(retEl) retEl.textContent='R$ '+fmtDec(retornoReal);
     if(pEl)   pEl.textContent=(pctReal>=0?'+':'')+pctReal.toFixed(2)+'%';
   });
 }
@@ -1588,7 +1593,7 @@ function recalcLucroMaxHedge(cardIdx, scenIdx, tipo){
 
 function renderTop3(){
   const a=parseFloat(document.getElementById('apostaInput').value)||5000;
-  const ranks=['rank1','rank2','rank3'],ords=['🥇','🥈','🥉'];
+  const ranks=['rank1','rank2','rank3'],ords=['','',''];
   document.getElementById('top3').innerHTML=allData.slice(0,3).map((r,i)=>{
     const lucro=r.retorno-a;
     return`<div class="top-card ${ranks[i]}">
@@ -1619,7 +1624,7 @@ function renderTop3(){
           </div>
         </div>
       </div>
-      <div style="font-size:11px;color:var(--muted);margin-top:10px;">${r.data} · ${r.site}</div>
+      <div style="font-size:11px;color:var(--muted);margin-top:10px;">${r.data}   ${r.site}</div>
     </div>`;
   }).join('');
 }
@@ -1646,14 +1651,14 @@ function renderStats(){
   document.getElementById('statsRows').innerHTML=[
     ['Total de jogos',n],['Com lucro positivo',vals.filter(v=>v>0).length],
     ['Maior % ganho',vals[n-1].toFixed(2)+'%'],['Menor % ganho',vals[0].toFixed(2)+'%'],
-    ['Média %',media.toFixed(2)+'%'],['Mediana %',mediana.toFixed(2)+'%'],
+    ['Media %',media.toFixed(2)+'%'],['Mediana %',mediana.toFixed(2)+'%'],
   ].map(([k,v])=>`<div class="stat-row"><span class="stat-name">${k}</span><span class="stat-val">${v}</span></div>`).join('');
 }
 
 function populateHoraFilter(){
   const horas=[...new Set(allData.map(r=>r.hora))].sort();
   const sel=document.getElementById('horaFilter');
-  sel.innerHTML='<option value="">Todos os horários</option>';
+  sel.innerHTML='<option value="">Todos os horarios</option>';
   horas.forEach(h=>{const o=document.createElement('option');o.value=h;o.textContent=h;sel.appendChild(o);});
 }
 
@@ -1676,17 +1681,17 @@ function normalizarNomeJogo(nome){
   if(!nome) return '';
   let n=nome.toLowerCase().trim();
   // Remove acentos
-  n=n.normalize('NFD').replace(/[̀-ͯ]/g,'');
-  // Remove parênteses
+  n=n.normalize('NFD').replace(/[-]/g,'');
+  // Remove parenteses
   n=n.replace(/\(.*?\)/g,'');
-  // Simplifica variações de Atlético
-  n=n.replace(/\b(atletico|atetico|athetico|ahético)\b/g,'atletico');
+  // Simplifica variacoes de Atletico
+  n=n.replace(/\b(atletico|atetico|athetico|ahetico)\b/g,'atletico');
   // Remove sufixos
   const sufixos=[' fc',' sc',' riyadh',' jeddah',' cl',' sp',' rj',' mg',' rs',' u20',' u23',' women',' feminina',' feminino'];
   sufixos.forEach(s=>n=n.replace(s,''));
   // Normaliza separadores
   n=n.replace(/-/g,' ').replace(/\./g,'').replace(/ vs /g,' x ');
-  // Remove espaços extras
+  // Remove espacos extras
   n=n.replace(/\s+/g,' ').trim();
   return n;
 }
@@ -1699,8 +1704,8 @@ function renderJogos(){
   }
 
   // Agrupar por JOGO_LIMPO (vindo do Excel, calculado pelo Python) + campeonato.
-  // Usa jogo_limpo quando disponível (Excel gerado após a correção); cai pro
-  // normalizador JS antigo só se o arquivo for de uma versão anterior sem essa coluna.
+  // Usa jogo_limpo quando disponivel (Excel gerado apos a correcao); cai pro
+  // normalizador JS antigo so se o arquivo for de uma versao anterior sem essa coluna.
   const jogosMap=new Map();
   allSitesData.forEach(r=>{
     const jogoNorm=r.jogo_limpo||normalizarNomeJogo(r.jogo);
@@ -1720,7 +1725,7 @@ function renderJogos(){
     if(jogo.horas.size>0){
       jogo.hora=Array.from(jogo.horas)[0];
     }else{
-      jogo.hora='—';
+      jogo.hora='-';
     }
 
     // Calcular lucro_pct usando a melhor odd de cada coluna
@@ -1737,18 +1742,18 @@ function renderJogos(){
   let jogos=Array.from(jogosMap.values());
   jogos.sort((a,b)=>b.lucro_pct-a.lucro_pct);
 
-  // Extrair dinamicamente sites que têm dados + manter lista padrão de TODOS os sites
+  // Extrair dinamicamente sites que tem dados + manter lista padrao de TODOS os sites
   const SITES_PADRAO=['Betano','EstrelaBet','KTO','Superbet','Bet365','Betfair','F12','Betesporte','Novibet','Ona.bet','Sportingbet','Betboo','Galera.bet','Rivalo','Brazino777','BetWarrior','Pix.bet','Stake','BetMGM','1xbet'];
   const sitesComDados=new Set();
   allSitesData.forEach(r=>{
     if(r.site) sitesComDados.add(r.site);
   });
 
-  // Combinar: primeiro os que têm dados (em ordem do arquivo), depois os que não têm (em ordem padrão)
+  // Combinar: primeiro os que tem dados (em ordem do arquivo), depois os que nao tem (em ordem padrao)
   const TODOS_SITES=[];
   const jaAdicionados=new Set();
 
-  // Primeiro adicionar sites com dados (em ordem de aparição no arquivo)
+  // Primeiro adicionar sites com dados (em ordem de aparicao no arquivo)
   allSitesData.forEach(r=>{
     if(r.site && !jaAdicionados.has(r.site)){
       TODOS_SITES.push(r.site);
@@ -1756,7 +1761,7 @@ function renderJogos(){
     }
   });
 
-  // Depois adicionar sites da lista padrão que ainda não foram adicionados
+  // Depois adicionar sites da lista padrao que ainda nao foram adicionados
   SITES_PADRAO.forEach(site=>{
     if(!jaAdicionados.has(site)){
       TODOS_SITES.push(site);
@@ -1779,7 +1784,7 @@ function renderJogos(){
       ?`<span style="font-family:var(--mono);font-size:10px;color:var(--muted);border:1px solid var(--border2);border-radius:4px;padding:1px 6px;margin-right:8px;vertical-align:middle">${jogo.campeonato}</span>`
       :'';
     html+=`<tr class="jogos-row-main" onclick="toggleExpandGame(${idx})">
-      <td><span class="jogos-expand-icon" id="icon-${idx}">▶</span></td>
+      <td><span class="jogos-expand-icon" id="icon-${idx}"></span></td>
       <td>${tagCamp}${jogo.jogo}</td>
       <td>${jogo.hora}</td>
       <td style="text-align:center;font-weight:500">${sitesTem.length}</td>
@@ -1806,17 +1811,17 @@ function renderJogos(){
         const isEmpMax=emp===maxEmp;
         const isForaMax=fora===maxFora;
         html+=`<div style="display:flex;gap:14px;padding:8px 0;align-items:center;border-left:3px solid rgba(34,197,94,0.3);padding-left:10px" class="jogos-row-detail ${cls}">
-          <div class="jogos-site-name" style="min-width:120px">✅ ${site}</div>
+          <div class="jogos-site-name" style="min-width:120px"> ${site}</div>
           <div class="jogos-odd casa ${isCasaMax?'highlight':''}${isCasaMax?'':''}" style="min-width:60px;text-align:center">${casa.toFixed(2)}</div>
           <div class="jogos-odd emp ${isEmpMax?'highlight':''}${isEmpMax?'':''}" style="min-width:60px;text-align:center">${emp.toFixed(2)}</div>
           <div class="jogos-odd fora ${isForaMax?'highlight':''}${isForaMax?'':''}" style="min-width:60px;text-align:center">${fora.toFixed(2)}</div>
         </div>`;
       }else{
         html+=`<div style="display:flex;gap:14px;padding:8px 0;align-items:center;border-left:3px solid rgba(239,68,68,0.12);padding-left:10px" class="jogos-row-detail ${cls}">
-          <div class="jogos-site-name" style="min-width:120px">❌ ${site}</div>
-          <div class="jogos-odd nao" style="min-width:60px;text-align:center">—</div>
-          <div class="jogos-odd nao" style="min-width:60px;text-align:center">—</div>
-          <div class="jogos-odd nao" style="min-width:60px;text-align:center">—</div>
+          <div class="jogos-site-name" style="min-width:120px"> ${site}</div>
+          <div class="jogos-odd nao" style="min-width:60px;text-align:center">-</div>
+          <div class="jogos-odd nao" style="min-width:60px;text-align:center">-</div>
+          <div class="jogos-odd nao" style="min-width:60px;text-align:center">-</div>
         </div>`;
       }
     });
@@ -1841,7 +1846,7 @@ function renderEstatisticas(){
   if(!allSitesData.length) return;
 
   // Agrupar por JOGO_LIMPO + campeonato (mesma chave usada pelo renderJogos)
-  // Garante que variações de nome entre casas ("Operário-PR" vs "Operário Ferroviário EC PR")
+  // Garante que variacoes de nome entre casas ("Operario-PR" vs "Operario Ferroviario EC PR")
   // sejam tratadas como o mesmo jogo na hora de calcular qual casa tem a maior odd.
   const jogosMap = new Map();
   allSitesData.forEach(r => {
@@ -1950,19 +1955,19 @@ function recalculateLucroMaxCard(idx){
     if(!c.viavel){
       divEl.className='lm-scen inviavel';
       if(alvEl) alvEl.value='0';
-      if(retEl) retEl.textContent='—';
-      if(pEl)   pEl.textContent='Não viável';
-      if(h1El)  h1El.textContent='R$ '+fmtDec(hedgeVals[ci][0]);
-      if(h2El)  h2El.textContent='R$ '+fmtDec(hedgeVals[ci][1]);
+      if(retEl) retEl.textContent='-';
+      if(pEl)   pEl.textContent='Nao viavel';
+      if(h1El)  h1El.textContent='R$ '+fmtDec(hedgeVals[ci][0]);
+      if(h2El)  h2El.textContent='R$ '+fmtDec(hedgeVals[ci][1]);
       return;
     }
     const isBest=melhor!==null&&Math.abs(c.lucro_pct-melhor)<0.001;
     divEl.className='lm-scen '+(isBest?'best':c.lucro_pct>=0?'normal':'neg');
     if(alvEl) alvEl.value=c.alvo.toFixed(2);
-    if(retEl) retEl.textContent='R$ '+fmtDec(c.retorno);
+    if(retEl) retEl.textContent='R$ '+fmtDec(c.retorno);
     if(pEl)   pEl.textContent=(c.lucro_pct>=0?'+':'')+c.lucro_pct.toFixed(2)+'%';
-    if(h1El)  h1El.textContent='R$ '+fmtDec(hedgeVals[ci][0]);
-    if(h2El)  h2El.textContent='R$ '+fmtDec(hedgeVals[ci][1]);
+    if(h1El)  h1El.textContent='R$ '+fmtDec(hedgeVals[ci][0]);
+    if(h2El)  h2El.textContent='R$ '+fmtDec(hedgeVals[ci][1]);
   });
 }
 function recalculateLucroMaxStake(idx, scenIdx){
@@ -1996,7 +2001,7 @@ function recalculateLucroMaxStake(idx, scenIdx){
     const divEl = document.getElementById(`lm-scen-${ci}-${idx}`);
     const alvEl = document.getElementById(`lm-alvo-${ci}-${idx}`);
     if(!divEl) return;
-    if(!c.viavel){ if(retEl) retEl.textContent='—'; return; }
+    if(!c.viavel){ if(retEl) retEl.textContent='-'; return; }
     const isBest=melhor!==null&&Math.abs(c.lucro_pct-melhor)<0.001;
     divEl.className='lm-scen '+(isBest?'best':c.lucro_pct>=0?'normal':'neg');
     const alvoReal = ci===scenIdx ? newAlvo : c.alvo;
@@ -2014,7 +2019,7 @@ function renderLucroMaximo(){
   const capital=parseFloat(document.getElementById('apostaInput').value)||5000;
   const el=document.getElementById('lucromax-cards');
   if(!allData.length){
-    el.innerHTML='<div style="color:var(--muted);font-size:12px;text-align:center;padding:40px 0">Carregue um arquivo XLSX para ver os cenários.</div>';
+    el.innerHTML='<div style="color:var(--muted);font-size:12px;text-align:center;padding:40px 0">Carregue um arquivo XLSX para ver os cenarios.</div>';
     return;
   }
   const comCen=allData.map(r=>{
@@ -2028,11 +2033,11 @@ function renderLucroMaximo(){
     .sort((a,b)=>b.melhor-a.melhor)
     .slice(0,6);
   if(!top.length){
-    el.innerHTML='<div style="color:var(--muted);font-size:12px;text-align:center;padding:40px 0">Nenhum cenário com lucro positivo encontrado com o capital atual.</div>';
+    el.innerHTML='<div style="color:var(--muted);font-size:12px;text-align:center;padding:40px 0">Nenhum cenario com lucro positivo encontrado com o capital atual.</div>';
     return;
   }
   const ranks=['rank1','rank2','rank3','rank3','rank3','rank3'];
-  const ords=['1º melhor','2º melhor','3º melhor','4º melhor','5º melhor','6º melhor'];
+  const ords=['1o melhor','2o melhor','3o melhor','4o melhor','5o melhor','6o melhor'];
   el.innerHTML=top.map(({r,cen,melhor},i)=>{
     const oddsHtml=`<div class="top-odds" style="margin:10px 0 8px">
       <input type="number" id="lm-odd-casa-${i}" class="odd-input odd-casa" step="0.01" min="1.0" value="${r.casa.toFixed(2)}" oninput="recalculateLucroMaxCard(${i})">
@@ -2043,7 +2048,7 @@ function renderLucroMaximo(){
       if(!c.viavel) return`
         <div class="lm-scen inviavel" id="lm-scen-${ci}-${i}" style="margin-bottom:6px">
           <span class="lm-scen-label">${c.nome}</span>
-          <span style="color:var(--muted);font-size:11px">Não viável</span>
+          <span style="color:var(--muted);font-size:11px">Nao viavel</span>
         </div>`;
       const isBest=Math.abs(c.lucro_pct-melhor)<0.001;
       const cls=isBest?'best':c.lucro_pct>=0?'normal':'neg';
@@ -2051,22 +2056,22 @@ function renderLucroMaximo(){
       return`
         <div class="lm-scen ${cls}" id="lm-scen-${ci}-${i}" style="flex-direction:column;align-items:stretch;padding:10px 12px;margin-bottom:6px">
           <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:6px">
-            <span style="font-size:13px">🎯</span>
-            <span class="lm-scen-label" style="font-size:13px;min-width:55px">${c.nome}${isBest?' ★':''}</span>
+            <span style="font-size:13px"></span>
+            <span class="lm-scen-label" style="font-size:13px;min-width:55px">${c.nome}${isBest?' ':''}</span>
             <input type="number" step="0.01" min="0" class="stake-input" id="lm-alvo-${ci}-${i}"
               value="${c.alvo.toFixed(2)}" oninput="recalculateLucroMaxStake(${i},${ci})"
               style="width:90px;font-size:13px">
-            <span style="color:var(--muted);font-size:12px">→</span>
+            <span style="color:var(--muted);font-size:12px"></span>
             <span id="lm-ret-${ci}-${i}" style="font-family:var(--mono);font-size:13px;color:#93c5fd">R$&nbsp;${fmtDec(c.retorno)}</span>
             <span class="lm-scen-pct" id="lm-pct-${ci}-${i}" style="margin-left:auto">${s}${c.lucro_pct.toFixed(2)}%</span>
           </div>
           <div style="display:flex;flex-direction:column;gap:3px;padding-left:22px;border-left:2px solid rgba(255,255,255,0.1)">
             <div style="display:flex;justify-content:space-between;align-items:center;font-size:12px;color:var(--muted);margin-bottom:4px">
-              <span>🛡️ ${c.h1nome}</span>
+              <span> ${c.h1nome}</span>
               <input type="number" id="lm-h1-input-${ci}-${i}" step="0.01" min="0" value="${c.ah1.toFixed(2)}" oninput="recalcLucroMaxHedge(${i},${ci},'h1')" style="width:90px;font-family:var(--mono);font-size:12px;padding:3px 6px;background:var(--bg3);border:1px solid var(--border2);border-radius:4px;color:var(--text);text-align:right">
             </div>
             <div style="display:flex;justify-content:space-between;align-items:center;font-size:12px;color:var(--muted)">
-              <span>🛡️ ${c.h2nome}</span>
+              <span> ${c.h2nome}</span>
               <input type="number" id="lm-h2-input-${ci}-${i}" step="0.01" min="0" value="${c.ah2.toFixed(2)}" oninput="recalcLucroMaxHedge(${i},${ci},'h2')" style="width:90px;font-family:var(--mono);font-size:12px;padding:3px 6px;background:var(--bg3);border:1px solid var(--border2);border-radius:4px;color:var(--text);text-align:right">
             </div>
           </div>
@@ -2096,7 +2101,7 @@ function copiarLink(url, btn){
 }
 
 function consolidarOdds(rawData){
-  // Agrupa por (campeonato + JOGO) — ignora hora, que pode variar entre sites
+  // Agrupa por (campeonato + JOGO) - ignora hora, que pode variar entre sites
   const grupos={};
 
   rawData.forEach(r=>{
@@ -2122,8 +2127,8 @@ function consolidarOdds(rawData){
     const maxEmpate=Math.max(...linhas.map(l=>l.empate||0));
     const maxFora=Math.max(...linhas.map(l=>l.fora||0));
 
-    // Procura na terceira aba (allSitesData) quais sites têm as maiores odds
-    // (usa JOGO_LIMPO do Excel quando disponível — mais confiável que renormalizar em JS)
+    // Procura na terceira aba (allSitesData) quais sites tem as maiores odds
+    // (usa JOGO_LIMPO do Excel quando disponivel - mais confiavel que renormalizar em JS)
     const jogoNorm=grupo.jogo_limpo||normalizeJogo(grupo.jogo);
     const mesmoJogo=s=>{
       const sNorm=s.jogo_limpo||normalizeJogo(s.jogo);
@@ -2134,7 +2139,7 @@ function consolidarOdds(rawData){
     const foraSites=(allSitesData||[]).filter(s=>mesmoJogo(s)&&Math.abs(s.fora-maxFora)<0.01);
 
     // Contar TODAS as casas que oferecem este jogo
-    // A coluna SITE pode ter múltiplos sites separados por " & "
+    // A coluna SITE pode ter multiplos sites separados por " & "
     let totalCasas = 0;
     const sitesSet = new Set();
     linhas.forEach(l => {
@@ -2177,7 +2182,7 @@ function normalizeJogo(jogo){
   return (jogo||'')
     .toLowerCase()
     .normalize('NFD')
-    .replace(/[̀-ͯ]/g,'')
+    .replace(/[-]/g,'')
     .replace(/\s+/g,' ')
     .trim();
 }
@@ -2202,7 +2207,7 @@ function renderTopApostasComLinks(){
     const v_emp=r.retorno/r.empate;
     const v_fora=r.retorno/r.fora;
     const lucro=r.retorno-capital;
-    // Usar os sites que têm as maiores odds (já calculados em consolidarOdds)
+    // Usar os sites que tem as maiores odds (ja calculados em consolidarOdds)
     const casaSites=(r.casa_sites||[]).map(s=>({site:s.site||'?',link:s.casa_link||'#'}));
     const empateSites=(r.empate_sites||[]).map(s=>({site:s.site||'?',link:s.empate_link||'#'}));
     const foraSites=(r.fora_sites||[]).map(s=>({site:s.site||'?',link:s.fora_link||'#'}));
@@ -2231,24 +2236,24 @@ function renderTopApostasComLinks(){
       <div class="link-row">
         <span class="link-label">Casa</span>
         <span class="link-url">${r.casa.toFixed(2)}</span>
-        <a href="${casaSites[0]?.link||'#'}" target="_blank" class="link-open" title="Abrir">🔗</a>
+        <a href="${casaSites[0]?.link||'#'}" target="_blank" class="link-open" title="Abrir"></a>
         <button class="link-copy" onclick="copiarLink('${casaSites[0]?.link||'#'}', this)">Copiar</button>
       </div>
       <div class="link-row">
         <span class="link-label">Empate</span>
         <span class="link-url">${r.empate.toFixed(2)}</span>
-        <a href="${empateSites[0]?.link||'#'}" target="_blank" class="link-open" title="Abrir">🔗</a>
+        <a href="${empateSites[0]?.link||'#'}" target="_blank" class="link-open" title="Abrir"></a>
         <button class="link-copy" onclick="copiarLink('${empateSites[0]?.link||'#'}', this)">Copiar</button>
       </div>
       <div class="link-row">
         <span class="link-label">Fora</span>
         <span class="link-url">${r.fora.toFixed(2)}</span>
-        <a href="${foraSites[0]?.link||'#'}" target="_blank" class="link-open" title="Abrir">🔗</a>
+        <a href="${foraSites[0]?.link||'#'}" target="_blank" class="link-open" title="Abrir"></a>
         <button class="link-copy" onclick="copiarLink('${foraSites[0]?.link||'#'}', this)">Copiar</button>
       </div>
       ${urlsHtml}
       <div style="margin-top:14px;padding-top:12px;border-top:1px solid var(--border)">
-        <div style="font-size:11px;font-family:var(--mono);color:var(--muted);margin-bottom:8px;text-transform:uppercase;letter-spacing:0.06em">💰 Distribuição de Stakes</div>
+        <div style="font-size:11px;font-family:var(--mono);color:var(--muted);margin-bottom:8px;text-transform:uppercase;letter-spacing:0.06em"> Distribuicao de Stakes</div>
         <div style="display:flex;gap:8px;flex-wrap:wrap">
           <div style="flex:1;min-width:90px">
             <div style="font-size:10px;color:#93c5fd;margin-bottom:3px">Casa</div>
@@ -2268,7 +2273,7 @@ function renderTopApostasComLinks(){
           <span style="font-size:11px;color:var(--muted)">Lucro: <span id="tl-lucro-${idx}" style="font-family:var(--mono);color:var(--green)">${r.lucro_pct>=0?'+':''}${r.lucro_pct.toFixed(2)}%</span></span>
         </div>
       </div>
-      <div class="links-meta">${r.data} · ${r.site}</div>
+      <div class="links-meta">${r.data}   ${r.site}</div>
     </div>`;
   }).join('');
 }
@@ -2280,9 +2285,9 @@ function renderTable(data){
     const numCasas=r.totalCasas||(r.site||'').split('&').length;
     const camp=r.campeonato||'';
     const data_jogo=(r.data||'').split(' ')[0]||'';
-    const toFixed2=v=>isNaN(v)?'—':(+v).toFixed(2);
+    const toFixed2=v=>isNaN(v)?'-':(+v).toFixed(2);
     const campLower=camp.toLowerCase();
-    const campColor=campLower.includes('libertadores')?'#10b981':campLower.includes('sul americana')||campLower.includes('sulamericana')||campLower.includes('sul-americana')?'#ec4899':campLower.includes('serie a')||campLower.includes('série a')?'#3b82f6':campLower.includes('serie b')||campLower.includes('série b')?'#f59e0b':campLower.includes('copa')?'#a855f7':'#6b7280';
+    const campColor=campLower.includes('libertadores')?'#10b981':campLower.includes('sul americana')||campLower.includes('sulamericana')||campLower.includes('sul-americana')?'#ec4899':campLower.includes('serie a')||campLower.includes('serie a')?'#3b82f6':campLower.includes('serie b')||campLower.includes('serie b')?'#f59e0b':campLower.includes('copa')?'#a855f7':'#6b7280';
     const campBadge=camp?`<span class="camp-badge" style="color:${campColor};border-color:${campColor}55;background:${campColor}18">${camp}</span>`:'';
     return `<tr>
     <td class="td-jogo" title="${r.jogo}">${r.jogo}</td>
@@ -2301,13 +2306,13 @@ function renderTable(data){
   }).join('');
 }
 
-// ═══════════════════════════════════════════════════════════════════
-// EXPORTAR PDF - VERSÃO DIRETA COM jsPDF (SEM html2canvas)
-// ═══════════════════════════════════════════════════════════════════
+// ===================================================================
+// EXPORTAR PDF - VERSAO DIRETA COM jsPDF (SEM html2canvas)
+// ===================================================================
 
 function exportarPDF() {
   if (!allData || !allData.length) {
-    toast('⚠️ Nenhum dado carregado para exportar.', 'error', 4000);
+    toast(' Nenhum dado carregado para exportar.', 'error', 4000);
     return;
   }
 
@@ -2327,18 +2332,18 @@ function exportarPDF() {
   else if (sort === 'casa_desc') dadosFiltrados.sort((a, b) => b.casa - a.casa);
   else if (sort === 'fora_desc') dadosFiltrados.sort((a, b) => b.fora - a.fora);
 
-  // Mostrar modal de opções
+  // Mostrar modal de opcoes
   const modalHtml = `
     <div id="pdfModal" style="position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.85);display:flex;align-items:center;justify-content:center;z-index:9999;">
       <div style="background:#1a1e24;border-radius:12px;padding:32px;max-width:400px;width:90%;border:1px solid #2a2f3a;box-shadow:0 8px 40px rgba(0,0,0,0.6);">
-        <h3 style="margin:0 0 8px 0;font-family:Arial,sans-serif;font-size:18px;color:#e8eaed;">📄 Exportar PDF</h3>
-        <p style="color:#6b7280;font-size:13px;margin-bottom:20px;">${dadosFiltrados.length} jogos disponíveis</p>
+        <h3 style="margin:0 0 8px 0;font-family:Arial,sans-serif;font-size:18px;color:#e8eaed;"> Exportar PDF</h3>
+        <p style="color:#6b7280;font-size:13px;margin-bottom:20px;">${dadosFiltrados.length} jogos disponiveis</p>
         <div style="display:flex;flex-direction:column;gap:10px;">
           <button onclick="gerarPDFDireto('todos')" style="padding:12px 20px;background:#252a32;border:1px solid #2a2f3a;border-radius:8px;cursor:pointer;color:#e8eaed;font-size:14px;font-weight:600;display:flex;align-items:center;gap:10px;font-family:Arial,sans-serif;">
-            <span style="font-size:20px;">📄</span> Todos os jogos (${dadosFiltrados.length})
+            <span style="font-size:20px;"></span> Todos os jogos (${dadosFiltrados.length})
           </button>
           <button onclick="gerarPDFDireto('lucro')" style="padding:12px 20px;background:rgba(34,197,94,0.12);border:1px solid rgba(34,197,94,0.3);border-radius:8px;cursor:pointer;color:#22c55e;font-size:14px;font-weight:600;display:flex;align-items:center;gap:10px;font-family:Arial,sans-serif;">
-            <span style="font-size:20px;">💚</span> Apenas com lucro positivo (${dadosFiltrados.filter(r=>r.lucro_pct>0).length})
+            <span style="font-size:20px;"></span> Apenas com lucro positivo (${dadosFiltrados.filter(r=>r.lucro_pct>0).length})
           </button>
           <button onclick="fecharModalPDF()" style="padding:10px;background:none;border:none;color:#6b7280;cursor:pointer;font-size:13px;margin-top:4px;font-family:Arial,sans-serif;">Cancelar</button>
         </div>
@@ -2383,13 +2388,13 @@ function gerarPDFDireto(tipo) {
     : dadosFiltrados;
 
   if (!dadosExportar.length) {
-    toast('⚠️ Nenhum jogo para exportar.', 'error', 4000);
+    toast(' Nenhum jogo para exportar.', 'error', 4000);
     return;
   }
 
   const dadosOrdenados = [...dadosExportar].sort((a, b) => b.lucro_pct - a.lucro_pct);
 
-  toast('⏳ Gerando PDF...', 'info', 3000);
+  toast(' Gerando PDF...', 'info', 3000);
 
   const { jsPDF } = window.jspdf;
   const doc = new jsPDF({
@@ -2403,10 +2408,10 @@ function gerarPDFDireto(tipo) {
   const dataStr = agora.toLocaleDateString('pt-BR') + ' ' + agora.toLocaleTimeString('pt-BR');
   const apostaValor = parseFloat(document.getElementById('apostaInput').value) || 5000;
 
-  const toFixed2 = v => isNaN(v) ? '—' : (+v).toFixed(2);
+  const toFixed2 = v => isNaN(v) ? '-' : (+v).toFixed(2);
   const fmtValor = n => 'R$ ' + n.toLocaleString('pt-BR', {minimumFractionDigits: 2, maximumFractionDigits: 2});
 
-  // Configurações da página
+  // Configuracoes da pagina
   const pageWidth = doc.internal.pageSize.getWidth();
   const pageHeight = doc.internal.pageSize.getHeight();
   const margin = 8;
@@ -2424,22 +2429,22 @@ function gerarPDFDireto(tipo) {
   const fundo = '#0d0f12';
   const fundoTabela = '#1a1e24';
 
-  // ========== CABEÇALHO ==========
+  // ========== CABECALHO ==========
   doc.setFillColor('#0d0f12');
   doc.rect(0, 0, pageWidth, pageHeight, 'F');
 
-  // Título
+  // Titulo
   doc.setFont('helvetica', 'bold');
   doc.setFontSize(14);
   doc.setTextColor(verde);
-  doc.text('📊 Análise de Odds · Aposta Holandesa', margin, y);
+  doc.text(' Analise de Odds   Aposta Holandesa', margin, y);
   y += 5;
 
-  // Subtítulo
+  // Subtitulo
   doc.setFont('helvetica', 'normal');
   doc.setFontSize(9);
   doc.setTextColor(cinza);
-  doc.text(`${dadosOrdenados.length} jogos · ${dadosOrdenados.filter(r=>r.lucro_pct>0).length} com lucro positivo`, margin, y);
+  doc.text(`${dadosOrdenados.length} jogos   ${dadosOrdenados.filter(r=>r.lucro_pct>0).length} com lucro positivo`, margin, y);
   y += 2;
 
   // Data e valor
@@ -2461,17 +2466,17 @@ function gerarPDFDireto(tipo) {
 
   doc.setFontSize(8);
   doc.setTextColor(cinzaClaro);
-  doc.text(`📊 Total: ${dadosOrdenados.length}`, margin + 3, y + 4);
+  doc.text(` Total: ${dadosOrdenados.length}`, margin + 3, y + 4);
   doc.setTextColor(verde);
-  doc.text(`💚 ${totalLucro}`, margin + 40, y + 4);
+  doc.text(` ${totalLucro}`, margin + 40, y + 4);
   doc.setTextColor('#f59e0b');
-  doc.text(`🟡 ${totalZero}`, margin + 65, y + 4);
+  doc.text(` ${totalZero}`, margin + 65, y + 4);
   doc.setTextColor(cinza);
-  doc.text(`⚫ ${totalNegativo}`, margin + 90, y + 4);
+  doc.text(` ${totalNegativo}`, margin + 90, y + 4);
 
   y += 10;
 
-  // ========== CABEÇALHO DA TABELA ==========
+  // ========== CABECALHO DA TABELA ==========
   const colunas = [
     { label: 'Jogo', w: 45, align: 'left' },
     { label: 'Camp.', w: 22, align: 'center' },
@@ -2487,7 +2492,7 @@ function gerarPDFDireto(tipo) {
     { label: '% Ganho', w: 18, align: 'right' }
   ];
 
-  // Desenhar cabeçalho
+  // Desenhar cabecalho
   let x = margin;
   doc.setFillColor(fundoTabela);
   doc.roundedRect(margin - 1, y - 2, pageWidth - margin * 2 + 2, 6, 2, 2, 'F');
@@ -2512,13 +2517,13 @@ function gerarPDFDireto(tipo) {
   const maxLinhasPorPagina = Math.floor((pageHeight - margin - 50) / lineHeight);
 
   dadosOrdenados.forEach((r, idx) => {
-    // Verificar se precisa de nova página
+    // Verificar se precisa de nova pagina
     if (pageCount >= maxLinhasPorPagina) {
       doc.addPage();
       y = margin + 8;
       pageCount = 0;
 
-      // Re-desenhar cabeçalho na nova página
+      // Re-desenhar cabecalho na nova pagina
       doc.setFillColor(fundoTabela);
       doc.roundedRect(margin - 1, y - 2, pageWidth - margin * 2 + 2, 6, 2, 2, 'F');
       doc.setFont('helvetica', 'bold');
@@ -2549,8 +2554,8 @@ function gerarPDFDireto(tipo) {
     let campColor = cinza;
     if (cl.includes('libertadores')) campColor = '#10b981';
     else if (cl.includes('sul americana') || cl.includes('sulamericana')) campColor = '#ec4899';
-    else if (cl.includes('serie a') || cl.includes('série a')) campColor = '#3b82f6';
-    else if (cl.includes('serie b') || cl.includes('série b')) campColor = '#f59e0b';
+    else if (cl.includes('serie a') || cl.includes('serie a')) campColor = '#3b82f6';
+    else if (cl.includes('serie b') || cl.includes('serie b')) campColor = '#f59e0b';
     else if (cl.includes('copa')) campColor = '#a855f7';
 
     const valores = [
@@ -2558,7 +2563,7 @@ function gerarPDFDireto(tipo) {
       camp,
       (r.data || '').split(' ')[0] || '',
       r.hora,
-      r.totalCasas || (r.site || '').split('&').length || '—',
+      r.totalCasas || (r.site || '').split('&').length || '-',
       toFixed2(r.casa),
       toFixed2(r.empate),
       toFixed2(r.fora),
@@ -2577,7 +2582,7 @@ function gerarPDFDireto(tipo) {
         doc.setTextColor(campColor);
         doc.setFont('helvetica', 'bold');
         doc.setFontSize(5.5);
-        const campText = camp.length > 12 ? camp.substring(0, 10) + '…' : camp;
+        const campText = camp.length > 12 ? camp.substring(0, 10) + '...' : camp;
         doc.text(campText, x + col.w / 2, y + 2, { align: 'center' });
         doc.setFont('helvetica', 'normal');
         doc.setFontSize(6.5);
@@ -2591,7 +2596,7 @@ function gerarPDFDireto(tipo) {
         doc.setFont('helvetica', 'normal');
         doc.setFontSize(6.5);
       }
-      // Cores específicas para odds
+      // Cores especificas para odds
       else if (ci === 5) { // Casa
         doc.setTextColor(azulClaro);
         doc.text(valores[ci], x + (col.align === 'center' ? col.w / 2 : col.align === 'right' ? col.w - 1 : 1), y + 2, {
@@ -2613,7 +2618,7 @@ function gerarPDFDireto(tipo) {
       else {
         doc.setTextColor(branco);
         const text = String(valores[ci] || '');
-        const displayText = text.length > 25 && ci === 0 ? text.substring(0, 23) + '…' : text;
+        const displayText = text.length > 25 && ci === 0 ? text.substring(0, 23) + '...' : text;
         doc.text(displayText, x + (col.align === 'right' ? col.w - 1 : col.align === 'center' ? col.w / 2 : 1), y + 2, {
           align: col.align === 'right' ? 'right' : col.align === 'center' ? 'center' : 'left'
         });
@@ -2625,28 +2630,28 @@ function gerarPDFDireto(tipo) {
     pageCount++;
   });
 
-  // ========== RODAPÉ ==========
+  // ========== RODAPE ==========
   const footerY = pageHeight - 8;
   doc.setFontSize(7);
   doc.setTextColor(cinza);
-  doc.text(`📊 ${dadosOrdenados.length} jogos · ${totalLucro} com lucro positivo · ${totalZero} neutros · ${totalNegativo} negativos`, margin, footerY);
-  doc.text('aposta holandesa · cobertura total 3 resultados', pageWidth - margin - 50, footerY, { align: 'right' });
+  doc.text(` ${dadosOrdenados.length} jogos   ${totalLucro} com lucro positivo   ${totalZero} neutros   ${totalNegativo} negativos`, margin, footerY);
+  doc.text('aposta holandesa   cobertura total 3 resultados', pageWidth - margin - 50, footerY, { align: 'right' });
 
   // ========== SALVAR ==========
   try {
     doc.save(`odds_${agora.toISOString().slice(0,10)}.pdf`);
-    toast('✅ PDF gerado com sucesso!', 'success', 3000);
+    toast(' PDF gerado com sucesso!', 'success', 3000);
   } catch (err) {
     console.error('Erro ao salvar PDF:', err);
-    toast('❌ Erro ao salvar PDF. Tente novamente.', 'error', 4000);
+    toast(' Erro ao salvar PDF. Tente novamente.', 'error', 4000);
   }
 }
 
 
 
-// ═══════════════════════════════════════════════════════════════════
-// HISTÓRICO - GERENCIAMENTO DE APOSTAS
-// ═══════════════════════════════════════════════════════════════════
+// ===================================================================
+// HISTORICO - GERENCIAMENTO DE APOSTAS
+// ===================================================================
 
 let historicoData = { jogadores: [], apostas: [] };
 let ordenacaoAtual = { coluna: 'data', direcao: 'desc' };
@@ -2662,12 +2667,12 @@ async function carregarHistorico() {
       preencherSelectJogadores();
       document.getElementById('form-data').valueAsDate = new Date();
     } else {
-      console.warn('Arquivo historico.json não encontrado. Use: python -m http.server 8080');
-      mostrarMensagem('⚠️ Para usar o histórico, inicie um servidor HTTP:\npython -m http.server 8080', 'warning');
+      console.warn('Arquivo historico.json nao encontrado. Use: python -m http.server 8080');
+      mostrarMensagem(' Para usar o historico, inicie um servidor HTTP:\npython -m http.server 8080', 'warning');
     }
   } catch (e) {
-    console.error('Erro ao carregar histórico:', e);
-    mostrarMensagem('⚠️ Para usar o histórico, inicie um servidor HTTP:\npython -m http.server 8080', 'warning');
+    console.error('Erro ao carregar historico:', e);
+    mostrarMensagem(' Para usar o historico, inicie um servidor HTTP:\npython -m http.server 8080', 'warning');
   }
 }
 
@@ -2697,7 +2702,7 @@ function renderizarJogadores() {
 
   const filtroPeriodo = document.getElementById('filtro-periodo')?.value || 'total';
 
-  // Função para verificar se a data está no período selecionado
+  // Funcao para verificar se a data esta no periodo selecionado
   const estaEmPeriodo = (dataStr) => {
     try {
       let dataAposta;
@@ -2732,7 +2737,7 @@ function renderizarJogadores() {
   };
 
   historicoData.jogadores.forEach(jogador => {
-    // Filtrar apostas do jogador E pelo período selecionado E excluindo Pendente
+    // Filtrar apostas do jogador E pelo periodo selecionado E excluindo Pendente
     const apostas = historicoData.apostas.filter(a =>
       a.jogador_id == jogador.id && estaEmPeriodo(a.data) && a.status !== 'Pendente'
     );
@@ -2744,7 +2749,7 @@ function renderizarJogadores() {
     let alertaTexto = '';
     if (percentualUsado >= 90) {
       corBarra = 'vermelho';
-      alertaTexto = '⚠️ Próximo do limite!';
+      alertaTexto = ' Proximo do limite!';
     } else if (percentualUsado >= 70) {
       corBarra = 'amarelo';
     }
@@ -2773,7 +2778,7 @@ function renderizarJogadores() {
       </div>
       <div class="historico-stat">
         <span class="historico-stat-label">IR estimado:</span>
-        <span class="historico-stat-value">${lucroTotal >= 2000 ? '📊 Consulte contador' : '✅ Isento'}</span>
+        <span class="historico-stat-value">${lucroTotal >= 2000 ? ' Consulte contador' : ' Isento'}</span>
       </div>
       <div class="historico-stat">
         <span class="historico-stat-label">Total apostas:</span>
@@ -2798,8 +2803,8 @@ function toggleFormularioAposta() {
   form.style.display = form.style.display === 'none' ? 'block' : 'none';
   if (form.style.display === 'block') {
     document.getElementById('form-data').valueAsDate = new Date();
-    document.getElementById('form-titulo').textContent = '➕ Nova Aposta';
-    document.getElementById('btn-salvar-aposta').textContent = '💾 Salvar';
+    document.getElementById('form-titulo').textContent = ' Nova Aposta';
+    document.getElementById('btn-salvar-aposta').textContent = ' Salvar';
     apostaSendoEditada = null;
     form.reset();
     document.getElementById('form-bonus').value = '0';
@@ -2809,7 +2814,7 @@ function toggleFormularioAposta() {
 }
 
 document.addEventListener('DOMContentLoaded', function() {
-  // Carregar histórico ao abrir a página (PRIMEIRO!)
+  // Carregar historico ao abrir a pagina (PRIMEIRO!)
   carregarHistoricoInicial();
 
   // Atualizar retorno ao mudar odd ou valor
@@ -2876,7 +2881,7 @@ function salvarAposta() {
   }
 
   if (apostaSendoEditada !== null && apostaSendoEditada !== undefined) {
-    // Modo de edição: atualizar aposta existente
+    // Modo de edicao: atualizar aposta existente
     const index = historicoData.apostas.findIndex(a => a.id === apostaSendoEditada);
 
     if (index !== -1) {
@@ -2897,7 +2902,7 @@ function salvarAposta() {
         lucro,
         status
       };
-      mostrarMensagem('✅ Aposta atualizada com sucesso!', 'success');
+      mostrarMensagem(' Aposta atualizada com sucesso!', 'success');
       apostaSendoEditada = null;
     }
   } else {
@@ -2920,7 +2925,7 @@ function salvarAposta() {
       status
     };
     historicoData.apostas.push(novaAposta);
-    mostrarMensagem('✅ Aposta salva com sucesso!', 'success');
+    mostrarMensagem(' Aposta salva com sucesso!', 'success');
   }
 
   salvarHistoricoLocalStorage();
@@ -2931,7 +2936,7 @@ function salvarAposta() {
 }
 
 function duplicarAposta(apostaSelecionada = null) {
-  // Implementação simplificada - copia os campos não-sensíveis
+  // Implementacao simplificada - copia os campos nao-sensiveis
   alert('Funcionalidade de duplicar aposta - preencha manualmente os novos valores');
 }
 
@@ -2941,7 +2946,7 @@ function renderizarTabela() {
 
   // Garantir que historicoData e suas propriedades existem
   if (!historicoData) {
-    console.warn('historicoData não inicializado');
+    console.warn('historicoData nao inicializado');
     tbody.innerHTML = '<tr><td colspan="13" style="text-align: center; padding: 20px;">Nenhuma aposta registrada</td></tr>';
     return;
   }
@@ -2957,7 +2962,7 @@ function renderizarTabela() {
   const filtroData = document.getElementById('filtro-data').value;
   const filtroEvento = document.getElementById('filtro-evento').value.toLowerCase();
 
-  // Função para verificar se a data está no período selecionado
+  // Funcao para verificar se a data esta no periodo selecionado
   const estaEmPeriodo = (dataStr) => {
     try {
       // Converter ISO 8601 ou DD/MM/YYYY para Date
@@ -2989,7 +2994,7 @@ function renderizarTabela() {
       // 'total' ou 'custom' mostra tudo
       return true;
     } catch (e) {
-      console.warn('Erro ao filtrar por período:', dataStr, e);
+      console.warn('Erro ao filtrar por periodo:', dataStr, e);
       return true;
     }
   };
@@ -3006,11 +3011,11 @@ function renderizarTabela() {
         // filtroData vem como YYYY-MM-DD
         let dataApostaStr;
         if (a.data.includes('T')) {
-          // ISO 8601: 2026-06-24T17:00 → extrair só a data
+          // ISO 8601: 2026-06-24T17:00  extrair so a data
           dataApostaStr = a.data.split('T')[0];
         } else if (a.data.includes('/')) {
-          // DD/MM/YYYY HH:MM → converter para YYYY-MM-DD
-          const partes = a.data.split(' ')[0]; // pega só a data
+          // DD/MM/YYYY HH:MM  converter para YYYY-MM-DD
+          const partes = a.data.split(' ')[0]; // pega so a data
           const [dia, mes, ano] = partes.split('/');
           dataApostaStr = `${ano}-${mes.padStart(2, '0')}-${dia.padStart(2, '0')}`;
         } else {
@@ -3046,7 +3051,7 @@ function renderizarTabela() {
     const jogador = historicoData.jogadores.find(j => j.id == aposta.jogador_id);
 
     // Formatar data de ISO 8601 (2026-06-24T17:00) para "24/06/2026 17:00"
-    let dataExibicao = 'Data inválida';
+    let dataExibicao = 'Data invalida';
     if (aposta.data) {
       try {
         // Se for ISO 8601 (2026-06-24T17:00)
@@ -3077,7 +3082,7 @@ function renderizarTabela() {
 
     // Calcular percentual
     const percentual = aposta.valor > 0 ? (aposta.lucro / aposta.valor * 100).toFixed(2) : 0;
-    // Compatibilidade com dados antigos (campo bonus pode não existir)
+    // Compatibilidade com dados antigos (campo bonus pode nao existir)
     const bonus = aposta.bonus || 0;
 
     return `<tr>
@@ -3094,8 +3099,8 @@ function renderizarTabela() {
       <td>${jogador?.nome || '?'}</td>
       <td>${aposta.status}</td>
       <td>
-        <button class="btn-editar" onclick="editarAposta(${aposta.id})">✏️</button>
-        <button class="btn-excluir" onclick="excluirAposta(${aposta.id})">🗑️</button>
+        <button class="btn-editar" onclick="editarAposta(${aposta.id})"></button>
+        <button class="btn-excluir" onclick="excluirAposta(${aposta.id})"></button>
       </td>
     </tr>`;
   }).join('');
@@ -3126,15 +3131,15 @@ function ordenarTabela(coluna) {
 }
 
 function abrirEdicaoAposta(id) {
-  // Garantir que id é um número
+  // Garantir que id e um numero
   id = parseInt(id);
   const aposta = historicoData.apostas.find(a => a.id === id);
   if (!aposta) {
-    mostrarMensagem('❌ Aposta não encontrada', 'error');
+    mostrarMensagem(' Aposta nao encontrada', 'error');
     return;
   }
 
-  // Preencher formulário com dados da aposta
+  // Preencher formulario com dados da aposta
   document.getElementById('form-jogador').value = aposta.jogador_id;
   document.getElementById('form-data').value = aposta.data;
   document.getElementById('form-esporte').value = aposta.esporte;
@@ -3148,18 +3153,18 @@ function abrirEdicaoAposta(id) {
   document.getElementById('form-resultado').value = aposta.resultado;
   document.getElementById('form-status').value = aposta.status;
 
-  // Atualizar estado de edição
+  // Atualizar estado de edicao
   apostaSendoEditada = id;
 
   // Atualizar UI
-  document.getElementById('form-titulo').textContent = '✏️ Editar Aposta';
-  document.getElementById('btn-salvar-aposta').textContent = '🔄 Atualizar';
+  document.getElementById('form-titulo').textContent = ' Editar Aposta';
+  document.getElementById('btn-salvar-aposta').textContent = ' Atualizar';
 
-  // Mostrar formulário e switch para aba histórico
+  // Mostrar formulario e switch para aba historico
   document.getElementById('formulario-aposta').style.display = 'block';
   switchTab('historico');
 
-  // Scroll para o formulário
+  // Scroll para o formulario
   setTimeout(() => {
     document.getElementById('formulario-aposta').scrollIntoView({ behavior: 'smooth', block: 'start' });
     document.getElementById('form-jogador').focus();
@@ -3168,15 +3173,15 @@ function abrirEdicaoAposta(id) {
 
 function cancelarEdicao() {
   apostaSendoEditada = null;
-  document.getElementById('form-titulo').textContent = '➕ Nova Aposta';
-  document.getElementById('btn-salvar-aposta').textContent = '💾 Salvar';
+  document.getElementById('form-titulo').textContent = ' Nova Aposta';
+  document.getElementById('btn-salvar-aposta').textContent = ' Salvar';
 
-  // Reset completo do formulário
+  // Reset completo do formulario
   const form = document.getElementById('formulario-aposta');
   form.reset();
   form.style.display = 'none';
 
-  // Reset dos campos específicos
+  // Reset dos campos especificos
   document.getElementById('form-bonus').value = '0';
   document.getElementById('form-retorno').value = '0';
   document.getElementById('form-data').valueAsDate = new Date();
@@ -3192,7 +3197,7 @@ function excluirAposta(id) {
     salvarHistoricoLocalStorage();
     renderizarJogadores();
     renderizarTabela();
-    mostrarMensagem('✅ Aposta excluída!', 'success');
+    mostrarMensagem(' Aposta excluida!', 'success');
   }
 }
 
@@ -3211,7 +3216,7 @@ function exportarHistoricoExcel() {
     'Casa': a.casa,
     'Odd': a.odd,
     'Valor (R$)': a.valor,
-    'Bônus (R$)': a.bonus || 0,
+    'Bonus (R$)': a.bonus || 0,
     'Retorno (R$)': a.retorno,
     'Resultado': a.resultado,
     'Lucro (R$)': a.lucro,
@@ -3224,7 +3229,7 @@ function exportarHistoricoExcel() {
   const wb = XLSX.utils.book_new();
   XLSX.utils.book_append_sheet(wb, ws, 'Apostas');
   XLSX.writeFile(wb, 'historico_apostas.xlsx');
-  mostrarMensagem('✅ Excel exportado!', 'success');
+  mostrarMensagem(' Excel exportado!', 'success');
 }
 
 function salvarHistoricoLocalStorage() {
@@ -3239,10 +3244,10 @@ function salvarHistoricoLocalStorage() {
   const timestamp = `${horas}:${minutos}`;
   localStorage.setItem('historico_timestamp', timestamp);
 
-  // Atualizar indicador na página
+  // Atualizar indicador na pagina
   const elemento = document.getElementById('timestamp-salvamento');
   if (elemento) {
-    elemento.textContent = `Salvo automaticamente às ${timestamp}`;
+    elemento.textContent = `Salvo automaticamente as ${timestamp}`;
   }
 }
 
@@ -3256,9 +3261,9 @@ function mostrarMensagem(texto, tipo = 'info') {
 }
 
 
-// ═══════════════════════════════════════════════════════════════════
+// ===================================================================
 // GERENCIAR JOGADORES
-// ═══════════════════════════════════════════════════════════════════
+// ===================================================================
 
 function abrirGerenciadorJogadores() {
   document.getElementById('modal-jogadores').style.display = 'flex';
@@ -3281,15 +3286,15 @@ function renderizarListaJogadores() {
         <div class="jogador-nome">${jogador.nome}</div>
         <div class="jogador-limite">Limite: R$ ${jogador.limite.toLocaleString('pt-BR', {minimumFractionDigits: 2})}</div>
         <div class="${jogador.ativo ? 'jogador-ativo' : 'jogador-inativo'}">
-          ${jogador.ativo ? '✅ Ativo' : '❌ Inativo'}
+          ${jogador.ativo ? ' Ativo' : ' Inativo'}
         </div>
       </div>
       <div class="jogador-acoes">
-        <button class="btn-editar-jogador" onclick="editarJogador(${jogador.id})">✏️ Editar</button>
+        <button class="btn-editar-jogador" onclick="editarJogador(${jogador.id})"> Editar</button>
         <button class="btn-ativar-jogador" onclick="toggleAtivarJogador(${jogador.id})">
-          ${jogador.ativo ? '❌ Desativar' : '✅ Ativar'}
+          ${jogador.ativo ? ' Desativar' : ' Ativar'}
         </button>
-        <button class="btn-excluir-jogador" onclick="excluirJogador(${jogador.id})">🗑️</button>
+        <button class="btn-excluir-jogador" onclick="excluirJogador(${jogador.id})"></button>
       </div>
     `;
     container.appendChild(div);
@@ -3301,7 +3306,7 @@ function adicionarJogador() {
   const limite = parseFloat(document.getElementById('novo-jogador-limite').value) || 5000;
 
   if (!nome) {
-    alert('⚠️ Insira um nome para o jogador');
+    alert(' Insira um nome para o jogador');
     return;
   }
 
@@ -3320,7 +3325,7 @@ function adicionarJogador() {
 
   document.getElementById('novo-jogador-nome').value = '';
   document.getElementById('novo-jogador-limite').value = '5000';
-  mostrarMensagem('✅ Jogador adicionado!', 'success');
+  mostrarMensagem(' Jogador adicionado!', 'success');
 }
 
 function editarJogador(id) {
@@ -3341,7 +3346,7 @@ function editarJogador(id) {
   renderizarListaJogadores();
   renderizarJogadores();
   renderizarTabela();
-  mostrarMensagem('✅ Jogador editado!', 'success');
+  mostrarMensagem(' Jogador editado!', 'success');
 }
 
 function toggleAtivarJogador(id) {
@@ -3352,12 +3357,12 @@ function toggleAtivarJogador(id) {
     preencherSelectJogadores();
     renderizarListaJogadores();
     renderizarJogadores();
-    mostrarMensagem(`${jogador.ativo ? '✅ Jogador ativado!' : '❌ Jogador desativado!'}`, 'success');
+    mostrarMensagem(`${jogador.ativo ? ' Jogador ativado!' : ' Jogador desativado!'}`, 'success');
   }
 }
 
 function excluirJogador(id) {
-  if (confirm('⚠️ Tem certeza que deseja excluir este jogador?')) {
+  if (confirm(' Tem certeza que deseja excluir este jogador?')) {
     historicoData.jogadores = historicoData.jogadores.filter(j => j.id !== id);
     historicoData.apostas = historicoData.apostas.filter(a => a.jogador_id !== id);
     salvarHistoricoLocalStorage();
@@ -3365,13 +3370,13 @@ function excluirJogador(id) {
     renderizarListaJogadores();
     renderizarJogadores();
     renderizarTabela();
-    mostrarMensagem('✅ Jogador excluído!', 'success');
+    mostrarMensagem(' Jogador excluido!', 'success');
   }
 }
 
-// ═══════════════════════════════════════════════════════════════════
+// ===================================================================
 // CARREGAR/IMPORTAR ARQUIVO JSON
-// ═══════════════════════════════════════════════════════════════════
+// ===================================================================
 
 function importarBackup(event) {
   const file = event.target.files[0];
@@ -3386,7 +3391,7 @@ function importarBackup(event) {
       if (!dados.jogadores) dados.jogadores = [];
       if (!dados.apostas) dados.apostas = [];
 
-      // Se o JSON é um array de apostas (formato alternativo), converter
+      // Se o JSON e um array de apostas (formato alternativo), converter
       if (Array.isArray(dados) && !Array.isArray(dados.jogadores)) {
         dados = {
           jogadores: historicoData.jogadores || [],
@@ -3396,13 +3401,13 @@ function importarBackup(event) {
 
       // Validar que temos pelo menos um dos dois
       if (!dados.jogadores && !dados.apostas) {
-        throw new Error('Arquivo não contém jogadores ou apostas');
+        throw new Error('Arquivo nao contem jogadores ou apostas');
       }
 
-      // Limpar dados inválidos em apostas
+      // Limpar dados invalidos em apostas
       if (Array.isArray(dados.apostas)) {
         dados.apostas = dados.apostas.filter(a => a && a.id && a.data && a.valor !== undefined);
-        // Compatibilidade com dados antigos - adicionar campo bonus se não existir
+        // Compatibilidade com dados antigos - adicionar campo bonus se nao existir
         dados.apostas = dados.apostas.map(aposta => {
           if (typeof aposta.bonus === 'undefined') {
             aposta.bonus = 0;
@@ -3423,13 +3428,13 @@ function importarBackup(event) {
       // Feedback
       const quantidadeApostas = dados.apostas ? dados.apostas.length : 0;
       const quantidadeJogadores = dados.jogadores ? dados.jogadores.length : 0;
-      mostrarMensagem(`✅ Importado: ${quantidadeJogadores} jogador(es), ${quantidadeApostas} aposta(s)!`, 'success');
+      mostrarMensagem(` Importado: ${quantidadeJogadores} jogador(es), ${quantidadeApostas} aposta(s)!`, 'success');
 
       // Limpar input
       event.target.value = '';
     } catch (err) {
       console.error('Erro ao importar:', err);
-      alert('❌ Erro ao importar arquivo.\n\nErro: ' + err.message + '\n\nCertifique-se de que é um arquivo JSON válido com estrutura {jogadores: [], apostas: []}');
+      alert(' Erro ao importar arquivo.\n\nErro: ' + err.message + '\n\nCertifique-se de que e um arquivo JSON valido com estrutura {jogadores: [], apostas: []}');
       event.target.value = '';
     }
   };
@@ -3445,12 +3450,12 @@ function exportarBackup() {
   a.download = 'historico.json';
   a.click();
   URL.revokeObjectURL(url);
-  mostrarMensagem('✅ Backup exportado como historico.json!', 'success');
+  mostrarMensagem(' Backup exportado como historico.json!', 'success');
 }
 
-// ═══════════════════════════════════════════════════════════════════
-// CARREGAR HISTÓRICO AO ABRIR A PÁGINA
-// ═══════════════════════════════════════════════════════════════════
+// ===================================================================
+// CARREGAR HISTORICO AO ABRIR A PAGINA
+// ===================================================================
 
 function carregarHistoricoInicial() {
   // Carregar do localStorage (principal)
@@ -3459,7 +3464,7 @@ function carregarHistoricoInicial() {
     try {
       historicoData = JSON.parse(dadosArmazenados);
 
-      // Compatibilidade com dados antigos - adicionar campo bonus se não existir
+      // Compatibilidade com dados antigos - adicionar campo bonus se nao existir
       if (historicoData.apostas && Array.isArray(historicoData.apostas)) {
         historicoData.apostas = historicoData.apostas.map(aposta => {
           if (aposta && typeof aposta.bonus === 'undefined') {
@@ -3473,12 +3478,12 @@ function carregarHistoricoInicial() {
       renderizarJogadores();
       renderizarTabela();
 
-      // Mostrar timestamp do último salvamento
+      // Mostrar timestamp do ultimo salvamento
       const timestamp = localStorage.getItem('historico_timestamp');
       if (timestamp) {
         const elemento = document.getElementById('timestamp-salvamento');
         if (elemento) {
-          elemento.textContent = `Salvo automaticamente às ${timestamp}`;
+          elemento.textContent = `Salvo automaticamente as ${timestamp}`;
         }
       }
       return;
@@ -3487,7 +3492,7 @@ function carregarHistoricoInicial() {
     }
   }
 
-  // Se não houver dados no localStorage, tentar carregar arquivo historico.json padrão
+  // Se nao houver dados no localStorage, tentar carregar arquivo historico.json padrao
   fetch('historico.json')
     .then(response => response.json())
     .then(dados => {
@@ -3496,7 +3501,7 @@ function carregarHistoricoInicial() {
       preencherSelectJogadores();
       renderizarJogadores();
       renderizarTabela();
-      mostrarMensagem('✅ Arquivo padrão carregado', 'success');
+      mostrarMensagem(' Arquivo padrao carregado', 'success');
     })
     .catch(() => {
       // Nenhum arquivo encontrado, inicializar vazio
