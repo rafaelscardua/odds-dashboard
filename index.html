@@ -589,6 +589,7 @@ td{padding:11px 14px;white-space:nowrap;}
       <button class="tab-btn" id="btn-jogos" onclick="switchTab('jogos')">🎮 Jogos</button>
       <button class="tab-btn" id="btn-estatisticas" onclick="switchTab('estatisticas')">📈 Estatísticas</button>
       <button class="tab-btn" id="btn-historico" onclick="switchTab('historico')">📋 Histórico</button>
+      <button class="tab-btn" id="btnGerenciarAbas" onclick="abrirGerenciadorAbas()" style="display:none;margin-left:auto;color:var(--muted)">⚙️ Gerenciar Abas</button>
     </div>
 
     <div class="tab-panel active" id="tab-comparativo">
@@ -767,6 +768,24 @@ td{padding:11px 14px;white-space:nowrap;}
       </div>
 
       <!-- MODAL GERENCIAR JOGADORES -->
+      <div class="modal-overlay" id="modal-gerenciar-abas" style="display: none;">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h3>⚙️ Gerenciar Abas Visíveis</h3>
+            <button class="btn-fechar" onclick="fecharGerenciadorAbas()">✕</button>
+          </div>
+          <div class="modal-section">
+            <h4>Marque as abas que os usuários (não-admin) podem ver</h4>
+            <div id="lista-gerenciar-abas"><!-- preenchido dinamicamente --></div>
+            <div style="margin-top:10px;font-size:12px;color:var(--muted)">Você (admin) sempre vê todas as abas, independente dessa configuração.</div>
+          </div>
+          <div class="modal-footer">
+            <button class="btn-adicionar" onclick="salvarVisibilidadeAbas()">💾 Salvar</button>
+            <button class="btn-fechar-modal" onclick="fecharGerenciadorAbas()">Cancelar</button>
+          </div>
+        </div>
+      </div>
+
       <div class="modal-overlay" id="modal-jogadores" style="display: none;">
         <div class="modal-content">
           <div class="modal-header">
@@ -974,6 +993,15 @@ let isAdmin = false;
 let currentUser = null;
 let registerMode = false;
 let dataListener = null;
+let hiddenTabs = {}; // { comparativo:false, toplinks:true, ... } - true = oculta para usuarios comuns
+const TAB_LIST = [
+  { key: 'comparativo',   label: '📊 Comparativo' },
+  { key: 'toplinks',      label: '🔗 Top Apostas c/ Links' },
+  { key: 'lucromax',      label: '💰 Lucro Máximo' },
+  { key: 'jogos',         label: '🎮 Jogos' },
+  { key: 'estatisticas',  label: '📈 Estatísticas' },
+  { key: 'historico',     label: '📋 Histórico' }
+];
 
 /* REGRAS FIREBASE RECOMENDADAS:
 {
@@ -1114,7 +1142,9 @@ function checkAdmin(user) {
       console.log('[DEBUG] Nó config inteiro:', configVal);
 
       const adminEmail = configVal ? configVal.adminEmail : null;
+      hiddenTabs = (configVal && configVal.hiddenTabs) ? configVal.hiddenTabs : {};
       console.log('[DEBUG] adminEmail extraído:', adminEmail);
+      console.log('[DEBUG] hiddenTabs extraído:', hiddenTabs);
       console.log('[DEBUG] user.email:', user.email);
 
       // Comparacao case-insensitive
@@ -1130,6 +1160,7 @@ function checkAdmin(user) {
       }
 
       setupUIForRole();
+      applyTabVisibility();
       showApp();
       listenToData();
     })
@@ -1137,6 +1168,7 @@ function checkAdmin(user) {
       console.error('[DEBUG] ERRO ao ler config:', err.code, err.message);
       isAdmin = false;
       setupUIForRole();
+      applyTabVisibility();
       showApp();
       listenToData();
     });
@@ -1169,6 +1201,70 @@ function setupUIForRole() {
     if (dropUser) dropUser.style.display = 'block';
     if (btnLoad) btnLoad.style.display = 'none'; // usuario comum nao carrega arquivo
   }
+}
+
+function applyTabVisibility() {
+  const btnGerenciarAbas = document.getElementById('btnGerenciarAbas');
+  if (btnGerenciarAbas) btnGerenciarAbas.style.display = isAdmin ? 'inline-flex' : 'none';
+
+  TAB_LIST.forEach(t => {
+    const btn = document.getElementById('btn-' + t.key);
+    if (!btn) return;
+    if (!isAdmin && hiddenTabs[t.key]) {
+      btn.style.display = 'none';
+    } else {
+      btn.style.display = '';
+    }
+  });
+
+  // Se o usuario comum estiver numa aba que acabou de ser ocultada, joga pra primeira visivel
+  if (!isAdmin) {
+    const activeBtn = document.querySelector('.tab-btn.active');
+    if (activeBtn && activeBtn.style.display === 'none') {
+      const primeiraVisivel = TAB_LIST.find(t => !hiddenTabs[t.key]);
+      if (primeiraVisivel) switchTab(primeiraVisivel.key);
+    }
+  }
+}
+
+function abrirGerenciadorAbas() {
+  if (!isAdmin) return;
+  const lista = document.getElementById('lista-gerenciar-abas');
+  lista.innerHTML = TAB_LIST.map(t => `
+    <label style="display:flex;align-items:center;gap:10px;padding:10px 4px;border-bottom:1px solid var(--border2);cursor:pointer">
+      <input type="checkbox" data-tab-key="${t.key}" ${hiddenTabs[t.key] ? '' : 'checked'} style="width:16px;height:16px;cursor:pointer">
+      <span>${t.label}</span>
+    </label>
+  `).join('');
+  document.getElementById('modal-gerenciar-abas').style.display = 'flex';
+}
+
+function fecharGerenciadorAbas() {
+  document.getElementById('modal-gerenciar-abas').style.display = 'none';
+}
+
+function salvarVisibilidadeAbas() {
+  if (!isAdmin || !db) {
+    toast('Apenas o administrador pode alterar isso.', 'error');
+    return;
+  }
+  const checkboxes = document.querySelectorAll('#lista-gerenciar-abas input[type="checkbox"]');
+  const novoHiddenTabs = {};
+  checkboxes.forEach(cb => {
+    const key = cb.getAttribute('data-tab-key');
+    novoHiddenTabs[key] = !cb.checked; // desmarcado = oculto = true
+  });
+  db.ref('config/hiddenTabs').set(novoHiddenTabs)
+    .then(() => {
+      hiddenTabs = novoHiddenTabs;
+      applyTabVisibility();
+      toast('Visibilidade das abas atualizada!', 'success');
+      fecharGerenciadorAbas();
+    })
+    .catch(err => {
+      console.error('[DEBUG] Erro ao salvar hiddenTabs:', err);
+      toast('Erro ao salvar: ' + err.message, 'error', 6000);
+    });
 }
 
 /* ===============================================================
