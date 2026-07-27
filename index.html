@@ -1,0 +1,3500 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Dashboard · Análise de Odds</title>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<style>
+/* ═══════════════════════════════════════════════
+   TEMAS
+═══════════════════════════════════════════════ */
+:root,[data-theme="dark"] {
+  --bg:#0d0f12;--bg2:#13161a;--bg3:#1a1e24;
+  --border:#252a32;--border2:#2e3440;
+  --text:#e8eaed;--muted:#6b7280;
+  --green:#22c55e;--green-dim:rgba(34,197,94,0.12);
+  --amber:#f59e0b;--amber-dim:rgba(245,158,11,0.12);
+  --red:#ef4444;--blue-dim:rgba(59,130,246,0.12);
+  --accent:#22c55e;--accent-dim:rgba(34,197,94,0.12);
+  --mono:'IBM Plex Mono',monospace;--sans:'DM Sans',sans-serif;
+  --radius:8px;--radius-lg:12px;
+  --shadow:0 4px 24px rgba(0,0,0,0.4);
+  --row-hover:rgba(255,255,255,0.03);
+  --row-alt:rgba(255,255,255,0.015);
+  --tab-active-border:var(--green);
+}
+
+[data-theme="light"] {
+  --bg:#f0f2f5;--bg2:#ffffff;--bg3:#e8eaed;
+  --border:#d1d5db;--border2:#c4c9d4;
+  --text:#111827;--muted:#6b7280;
+  --green:#16a34a;--green-dim:rgba(22,163,74,0.1);
+  --amber:#d97706;--amber-dim:rgba(217,119,6,0.1);
+  --red:#dc2626;--blue-dim:rgba(37,99,235,0.1);
+  --accent:#16a34a;--accent-dim:rgba(22,163,74,0.1);
+  --shadow:0 4px 24px rgba(0,0,0,0.08);
+  --row-hover:rgba(0,0,0,0.025);
+  --row-alt:rgba(0,0,0,0.015);
+  --tab-active-border:var(--green);
+}
+
+[data-theme="neon"] {
+  --bg:#050508;--bg2:#0a0a12;--bg3:#0f0f1a;
+  --border:#1a1a2e;--border2:#16213e;
+  --text:#e2e8ff;--muted:#7b82b0;
+  --green:#00ff9f;--green-dim:rgba(0,255,159,0.1);
+  --amber:#ffbe00;--amber-dim:rgba(255,190,0,0.1);
+  --red:#ff3366;--blue-dim:rgba(0,200,255,0.1);
+  --accent:#00ff9f;--accent-dim:rgba(0,255,159,0.1);
+  --shadow:0 0 40px rgba(0,255,159,0.15);
+  --row-hover:rgba(0,255,159,0.04);
+  --row-alt:rgba(0,200,255,0.02);
+  --tab-active-border:#00bfff;
+}
+
+/* ═══════════════════════════════════════════════
+   SELETOR DE TEMA
+═══════════════════════════════════════════════ */
+.theme-switcher{display:flex;align-items:center;gap:6px;}
+.theme-btn{
+  width:28px;height:28px;border-radius:50%;border:2px solid transparent;
+  cursor:pointer;transition:all .2s;position:relative;outline:none;
+}
+.theme-btn:hover{transform:scale(1.15);}
+.theme-btn.active{border-color:var(--text);box-shadow:0 0 8px rgba(255,255,255,0.3);}
+.theme-btn[data-t="dark"]{background:radial-gradient(circle at 30% 30%,#2a2f3a,#0d0f12);}
+.theme-btn[data-t="light"]{background:radial-gradient(circle at 30% 30%,#ffffff,#d1d5db);}
+.theme-btn[data-t="neon"]{background:radial-gradient(circle at 30% 30%,#00ff9f44,#050508);border-color:#00ff9f44;}
+.theme-label{font-size:10px;font-family:var(--mono);color:var(--muted);text-transform:uppercase;letter-spacing:.06em;margin-right:2px;}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{background:var(--bg);color:var(--text);font-family:var(--sans);font-size:14px;line-height:1.5;min-height:100vh;}
+.shell{max-width:1280px;margin:0 auto;padding:0 24px;}
+header{border-bottom:1px solid var(--border);padding:16px 0;position:sticky;top:0;background:var(--bg);z-index:100;}
+.header-inner{display:flex;justify-content:space-between;align-items:center;gap:16px;flex-wrap:wrap;}
+.logo{display:flex;align-items:center;gap:10px;}
+.logo-dot{width:8px;height:8px;border-radius:50%;background:var(--green);box-shadow:0 0 8px var(--green);animation:pulse 2s infinite;}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:0.4}}
+.logo-text{font-family:var(--mono);font-size:15px;font-weight:500;}
+.logo-sub{font-size:11px;color:var(--muted);}
+.header-actions{display:flex;align-items:center;gap:10px;flex-wrap:wrap;}
+.tag{font-size:11px;font-family:var(--mono);padding:4px 10px;border-radius:20px;border:1px solid;}
+.tag-green{border-color:rgba(34,197,94,0.4);color:var(--green);background:var(--green-dim);}
+.tag-gray{border-color:var(--border2);color:var(--muted);}
+
+/* Botão principal de carregar */
+.btn-load{
+  font-family:var(--sans);font-size:14px;font-weight:600;
+  padding:10px 22px;background:var(--green);color:#0d0f12;
+  border:none;border-radius:var(--radius);cursor:pointer;
+  display:flex;align-items:center;gap:8px;transition:all 0.2s;
+  box-shadow:0 0 20px rgba(34,197,94,0.3);
+}
+.btn-load:hover{background:#16a34a;box-shadow:0 0 28px rgba(34,197,94,0.45);}
+.btn-load svg{width:16px;height:16px;}
+
+/* Botão exportar PDF */
+.btn-pdf{
+  font-family:var(--sans);font-size:13px;font-weight:600;
+  padding:8px 16px;background:#dc2626;color:#fff;
+  border:none;border-radius:var(--radius);cursor:pointer;
+  display:inline-flex;align-items:center;gap:6px;transition:all 0.2s;
+}
+.btn-pdf:hover{background:#b91c1c;transform:scale(1.02);}
+.btn-pdf svg{width:16px;height:16px;}
+
+/* Drop zone overlay */
+.drop-overlay{
+  position:fixed;inset:0;background:rgba(13,15,18,0.92);
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  z-index:300;gap:16px;transition:opacity 0.2s;
+}
+.drop-overlay.hidden{opacity:0;pointer-events:none;}
+.drop-box{
+  border:2px dashed rgba(34,197,94,0.5);border-radius:var(--radius-lg);
+  padding:60px 80px;text-align:center;cursor:pointer;transition:all 0.2s;
+  background:var(--bg2);
+}
+.drop-box:hover,.drop-box.drag{border-color:var(--green);background:var(--green-dim);}
+.drop-icon{font-size:48px;margin-bottom:16px;}
+.drop-title{font-size:18px;font-weight:600;margin-bottom:8px;}
+.drop-sub{font-size:13px;color:var(--muted);}
+.drop-hint{font-size:12px;color:var(--muted);margin-top:24px;}
+.drop-hint code{background:var(--bg3);padding:3px 8px;border-radius:5px;font-family:var(--mono);}
+.btn-skip{font-size:12px;color:var(--muted);background:none;border:none;cursor:pointer;text-decoration:underline;}
+.btn-skip:hover{color:var(--text);}
+
+main{padding:28px 0;}
+.aposta-row{display:flex;align-items:center;gap:16px;margin-bottom:28px;flex-wrap:wrap;}
+.aposta-label{font-size:12px;font-family:var(--mono);color:var(--muted);text-transform:uppercase;letter-spacing:0.06em;}
+.aposta-wrap{position:relative;}
+.aposta-prefix{position:absolute;left:12px;top:50%;transform:translateY(-50%);font-family:var(--mono);font-size:13px;color:var(--muted);pointer-events:none;}
+#apostaInput{font-family:var(--mono);font-size:18px;font-weight:500;color:var(--green);background:var(--bg3);border:1px solid var(--border2);border-radius:var(--radius);padding:8px 12px 8px 30px;width:160px;outline:none;}
+#apostaInput:focus{border-color:rgba(34,197,94,0.5);}
+.aposta-hint{font-size:12px;color:var(--muted);}
+
+.metrics{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:12px;margin-bottom:28px;}
+.metric{background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius-lg);padding:18px 20px;}
+.metric-label{font-size:11px;font-family:var(--mono);color:var(--muted);text-transform:uppercase;letter-spacing:0.06em;margin-bottom:10px;}
+.metric-value{font-size:26px;font-weight:600;line-height:1;font-family:var(--mono);}
+.metric-value.green{color:var(--green);}
+.metric-value.amber{color:var(--amber);}
+.metric-sub{font-size:11px;color:var(--muted);margin-top:5px;}
+
+.section-header{display:flex;align-items:baseline;gap:10px;margin-bottom:14px;}
+.section-title{font-size:11px;font-family:var(--mono);color:var(--muted);text-transform:uppercase;letter-spacing:0.08em;}
+.section-count{font-size:11px;font-family:var(--mono);color:var(--border2);}
+
+.top3{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:12px;margin-bottom:28px;}
+.top-card{background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius-lg);padding:18px 20px;position:relative;overflow:hidden;transition:transform 0.2s,box-shadow 0.2s;box-shadow:var(--shadow);}
+.top-card:hover{transform:translateY(-3px);box-shadow:0 12px 40px rgba(0,0,0,0.35);}
+.top-card::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;}
+.top-card::after{content:'';position:absolute;top:0;left:0;bottom:0;width:3px;}
+.top-card.rank1::before{background:linear-gradient(90deg,#f59e0b,#fbbf24);}
+.top-card.rank1::after{background:linear-gradient(180deg,rgba(245,158,11,0.15),transparent);}
+.top-card.rank2::before{background:linear-gradient(90deg,#9ca3af,#d1d5db);}
+.top-card.rank2::after{background:linear-gradient(180deg,rgba(156,163,175,0.15),transparent);}
+.top-card.rank3::before{background:linear-gradient(90deg,#92400e,#b45309);}
+.top-card.rank3::after{background:linear-gradient(180deg,rgba(146,64,14,0.15),transparent);}
+.top-rank{font-size:18px;margin-bottom:6px;}
+.top-jogo{font-size:19px;font-weight:500;margin-bottom:12px;line-height:1.3;}
+.top-odds{display:flex;gap:6px;margin-bottom:12px;flex-wrap:wrap;}
+.odd-tag{font-family:var(--mono);font-size:12px;padding:3px 9px;border-radius:5px;}
+.odd-casa{background:var(--blue-dim);color:#93c5fd;border:1px solid rgba(59,130,246,0.2);}
+.odd-emp{background:rgba(107,114,128,0.12);color:#9ca3af;border:1px solid rgba(107,114,128,0.2);}
+.odd-fora{background:var(--amber-dim);color:#fcd34d;border:1px solid rgba(245,158,11,0.2);}
+.odd-input{font-family:var(--mono);font-size:14px;padding:6px 10px;border-radius:6px;background:var(--bg3);border:1.5px solid;outline:none;transition:all 0.2s;color:inherit;width:70px;min-width:70px;text-align:center;}
+.odd-input.odd-casa{border-color:rgba(59,130,246,0.5);color:#93c5fd;}
+.odd-input.odd-casa:focus{border-color:#3b82f6;background:rgba(59,130,246,0.2);box-shadow:0 0 8px rgba(59,130,246,0.3);}
+.odd-input.odd-emp{border-color:rgba(107,114,128,0.4);color:#9ca3af;}
+.odd-input.odd-emp:focus{border-color:#6b7280;background:rgba(107,114,128,0.15);box-shadow:0 0 8px rgba(107,114,128,0.2);}
+.odd-input.odd-fora{border-color:rgba(245,158,11,0.5);color:#fcd34d;}
+.odd-input.odd-fora:focus{border-color:#f59e0b;background:rgba(245,158,11,0.2);box-shadow:0 0 8px rgba(245,158,11,0.3);}
+.top-financial{border-top:1px solid var(--border);padding-top:12px;display:flex;justify-content:space-between;align-items:flex-end;}
+.top-lucro-val{font-family:var(--mono);font-size:15px;font-weight:500;color:var(--green);}
+.top-lucro-pct{font-family:var(--mono);font-size:20px;color:var(--green);}
+.top-distrib{font-size:15px;color:var(--muted);text-align:right;line-height:1.7;}
+
+.grid2{display:grid;grid-template-columns:1fr 340px;gap:20px;align-items:start;margin-bottom:28px;}
+@media(max-width:900px){.grid2{grid-template-columns:1fr;}}
+.chart-box,.stats-box{background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius-lg);padding:20px;}
+.chart-box canvas{max-height:220px;}
+.stat-row{display:flex;justify-content:space-between;align-items:center;padding:9px 0;border-bottom:1px solid var(--border);font-size:13px;}
+.stat-row:last-child{border-bottom:none;}
+.stat-name{color:var(--muted);font-size:12px;}
+.stat-val{font-family:var(--mono);font-weight:500;}
+
+.filters{display:flex;gap:10px;margin-bottom:14px;flex-wrap:wrap;align-items:center;}
+.filter-input{background:var(--bg3);border:1px solid var(--border2);border-radius:var(--radius);padding:8px 12px;color:var(--text);font-family:var(--sans);font-size:13px;outline:none;}
+.filter-input:focus{border-color:rgba(34,197,94,0.4);}
+#searchInput{width:260px;}
+.filter-input::placeholder{color:var(--muted);}
+
+.table-wrap{background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius-lg);overflow:hidden;box-shadow:var(--shadow);}
+.table-scroll{overflow-x:auto;}
+table{width:100%;border-collapse:collapse;font-size:13px;}
+thead th{background:var(--bg3);padding:11px 14px;text-align:left;font-size:10px;font-family:var(--mono);color:var(--muted);text-transform:uppercase;letter-spacing:0.07em;border-bottom:2px solid var(--border);white-space:nowrap;}
+tbody tr{border-bottom:1px solid var(--border);transition:background 0.15s,transform 0.1s;}
+tbody tr:last-child{border-bottom:none;}
+tbody tr:nth-child(even){background:var(--row-alt);}
+tbody tr:hover{background:var(--row-hover);}
+@keyframes fadeInRow{from{opacity:0;transform:translateY(4px);}to{opacity:1;transform:translateY(0);}}
+tbody tr{animation:fadeInRow 0.25s ease both;}
+tbody tr:nth-child(1){animation-delay:.02s;}
+tbody tr:nth-child(2){animation-delay:.04s;}
+tbody tr:nth-child(3){animation-delay:.06s;}
+tbody tr:nth-child(4){animation-delay:.08s;}
+tbody tr:nth-child(5){animation-delay:.10s;}
+tbody tr:nth-child(6){animation-delay:.12s;}
+tbody tr:nth-child(7){animation-delay:.14s;}
+tbody tr:nth-child(8){animation-delay:.16s;}
+tbody tr:nth-child(9){animation-delay:.18s;}
+tbody tr:nth-child(10){animation-delay:.20s;}
+td{padding:11px 14px;white-space:nowrap;}
+.td-jogo{font-weight:500;max-width:220px;overflow:hidden;text-overflow:ellipsis;}
+.td-mono{font-family:var(--mono);font-size:12px;}
+.td-odd-casa{font-family:var(--mono);font-size:12px;color:#93c5fd;}
+.td-odd-emp{font-family:var(--mono);font-size:12px;color:#9ca3af;}
+.td-odd-fora{font-family:var(--mono);font-size:12px;color:#fcd34d;}
+/* Tooltip nas odds */
+.td-odd-tip{position:relative;cursor:default;}
+.td-odd-tip::after{
+  content:attr(data-tip);
+  position:absolute;bottom:calc(100% + 6px);left:50%;transform:translateX(-50%);
+  background:var(--bg3);border:1px solid var(--border2);color:var(--text);
+  font-size:10px;font-family:var(--mono);padding:4px 8px;border-radius:6px;
+  white-space:nowrap;pointer-events:none;opacity:0;transition:opacity 0.15s;
+  z-index:99;box-shadow:0 4px 12px rgba(0,0,0,0.3);
+}
+.td-odd-tip:hover::after{opacity:1;}
+.td-pct{font-family:var(--mono);font-size:13px;font-weight:500;text-align:right;}
+.td-pct.pos{color:var(--green);}
+.td-pct.neg{color:var(--muted);}
+.td-val{font-family:var(--mono);font-size:12px;color:var(--muted);text-align:right;}
+/* Badge campeonato */
+.camp-badge{display:inline-block;font-family:var(--mono);font-size:10px;font-weight:700;padding:2px 8px;border-radius:20px;letter-spacing:.04em;white-space:nowrap;border:1px solid currentColor;}
+.empty{text-align:center;color:var(--muted);padding:60px;font-size:13px;line-height:2.5;}
+.empty strong{color:var(--text);}
+.table-footer{padding:10px 16px;border-top:1px solid var(--border);display:flex;justify-content:space-between;font-size:11px;font-family:var(--mono);color:var(--muted);}
+
+.toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(80px);background:var(--bg3);border:1px solid var(--border2);border-radius:var(--radius-lg);padding:12px 20px;font-size:13px;font-family:var(--mono);transition:transform 0.3s;z-index:400;white-space:nowrap;}
+.toast.visible{transform:translateX(-50%) translateY(0);}
+.toast.success{border-color:rgba(34,197,94,0.4);color:var(--green);}
+.toast.error{border-color:rgba(239,68,68,0.4);color:var(--red);}
+
+/* ── Abas de navegação ─────────────────────────────────────── */
+.tabs-nav{display:flex;margin-bottom:24px;border-bottom:1px solid var(--border);gap:2px;flex-wrap:wrap;}
+.tab-btn{font-family:var(--mono);font-size:11px;letter-spacing:0.07em;text-transform:uppercase;
+  padding:10px 20px;background:none;border:none;border-bottom:2px solid transparent;
+  color:var(--muted);cursor:pointer;margin-bottom:-1px;transition:color 0.15s,border-color 0.15s;
+  display:flex;align-items:center;gap:6px;border-radius:6px 6px 0 0;}
+.tab-btn:hover{color:var(--text);background:var(--row-alt);}
+.tab-btn.active{color:var(--accent);border-bottom-color:var(--tab-active-border);font-weight:600;background:var(--accent-dim);}
+.tab-panel{display:none;}
+.tab-panel.active{display:block;animation:fadeInRow 0.2s ease both;}
+
+/* ── Aba Top Apostas c/ Links ─────────────────────────────── */
+.links-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:14px;margin-bottom:28px;}
+.links-card{background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius-lg);padding:20px;position:relative;overflow:visible;box-shadow:var(--shadow);transition:transform 0.2s,box-shadow 0.2s;}
+.links-card:hover{transform:translateY(-2px);box-shadow:0 8px 32px rgba(0,0,0,0.3);}
+.links-card::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,var(--green),var(--accent));border-radius:var(--radius-lg) var(--radius-lg) 0 0;}
+.links-jogo{font-size:15px;font-weight:500;margin-bottom:12px;line-height:1.3;color:var(--text);}
+.links-lucro{font-family:var(--mono);font-size:13px;font-weight:600;color:var(--green);margin-bottom:16px;}
+.links-lucro-pct{font-family:var(--mono);font-size:25px;color:var(--green);}
+.link-row{display:flex;align-items:center;gap:10px;padding:10px;background:var(--bg3);border-radius:6px;margin-bottom:8px;border:1px solid var(--border2);}
+.link-row:last-child{margin-bottom:0;}
+.link-label{font-size:12px;font-family:var(--mono);color:var(--muted);text-transform:uppercase;min-width:60px;}
+.link-url{flex:1;font-size:12px;color:var(--text);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-family:monospace;}
+.link-open{color:var(--green);cursor:pointer;text-decoration:none;font-size:14px;transition:all 0.2s;}
+.link-open:hover{transform:scale(1.2);}
+.link-copy{background:none;border:none;color:var(--green);cursor:pointer;font-size:12px;padding:4px 8px;border-radius:4px;transition:all 0.2s;font-weight:500;}
+.link-copy:hover{background:rgba(34,197,94,0.1);}
+.links-meta{font-size:11px;color:var(--muted);margin-top:14px;padding-top:10px;border-top:1px solid var(--border);}
+.links-urls{margin-top:14px;padding-top:10px;border-top:1px solid var(--border);}
+.links-url-item{font-size:11px;margin-bottom:8px;word-break:break-all;}
+.links-url-label{color:var(--muted);font-weight:500;display:block;margin-bottom:3px;}
+.links-url-text{color:var(--green);font-family:monospace;font-size:10px;padding:6px;background:var(--bg3);border-radius:4px;display:block;max-width:100%;word-break:break-all;margin-bottom:4px;}
+
+/* ── Aba Lucro Máximo ──────────────────────────────────────── */
+.lm-intro{font-size:13px;color:var(--muted);background:var(--bg2);border:1px solid var(--border);
+  border-left:3px solid rgba(34,197,94,0.4);border-radius:var(--radius);
+  padding:12px 16px;margin-bottom:22px;line-height:1.7;}
+.lm-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:14px;margin-bottom:28px;}
+.lm-card{background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius-lg);padding:18px 20px;position:relative;overflow:hidden;}
+.lm-card::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;}
+.lm-card.rank1::before{background:linear-gradient(90deg,#f59e0b,#fbbf24);}
+.lm-card.rank2::before{background:linear-gradient(90deg,#9ca3af,#d1d5db);}
+.lm-card.rank3::before{background:linear-gradient(90deg,#92400e,#b45309);}
+.lm-rank{font-size:10px;font-family:var(--mono);color:var(--muted);margin-bottom:8px;text-transform:uppercase;letter-spacing:0.06em;}
+.lm-jogo{font-size:14px;font-weight:500;margin-bottom:14px;line-height:1.3;}
+.lm-scenarios{display:flex;flex-direction:column;gap:5px;}
+.lm-scen{display:flex;justify-content:space-between;align-items:center;padding:8px 11px;border-radius:6px;}
+.lm-scen.best{background:var(--green-dim);border:1px solid rgba(34,197,94,0.25);}
+.lm-scen.normal{background:var(--bg3);border:1px solid var(--border);}
+.lm-scen.neg{background:var(--bg3);border:1px solid var(--border);}
+.lm-scen.inviavel{background:rgba(239,68,68,0.05);border:1px solid rgba(239,68,68,0.12);}
+.lm-scen-label{font-family:var(--mono);font-size:12px;color:var(--muted);}
+.lm-scen.best .lm-scen-label{color:var(--green);font-weight:500;}
+.lm-scen-pct{font-family:var(--mono);font-size:13px;font-weight:500;}
+.lm-scen.best .lm-scen-pct{color:var(--green);}
+.lm-scen.normal .lm-scen-pct{color:var(--text);}
+.lm-scen.neg .lm-scen-pct{color:var(--muted);}
+.lm-scen.inviavel .lm-scen-pct{color:var(--muted);font-size:11px;}
+.lm-footer{margin-top:12px;padding-top:10px;border-top:1px solid var(--border);font-size:11px;color:var(--muted);}
+
+/* ── Aba JOGOS ─────────────────────────────────────────────── */
+.jogos-container{background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius-lg);overflow:hidden;}
+.jogos-table{width:100%;border-collapse:collapse;font-size:13px;}
+.jogos-table thead th{background:var(--bg3);padding:11px 14px;text-align:left;font-size:10px;font-family:var(--mono);color:var(--muted);text-transform:uppercase;letter-spacing:0.07em;border-bottom:1px solid var(--border);white-space:nowrap;}
+.jogos-table tbody tr{border-bottom:1px solid var(--border);transition:background 0.1s;}
+.jogos-table tbody tr:hover{background:var(--bg3);}
+.jogos-table td{padding:11px 14px;}
+
+.jogos-row-main{cursor:pointer;}
+.jogos-row-main:hover{background:var(--bg3);}
+.jogos-expand-icon{display:inline-block;transition:transform 0.2s;font-size:14px;width:20px;text-align:center;}
+.jogos-expand-icon.expanded{transform:rotate(90deg);}
+
+.jogos-row-detail{background:var(--bg3);}
+.jogos-row-detail.site-sim{background:rgba(34,197,94,0.08);border-left:3px solid rgba(34,197,94,0.3);}
+.jogos-row-detail.site-nao{background:rgba(239,68,68,0.05);border-left:3px solid rgba(239,68,68,0.12);}
+
+.jogos-site-name{font-weight:500;}
+.jogos-site-sim .jogos-site-name{color:var(--green);}
+.jogos-site-nao .jogos-site-name{color:var(--muted);}
+
+.jogos-odd{font-family:var(--mono);font-size:12px;text-align:center;}
+.jogos-odd.casa{color:#93c5fd;}
+.jogos-odd.emp{color:#9ca3af;}
+.jogos-odd.fora{color:#fcd34d;}
+.jogos-odd.highlight{background:rgba(245,158,11,0.25);color:#000;font-weight:600;border-radius:4px;padding:4px 8px;}
+.jogos-odd.nao{color:var(--muted);}
+
+/* ═══════════════════════════════════════════════════════════════ */
+/* HISTORICO - ABA HISTÓRICO */
+/* ═══════════════════════════════════════════════════════════════ */
+.historico-jogadores{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:16px;margin-bottom:24px;}
+.historico-card{background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius-lg);padding:16px;}
+.historico-card-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;}
+.historico-card-nome{font-weight:600;color:var(--text);font-size:14px;}
+.historico-card-limite{color:var(--muted);font-size:12px;}
+.historico-barra{background:rgba(255,255,255,0.1);height:8px;border-radius:4px;overflow:hidden;margin:8px 0;}
+.historico-barra-fill{height:100%;border-radius:4px;transition:width 0.3s;}
+.historico-barra-fill.verde{background:#10b981;}
+.historico-barra-fill.amarelo{background:#f59e0b;}
+.historico-barra-fill.vermelho{background:#ef4444;}
+.historico-stat{display:flex;justify-content:space-between;padding:6px 0;font-size:13px;color:var(--text);}
+.historico-stat-label{color:var(--muted);}
+.historico-stat-value{font-weight:600;}
+.historico-alerta{color:#ef4444;font-size:12px;margin-top:8px;padding:4px 0;}
+
+.historico-filtros{display:flex;gap:12px;margin-bottom:16px;flex-wrap:wrap;align-items:center;}
+.historico-filtros select,.historico-filtros input{background:var(--bg2);border:1px solid var(--border);color:var(--text);padding:8px 12px;border-radius:4px;font-size:13px;}
+.historico-filtros input[type="date"]{min-width:120px;}
+.historico-filtros input[type="text"]{min-width:150px;}
+.filtro-label{font-size:12px;color:var(--muted);text-transform:uppercase;letter-spacing:0.06em;margin-right:4px;}
+
+.btn-nova-aposta{background:var(--green);color:#000;padding:10px 16px;border:none;border-radius:4px;cursor:pointer;font-weight:600;margin-bottom:16px;}
+.btn-nova-aposta:hover{background:#16a34a;}
+
+.historico-form{background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius-lg);padding:16px;margin-bottom:24px;}
+.form-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:12px;margin-bottom:16px;}
+.form-group{display:flex;flex-direction:column;}
+.form-group label{color:var(--muted);font-size:12px;margin-bottom:4px;font-weight:600;}
+.form-group input,.form-group select{background:var(--bg);border:1px solid var(--border);color:var(--text);padding:8px 10px;border-radius:4px;font-size:13px;}
+.form-buttons{display:flex;gap:8px;}
+.btn-salvar,.btn-duplicar,.btn-cancelar{padding:10px 16px;border:none;border-radius:4px;cursor:pointer;font-size:13px;font-weight:600;}
+.btn-salvar{background:var(--green);color:#000;}
+.btn-duplicar{background:var(--text);color:var(--bg);}
+.btn-cancelar{background:#ef4444;color:#fff;}
+
+.historico-tabela{overflow-x:auto;margin-bottom:16px;}
+.tabela-apostas{width:100%;border-collapse:collapse;font-size:13px;}
+.tabela-apostas thead{background:rgba(16,185,129,0.1);}
+.tabela-apostas th{padding:12px;text-align:left;font-weight:600;color:var(--green);cursor:pointer;border-bottom:2px solid var(--border);}
+.tabela-apostas th:hover{background:rgba(16,185,129,0.2);}
+.tabela-apostas td{padding:12px;border-bottom:1px solid var(--border);color:var(--text);}
+.tabela-apostas tbody tr:hover{background:rgba(255,255,255,0.05);}
+.tabela-apostas tfoot{background:rgba(16,185,129,0.05);font-weight:600;}
+.tabela-apostas tfoot td{padding:12px;color:var(--green);}
+
+.btn-editar,.btn-excluir{padding:4px 8px;margin:0 2px;border:none;border-radius:3px;cursor:pointer;font-size:12px;}
+.btn-editar{background:#4f46e5;color:#fff;}
+.btn-excluir{background:#ef4444;color:#fff;}
+
+.btn-exportar{background:#8b5cf6;color:#fff;padding:10px 16px;border:none;border-radius:4px;cursor:pointer;font-weight:600;}
+.btn-exportar:hover{background:#7c3aed;}
+
+.btn-gerenciar{background:#6366f1;color:#fff;padding:8px 12px;border:none;border-radius:4px;cursor:pointer;font-size:13px;font-weight:600;}
+.btn-gerenciar:hover{background:#4f46e5;}
+
+/* MODAL JOGADORES */
+.modal-overlay{position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.7);display:flex;align-items:center;justify-content:center;z-index:9999;}
+.modal-content{background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius-lg);padding:24px;max-width:600px;width:90%;max-height:80vh;overflow-y:auto;}
+.modal-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:20px;padding-bottom:12px;border-bottom:1px solid var(--border);}
+.modal-header h3{margin:0;color:var(--text);}
+.btn-fechar{background:none;border:none;color:var(--muted);font-size:20px;cursor:pointer;}
+.btn-fechar:hover{color:var(--text);}
+
+.modal-section{margin-bottom:20px;}
+.modal-section h4{color:var(--text);margin-bottom:12px;font-size:14px;}
+.form-grid-modal{display:flex;gap:8px;margin-bottom:12px;}
+.form-grid-modal input{flex:1;background:var(--bg);border:1px solid var(--border);color:var(--text);padding:8px 10px;border-radius:4px;font-size:13px;}
+.btn-adicionar{background:var(--green);color:#000;padding:8px 16px;border:none;border-radius:4px;cursor:pointer;font-weight:600;font-size:13px;}
+.btn-adicionar:hover{background:#16a34a;}
+
+.lista-jogadores{display:flex;flex-direction:column;gap:8px;}
+.jogador-item{background:var(--bg);border:1px solid var(--border);border-radius:4px;padding:12px;display:flex;justify-content:space-between;align-items:center;}
+.jogador-info{flex:1;}
+.jogador-nome{color:var(--text);font-weight:600;margin-bottom:4px;}
+.jogador-limite{color:var(--muted);font-size:12px;}
+.jogador-ativo{color:var(--green);font-size:12px;font-weight:600;}
+.jogador-inativo{color:#ef4444;font-size:12px;font-weight:600;}
+.jogador-acoes{display:flex;gap:6px;}
+.btn-editar-jogador,.btn-ativar-jogador,.btn-excluir-jogador{padding:6px 10px;border:none;border-radius:3px;cursor:pointer;font-size:11px;font-weight:600;}
+.btn-editar-jogador{background:#4f46e5;color:#fff;}
+.btn-ativar-jogador{background:var(--green);color:#000;}
+.btn-excluir-jogador{background:#ef4444;color:#fff;}
+
+.modal-footer{padding-top:12px;border-top:1px solid var(--border);display:flex;gap:8px;justify-content:flex-end;}
+.btn-fechar-modal{background:var(--border);color:var(--text);padding:10px 16px;border:none;border-radius:4px;cursor:pointer;font-weight:600;}
+
+.banner-salvamento{background:rgba(16,185,129,0.1);border-left:4px solid #10b981;padding:10px 14px;margin-bottom:16px;border-radius:4px;color:var(--text);font-size:12px;font-weight:600;}
+#timestamp-salvamento{color:var(--green);}
+
+.btn-exportar-backup{background:#8b5cf6;color:#fff;padding:10px 16px;border:none;border-radius:4px;cursor:pointer;font-weight:600;font-size:13px;}
+.btn-exportar-backup:hover{background:#7c3aed;}
+
+.btn-importar-backup{background:#6366f1;color:#fff;padding:10px 16px;border:none;border-radius:4px;cursor:pointer;font-weight:600;font-size:13px;}
+.btn-importar-backup:hover{background:#4f46e5;}
+
+#input-arquivo{display:none;}
+
+/* ═══════════════════════════════════════════════
+   LOGIN & ADMIN
+═══════════════════════════════════════════════ */
+#loginScreen{position:fixed;inset:0;background:var(--bg);z-index:2000;display:flex;align-items:center;justify-content:center;padding:20px;}
+.login-box{background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius-lg);padding:40px;width:100%;max-width:420px;box-shadow:var(--shadow);}
+.login-title{font-family:var(--mono);font-size:22px;margin-bottom:8px;text-align:center;font-weight:600;}
+.login-sub{font-size:13px;color:var(--muted);text-align:center;margin-bottom:28px;}
+.login-input{width:100%;background:var(--bg3);border:1px solid var(--border2);color:var(--text);padding:12px 14px;border-radius:var(--radius);margin-bottom:12px;font-family:var(--sans);font-size:14px;outline:none;transition:border-color .2s;}
+.login-input:focus{border-color:rgba(34,197,94,0.5);}
+.login-btn{width:100%;background:var(--green);color:#0d0f12;border:none;padding:12px;border-radius:var(--radius);font-weight:600;cursor:pointer;margin-bottom:14px;font-size:15px;transition:all .2s;}
+.login-btn:hover{box-shadow:0 0 20px rgba(34,197,94,0.4);}
+.login-btn.secondary{background:var(--bg3);color:var(--text);border:1px solid var(--border2);}
+.login-btn.secondary:hover{border-color:var(--green);color:var(--green);background:var(--green-dim);}
+.login-link{color:var(--muted);font-size:12px;text-align:center;cursor:pointer;display:block;padding:6px;}
+.login-link:hover{color:var(--text);text-decoration:underline;}
+.login-error{color:var(--red);font-size:12px;margin-top:8px;text-align:center;min-height:18px;}
+.admin-badge{background:var(--red);color:#fff;font-size:10px;padding:3px 10px;border-radius:20px;font-family:var(--mono);font-weight:600;margin-left:8px;}
+.user-badge{color:var(--muted);font-size:12px;font-family:var(--mono);margin-right:8px;}
+.btn-logout{font-size:12px;padding:6px 12px;background:var(--bg3);border:1px solid var(--border2);color:var(--muted);border-radius:var(--radius);cursor:pointer;font-family:var(--mono);}
+.btn-logout:hover{color:var(--text);border-color:var(--red);}
+.btn-clear{font-size:12px;padding:6px 14px;background:rgba(239,68,68,0.12);border:1px solid rgba(239,68,68,0.3);color:var(--red);border-radius:var(--radius);cursor:pointer;font-family:var(--sans);font-weight:600;margin-right:8px;}
+.btn-clear:hover{background:rgba(239,68,68,0.2);}
+#appContainer{display:none;}
+.waiting-box{text-align:center;padding:60px 20px;color:var(--muted);}
+.waiting-box strong{color:var(--text);font-size:16px;display:block;margin-bottom:10px;}
+.waiting-box .icon{font-size:48px;margin-bottom:16px;}
+</style>
+
+<!-- Firebase SDKs -->
+<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-database-compat.js"></script>
+</head>
+<body>
+<div id="loginScreen">
+  <div class="login-box">
+    <div class="login-title">🔐 odds.dashboard</div>
+    <div class="login-sub">Login obrigatório · Aposta holandesa</div>
+    <input type="email" id="loginEmail" class="login-input" placeholder="Email">
+    <input type="password" id="loginPassword" class="login-input" placeholder="Senha">
+    <button class="login-btn" onclick="doLogin()">Entrar</button>
+    <button class="login-btn secondary" id="btnRegister" onclick="doRegister()">Criar conta</button>
+    <div style="display:flex;justify-content:space-between;margin-top:4px">
+      <span class="login-link" onclick="toggleRegisterMode()" id="toggleRegText">Primeiro acesso? Criar conta</span>
+    </div>
+    <div class="login-error" id="loginError"></div>
+  </div>
+</div>
+
+<div id="appContainer">
+
+
+<!-- Drop overlay (tela inicial) -->
+<div class="drop-overlay" id="dropOverlay">
+  <!-- MODO ADMIN: Upload -->
+  <div id="dropAdmin" style="display:none">
+    <div class="drop-box" id="dropBox" onclick="document.getElementById('fileInput').click()">
+      <div class="drop-icon">📂</div>
+      <div class="drop-title" id="dropTitle">Carregar XLSX (Admin)</div>
+      <div class="drop-sub">Arraste ou clique para selecionar os arquivos gerados pelo Python</div>
+    </div>
+    <div class="drop-hint">
+      Pode selecionar mais de um arquivo de uma vez (ex: serie_a.xlsx + serie_b.xlsx). 
+      <strong style="color:var(--green)">Os dados serão salvos na nuvem e todos os usuários verão.</strong>
+    </div>
+    <div style="margin-top:16px;display:flex;gap:10px;align-items:center">
+      <label style="font-size:12px;color:var(--muted);display:flex;align-items:center;gap:6px;cursor:pointer">
+        <input type="checkbox" id="modoAcumular" checked style="accent-color:var(--green)"> 
+        Acumular com dados existentes (desmarque para substituir tudo)
+      </label>
+    </div>
+    <button class="btn-skip" onclick="fecharOverlay()">Fechar overlay</button>
+  </div>
+
+  <!-- MODO USER: Aguardando dados -->
+  <div id="dropUser" style="display:none">
+    <div class="waiting-box">
+      <div class="icon">⏳</div>
+      <strong>Aguardando dados do administrador</strong>
+      <div>O dashboard será atualizado automaticamente quando o admin carregar os jogos.</div>
+      <div style="margin-top:20px;font-size:12px;color:var(--muted)">Você está conectado como visualizador.</div>
+    </div>
+  </div>
+</div>
+
+<input type="file" id="fileInput" accept=".xlsx" multiple style="display:none" onchange="handleFile(this)">
+
+<header>
+  <div class="shell">
+    <div class="header-inner">
+      <div class="logo">
+        <div class="logo-dot"></div>
+        <div>
+          <div class="logo-text">odds.dashboard</div>
+          <div class="logo-sub" id="logoSub">aposta holandesa · cobertura total</div>
+        </div>
+      </div>
+      <div class="header-actions">
+        <div class="theme-switcher">
+          <span class="theme-label">Tema</span>
+          <button class="theme-btn active" data-t="dark" onclick="setTheme('dark')" title="Dark"></button>
+          <button class="theme-btn" data-t="light" onclick="setTheme('light')" title="Light"></button>
+          <button class="theme-btn" data-t="neon" onclick="setTheme('neon')" title="Neon"></button>
+        </div>
+        <span class="tag tag-gray" id="tagJogos">sem dados</span>
+        <select id="filtroCampeonatoSelect" class="filter-input" style="display:none" onchange="mudarFiltroCampeonato(this.value)">
+          <option value="__todos__">Todos os campeonatos</option>
+        </select>
+        <input type="file" id="fileInputAdicionar" accept=".xlsx" multiple style="display:none" onchange="handleFile(this)">
+        <button class="btn-load" id="btnAdicionar" style="display:none;background:var(--bg3);color:var(--text);box-shadow:none;border:1px solid var(--border2)" onclick="document.getElementById('fileInputAdicionar').click()">
+          + Adicionar XLSX
+        </button>
+        <button class="btn-load" onclick="document.getElementById('fileInput').click()">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+          Carregar XLSX
+        </button>
+      
+        <span class="user-badge" id="userBadge"></span>
+        <span class="admin-badge" id="adminBadge" style="display:none">ADMIN</span>
+        <button class="btn-clear admin-only" id="btnLimpar" style="display:none" onclick="clearDataFromFirebase()">🗑️ Limpar Dados</button>
+        <button class="btn-logout" onclick="doLogout()">Sair</button>
+      </div>
+    </div>
+  </div>
+</header>
+
+<main>
+  <div class="shell">
+
+    <div class="aposta-row">
+      <span class="aposta-label">Valor da aposta</span>
+      <div class="aposta-wrap">
+        <span class="aposta-prefix">R$</span>
+        <input type="number" id="apostaInput" value="5000" min="1" onchange="recalc()">
+      </div>
+      <span class="aposta-hint">distribuição automática por dutching nas 3 odds</span>
+
+      <span class="aposta-label" style="margin-left: 40px;">Jogos capturados</span>
+      <span class="aposta-hint" id="jogosCapturados" style="font-weight: 500; color: var(--green);">0</span>
+    </div>
+
+    <div class="metrics">
+      <div class="metric"><div class="metric-label">Melhor lucro</div><div class="metric-value green" id="m-lucro">—</div><div class="metric-sub" id="m-lucro-jogo">carregue o arquivo</div></div>
+      <div class="metric"><div class="metric-label">Maior % ganho</div><div class="metric-value green" id="m-pct">—</div><div class="metric-sub" id="m-pct-jogo"></div></div>
+      <div class="metric"><div class="metric-label">Jogos c/ lucro</div><div class="metric-value green" id="m-positivos">—</div><div class="metric-sub" id="m-positivos-sub"></div></div>
+      <div class="metric"><div class="metric-label">Margem média</div><div class="metric-value amber" id="m-margem">—</div><div class="metric-sub">da bookmaker</div></div>
+    </div>
+
+    <div class="tabs-nav">
+      <button class="tab-btn active" id="btn-comparativo" onclick="switchTab('comparativo')">📊 Comparativo</button>
+      <button class="tab-btn" id="btn-toplinks" onclick="switchTab('toplinks')">🔗 Top Apostas c/ Links</button>
+      <button class="tab-btn" id="btn-lucromax" onclick="switchTab('lucromax')">💰 Lucro Máximo</button>
+      <button class="tab-btn" id="btn-jogos" onclick="switchTab('jogos')">🎮 Jogos</button>
+      <button class="tab-btn" id="btn-estatisticas" onclick="switchTab('estatisticas')">📈 Estatísticas</button>
+      <button class="tab-btn" id="btn-historico" onclick="switchTab('historico')">📋 Histórico</button>
+    </div>
+
+    <div class="tab-panel active" id="tab-comparativo">
+
+    <div class="section-header"><span class="section-title">&#127942; top 3 apostas</span></div>
+    <div class="top3" id="top3">
+      <div class="top-card rank1"><div style="color:var(--muted);font-size:12px;text-align:center;padding:20px 0">—</div></div>
+      <div class="top-card rank2"><div style="color:var(--muted);font-size:12px;text-align:center;padding:20px 0">—</div></div>
+      <div class="top-card rank3"><div style="color:var(--muted);font-size:12px;text-align:center;padding:20px 0">—</div></div>
+    </div>
+
+    <div class="grid2">
+      <div class="chart-box">
+        <div class="section-header"><span class="section-title">Distribuição das margens</span></div>
+        <canvas id="marginChart"></canvas>
+      </div>
+      <div class="stats-box">
+        <div class="section-header"><span class="section-title">Resumo estatístico</span></div>
+        <div id="statsRows"><div style="color:var(--muted);font-size:12px;padding:12px 0">Sem dados</div></div>
+      </div>
+    </div>
+
+    <div class="section-header">
+      <span class="section-title">Todos os jogos</span>
+      <span class="section-count" id="tableCount"></span>
+    </div>
+    <div class="filters">
+      <input class="filter-input" id="searchInput" placeholder="🔍  Buscar jogo..." oninput="applyFilters()">
+      <select class="filter-input" id="horaFilter" onchange="applyFilters()"><option value="">Todos os horários</option></select>
+      <select class="filter-input" id="sortSelect" onchange="applyFilters()">
+        <option value="lucro_pct_desc">% ganho ↓</option>
+        <option value="lucro_pct_asc">% ganho ↑</option>
+        <option value="hora_asc">Hora ↑</option>
+        <option value="casa_desc">Odd casa ↓</option>
+        <option value="fora_desc">Odd fora ↓</option>
+      </select>
+      <button class="btn-pdf" onclick="exportarPDF()">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" width="16" height="16"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8l-6-6z"/><path d="M14 2v6h6"/><path d="M12 18v-4"/><path d="M8 18v-2"/><path d="M16 18v-6"/></svg>
+        PDF
+      </button>
+    </div>
+    <div class="table-wrap" id="tableWrap">
+      <div class="table-scroll">
+        <table id="tabelaComparativo">
+          <thead><tr>
+            <th>Jogo</th><th>Campeonato</th><th>Data</th><th>Hora</th><th style="text-align:center">Casas</th><th>Casa</th><th>Emp.</th><th>Fora</th>
+            <th style="text-align:right">Val. Casa</th>
+            <th style="text-align:right">Val. Emp.</th>
+            <th style="text-align:right">Val. Fora</th>
+            <th style="text-align:right">% Ganho</th>
+          </tr></thead>
+          <tbody id="tableBody">
+            <tr><td colspan="12" class="empty">
+              <strong>Nenhum dado carregado</strong><br>
+              1. Rode <code style="font-family:monospace;background:rgba(255,255,255,0.05);padding:2px 8px;border-radius:4px">python estudo_bets.py</code><br>
+              2. Role a página do site até o final<br>
+              3. Clique em <strong>Carregar XLSX</strong> acima
+            </td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="table-footer">
+        <span id="tableFooterLeft">—</span>
+        <span>aposta holandesa · cobertura total 3 resultados</span>
+      </div>
+    </div>
+    </div><!-- /tab-comparativo -->
+
+    <div class="tab-panel" id="tab-toplinks">
+      <div class="section-header"><span class="section-title">🎯 melhores apostas com links diretos</span></div>
+      <div class="links-grid" id="toplinks-cards">
+        <div style="color:var(--muted);font-size:12px;text-align:center;padding:40px 0">Carregue um arquivo XLSX para ver as apostas.</div>
+      </div>
+    </div><!-- /tab-toplinks -->
+
+    <div class="tab-panel" id="tab-lucromax">
+      <div class="lm-intro">
+        Aposte priorizando um resultado: lucro m&#225;ximo se ele vencer, capital garantido (sem perda) se vencer qualquer outro resultado.
+        Os hedges s&#227;o calculados automaticamente para que os dois resultados alternativos devolvam exatamente o capital investido.
+      </div>
+      <div class="section-header"><span class="section-title">Top 3 &middot; melhor cen&#225;rio por jogo</span></div>
+      <div class="lm-grid" id="lucromax-cards">
+        <div style="color:var(--muted);font-size:12px;text-align:center;padding:40px 0">Carregue um arquivo XLSX para ver os cen&#225;rios.</div>
+      </div>
+    </div><!-- /tab-lucromax -->
+
+    <div class="tab-panel" id="tab-jogos">
+      <div class="section-header"><span class="section-title">📋 Todos os Jogos</span></div>
+      <div class="jogos-container">
+        <table class="jogos-table">
+          <thead>
+            <tr>
+              <th style="width: 30px"></th>
+              <th>Jogo</th>
+              <th style="width: 80px">Hora</th>
+              <th style="width: 60px">Casas</th>
+              <th style="width: 70px">Casa</th>
+              <th style="width: 70px">Emp.</th>
+              <th style="width: 70px">Fora</th>
+              <th style="width: 70px">% Lucro</th>
+            </tr>
+          </thead>
+          <tbody id="jogos-tbody">
+            <tr><td colspan="7" style="text-align: center; color: var(--muted); padding: 20px;">Carregue um arquivo XLSX para ver os jogos.</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div><!-- /tab-jogos -->
+
+    <!-- ═══════════════════════════════════════════════════════════════ -->
+    <!-- ABA ESTATÍSTICAS -->
+    <!-- ═══════════════════════════════════════════════════════════════ -->
+    <div class="tab-panel" id="tab-estatisticas">
+      <div class="section-header"><span class="section-title">📈 Estatísticas por Casa</span></div>
+      <div class="jogos-container">
+        <table class="jogos-table" id="estat-table">
+          <thead>
+            <tr>
+              <th style="width:30px">#</th>
+              <th>Casa Bet</th>
+              <th style="width:110px;text-align:center">🏆 Odds Ganhadoras</th>
+              <th style="width:110px;text-align:center">Total Casa</th>
+              <th style="width:110px;text-align:center">Total Empate</th>
+              <th style="width:110px;text-align:center">Total Fora</th>
+            </tr>
+          </thead>
+          <tbody id="estat-tbody">
+            <tr><td colspan="6" style="text-align:center;color:var(--muted);padding:20px;">Carregue um arquivo XLSX para ver as estatísticas.</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div><!-- /tab-estatisticas -->
+
+    <!-- ═══════════════════════════════════════════════════════════════ -->
+    <!-- ABA HISTÓRICO -->
+    <!-- ═══════════════════════════════════════════════════════════════ -->
+    <div class="tab-panel" id="tab-historico">
+      <div class="section-header"><span class="section-title">📊 Histórico de Apostas</span></div>
+
+      <!-- INDICADOR DE SALVAMENTO -->
+      <div class="banner-salvamento">
+        💾 <span id="timestamp-salvamento">Inicializando...</span>
+      </div>
+
+      <!-- CARDS DOS JOGADORES -->
+      <div class="historico-jogadores" id="historico-jogadores">
+        <!-- Preenchido dinamicamente -->
+      </div>
+
+      <!-- FILTROS -->
+      <div class="historico-filtros">
+        <select id="filtro-jogador">
+          <option value="">Todos os jogadores</option>
+        </select>
+        <select id="filtro-periodo">
+          <option value="mes">Mês atual</option>
+          <option value="ano">Ano atual</option>
+          <option value="total">Total</option>
+          <option value="custom">Personalizado</option>
+        </select>
+        <select id="filtro-status">
+          <option value="">Todos os status</option>
+          <option value="Pendente">Pendente</option>
+          <option value="Ganhou">Ganhou</option>
+          <option value="Perdeu">Perdeu</option>
+        </select>
+        <div style="display:flex;align-items:center;gap:4px;">
+          <span class="filtro-label">Data:</span>
+          <input type="date" id="filtro-data" placeholder="Filtrar por data">
+        </div>
+        <div style="display:flex;align-items:center;gap:4px;">
+          <span class="filtro-label">Evento:</span>
+          <input type="text" id="filtro-evento" placeholder="Buscar evento..." style="width:200px;">
+        </div>
+        <button class="btn-gerenciar" onclick="abrirGerenciadorJogadores()">⚙️ Gerenciar Jogadores</button>
+      </div>
+
+      <!-- MODAL GERENCIAR JOGADORES -->
+      <div class="modal-overlay" id="modal-jogadores" style="display: none;">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h3>⚙️ Gerenciar Jogadores</h3>
+            <button class="btn-fechar" onclick="fecharGerenciadorJogadores()">✕</button>
+          </div>
+
+          <!-- Adicionar novo jogador -->
+          <div class="modal-section">
+            <h4>Adicionar Novo Jogador</h4>
+            <div class="form-grid-modal">
+              <input type="text" id="novo-jogador-nome" placeholder="Nome do jogador" maxlength="50">
+              <input type="number" id="novo-jogador-limite" placeholder="Limite (R$)" min="100" value="5000">
+              <button class="btn-adicionar" onclick="adicionarJogador()">✅ Adicionar</button>
+            </div>
+          </div>
+
+          <!-- Lista de jogadores -->
+          <div class="modal-section">
+            <h4>Jogadores Cadastrados</h4>
+            <div class="lista-jogadores" id="lista-jogadores">
+              <!-- Preenchido dinamicamente -->
+            </div>
+          </div>
+
+          <div class="modal-footer">
+            <button class="btn-fechar-modal" onclick="fecharGerenciadorJogadores()">Fechar</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- BOTÕES AÇÕES -->
+      <div style="margin-bottom: 16px; display: flex; gap: 8px; flex-wrap: wrap;">
+        <button class="btn-exportar-backup" onclick="exportarBackup()">💾 Exportar backup</button>
+        <button class="btn-importar-backup" onclick="document.getElementById('input-arquivo').click()">📥 Importar backup</button>
+        <button class="btn-nova-aposta" onclick="toggleFormularioAposta()">➕ Nova Aposta</button>
+      </div>
+
+      <!-- INPUT DE ARQUIVO (OCULTO) -->
+      <input type="file" id="input-arquivo" accept=".json" onchange="importarBackup(event)">
+
+      <!-- FORMULÁRIO DE NOVA APOSTA -->
+      <div class="historico-form" id="formulario-aposta" style="display: none;">
+        <h3 id="form-titulo">➕ Nova Aposta</h3>
+        <div class="form-grid">
+          <div class="form-group">
+            <label>Jogador</label>
+            <select id="form-jogador" required></select>
+          </div>
+          <div class="form-group">
+            <label>Data/Hora</label>
+            <input type="datetime-local" id="form-data" required>
+          </div>
+          <div class="form-group">
+            <label>Esporte</label>
+            <select id="form-esporte" required>
+              <option value="Futebol">Futebol</option>
+              <option value="Tênis">Tênis</option>
+              <option value="Basquete">Basquete</option>
+              <option value="Outros">Outros</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>Liga/Torneio</label>
+            <input type="text" id="form-liga" placeholder="ex: Copa do Mundo 2026">
+          </div>
+          <div class="form-group">
+            <label>Evento</label>
+            <input type="text" id="form-evento" placeholder="ex: Inglaterra x Gana" required>
+          </div>
+          <div class="form-group">
+            <label>Mercado</label>
+            <select id="form-mercado" required>
+              <option value="Resultado Final">Resultado Final</option>
+              <option value="Mais/Menos Gols">Mais/Menos Gols</option>
+              <option value="Handicap">Handicap</option>
+              <option value="Outros">Outros</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>Casa de aposta</label>
+            <select id="form-casa" required>
+              <option value="Betano">Betano</option>
+              <option value="EstrelaBet">EstrelaBet</option>
+              <option value="KTO">KTO</option>
+              <option value="Superbet">Superbet</option>
+              <option value="Bet365">Bet365</option>
+              <option value="Betfair">Betfair</option>
+              <option value="F12">F12</option>
+              <option value="Betesporte">Betesporte</option>
+              <option value="Novibet">Novibet</option>
+              <option value="Ona.bet">Ona.bet</option>
+              <option value="Sportingbet">Sportingbet</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>Odd</label>
+            <input type="number" id="form-odd" step="0.01" min="1" required>
+          </div>
+          <div class="form-group">
+            <label>Valor apostado (R$)</label>
+            <input type="number" id="form-valor" step="0.01" min="0" required>
+          </div>
+          <div class="form-group">
+            <label>Bônus (R$)</label>
+            <input type="number" id="form-bonus" step="0.01" min="0" value="0">
+          </div>
+          <div class="form-group">
+            <label>Resultado apostado</label>
+            <select id="form-resultado" required>
+              <option value="Casa">Casa</option>
+              <option value="Empate">Empate</option>
+              <option value="Fora">Fora</option>
+              <option value="Sim">Sim</option>
+              <option value="Não">Não</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>Status</label>
+            <select id="form-status" required>
+              <option value="Pendente">Pendente</option>
+              <option value="Ganhou">Ganhou</option>
+              <option value="Perdeu">Perdeu</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>Retorno (R$)</label>
+            <input type="number" id="form-retorno" readonly style="background: var(--bg2); cursor: not-allowed;">
+          </div>
+        </div>
+
+        <div class="form-buttons">
+          <button class="btn-salvar" id="btn-salvar-aposta" onclick="salvarAposta()">💾 Salvar</button>
+          <button class="btn-duplicar" onclick="duplicarAposta()">📋 Duplicar</button>
+          <button class="btn-cancelar" onclick="cancelarEdicao()">❌ Cancelar</button>
+        </div>
+      </div>
+
+      <!-- TABELA DE HISTÓRICO -->
+      <div class="historico-tabela">
+        <table class="tabela-apostas">
+          <thead>
+            <tr>
+              <th onclick="ordenarTabela('data')">Data 📅</th>
+              <th onclick="ordenarTabela('evento')">Evento ⚽</th>
+              <th onclick="ordenarTabela('casa')">Casa 🏠</th>
+              <th onclick="ordenarTabela('odd')">Odd 📊</th>
+              <th onclick="ordenarTabela('valor')">Valor 💵</th>
+              <th onclick="ordenarTabela('bonus')">Bônus 🎁</th>
+              <th onclick="ordenarTabela('retorno')">Retorno 💰</th>
+              <th onclick="ordenarTabela('resultado')">Resultado</th>
+              <th onclick="ordenarTabela('lucro')">Lucro 📈</th>
+              <th onclick="ordenarTabela('percentual')">%</th>
+              <th onclick="ordenarTabela('jogador')">Jogador 👤</th>
+              <th onclick="ordenarTabela('status')">Status ✅</th>
+              <th>Ações</th>
+            </tr>
+          </thead>
+          <tbody id="historico-tbody">
+            <!-- Preenchido dinamicamente -->
+          </tbody>
+          <tfoot>
+            <tr>
+              <td colspan="4"><strong>TOTAIS</strong></td>
+              <td id="total-investido">R$ 0,00</td>
+              <td id="total-bonus">R$ 0,00</td>
+              <td id="total-retorno">R$ 0,00</td>
+              <td></td>
+              <td id="total-lucro">R$ 0,00</td>
+              <td id="total-percentual">0%</td>
+              <td colspan="3"></td>
+            </tr>
+          </tfoot>
+        </table>
+      </div>
+
+      <!-- BOTÃO EXPORTAR -->
+      <button class="btn-exportar" onclick="exportarHistoricoExcel()">📥 Exportar Excel</button>
+
+    </div><!-- /tab-historico -->
+
+  </div>
+</main>
+
+<div class="toast" id="toast"></div>
+
+<script>
+/* ═══════════════════════════════════════════════════════════════
+   FIREBASE · AUTH & REALTIME DATABASE
+═══════════════════════════════════════════════════════════════ */
+
+// ═══ CONFIGURAÇÃO FIREBASE (PREENCHA COM SEUS DADOS DO CONSOLE) ═══
+const firebaseConfig = {
+  apiKey: "SUA_API_KEY",
+  authDomain: "SEU_PROJETO.firebaseapp.com",
+  databaseURL: "https://SEU_PROJETO-default-rtdb.firebaseio.com",
+  projectId: "SEU_PROJETO",
+  storageBucket: "SEU_PROJETO.appspot.com",
+  messagingSenderId: "SEU_SENDER_ID",
+  appId: "SEU_APP_ID"
+};
+
+let db = null;
+let isAdmin = false;
+let currentUser = null;
+let registerMode = false;
+let dataListener = null;
+
+function initFirebase() {
+  try {
+    firebase.initializeApp(firebaseConfig);
+    db = firebase.database();
+    firebase.auth().onAuthStateChanged(user => {
+      if (user) {
+        currentUser = user;
+        checkAdmin(user);
+      } else {
+        showLogin();
+      }
+    });
+  } catch (e) {
+    console.error("Firebase init error:", e);
+    document.getElementById('loginError').textContent = "Erro ao conectar com o servidor. Verifique a configuração do Firebase.";
+  }
+}
+
+function showLogin() {
+  document.getElementById('loginScreen').style.display = 'flex';
+  document.getElementById('appContainer').style.display = 'none';
+  document.getElementById('loginEmail').value = '';
+  document.getElementById('loginPassword').value = '';
+  document.getElementById('loginError').textContent = '';
+}
+
+function showApp() {
+  document.getElementById('loginScreen').style.display = 'none';
+  document.getElementById('appContainer').style.display = 'block';
+  document.getElementById('userBadge').textContent = currentUser ? currentUser.email : '';
+}
+
+function toggleRegisterMode() {
+  registerMode = !registerMode;
+  const btnReg = document.getElementById('btnRegister');
+  const btnMain = document.querySelector('#loginScreen .login-btn');
+  const toggleText = document.getElementById('toggleRegText');
+  if (registerMode) {
+    btnReg.style.display = 'block';
+    btnMain.style.display = 'none';
+    toggleText.textContent = 'Já tem conta? Fazer login';
+  } else {
+    btnReg.style.display = 'none';
+    btnMain.style.display = 'block';
+    toggleText.textContent = 'Primeiro acesso? Criar conta';
+  }
+}
+
+function doLogin() {
+  const email = document.getElementById('loginEmail').value.trim();
+  const pass = document.getElementById('loginPassword').value;
+  const errEl = document.getElementById('loginError');
+  if (!email || !pass) { errEl.textContent = 'Preencha email e senha.'; return; }
+  errEl.textContent = '';
+  firebase.auth().signInWithEmailAndPassword(email, pass)
+    .catch(e => { errEl.textContent = e.message; });
+}
+
+function doRegister() {
+  const email = document.getElementById('loginEmail').value.trim();
+  const pass = document.getElementById('loginPassword').value;
+  const errEl = document.getElementById('loginError');
+  if (!email || !pass) { errEl.textContent = 'Preencha email e senha.'; return; }
+  if (pass.length < 6) { errEl.textContent = 'A senha deve ter pelo menos 6 caracteres.'; return; }
+  errEl.textContent = '';
+  firebase.auth().createUserWithEmailAndPassword(email, pass)
+    .then(() => {
+      errEl.style.color = 'var(--green)';
+      errEl.textContent = 'Conta criada! Faça login.';
+      toggleRegisterMode();
+    })
+    .catch(e => { errEl.style.color = 'var(--red)'; errEl.textContent = e.message; });
+}
+
+function doLogout() {
+  firebase.auth().signOut();
+}
+
+function checkAdmin(user) {
+  if (!db) return;
+  // Verifica no Realtime Database se o email do usuário é o admin configurado
+  db.ref('config/adminEmail').once('value').then(snap => {
+    const adminEmail = snap.val();
+    isAdmin = (user.email === adminEmail);
+    setupUIForRole();
+    showApp();
+    listenToData();
+  }).catch(() => {
+    // Se não conseguir ler config, assume não-admin
+    isAdmin = false;
+    setupUIForRole();
+    showApp();
+    listenToData();
+  });
+}
+
+function setupUIForRole() {
+  const adminBadge = document.getElementById('adminBadge');
+  const btnLimpar = document.getElementById('btnLimpar');
+  const btnAdicionar = document.getElementById('btnAdicionar');
+  const dropAdmin = document.getElementById('dropAdmin');
+  const dropUser = document.getElementById('dropUser');
+  const fileInput = document.getElementById('fileInput');
+
+  if (isAdmin) {
+    adminBadge.style.display = 'inline-block';
+    btnLimpar.style.display = 'inline-flex';
+    btnAdicionar.style.display = 'inline-flex';
+    if (dropAdmin) dropAdmin.style.display = 'block';
+    if (dropUser) dropUser.style.display = 'none';
+    fileInput.style.display = 'none'; // mantém hidden, mas funciona via click
+  } else {
+    adminBadge.style.display = 'none';
+    btnLimpar.style.display = 'none';
+    btnAdicionar.style.display = 'none';
+    if (dropAdmin) dropAdmin.style.display = 'none';
+    if (dropUser) dropUser.style.display = 'block';
+  }
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   SINCRONIZAÇÃO DE DADOS COM FIREBASE
+═══════════════════════════════════════════════════════════════ */
+
+function listenToData() {
+  if (!db) return;
+  if (dataListener) db.ref('oddsData').off('value', dataListener);
+  dataListener = db.ref('oddsData').on('value', snap => {
+    const val = snap.val();
+    if (val) {
+      // Restaura dados vindos da nuvem
+      allDataRawMaster = val.allDataRawMaster || [];
+      allSitesDataMaster = val.allSitesDataMaster || [];
+      campeonatosCarregados = val.campeonatosCarregados || [];
+      atualizarSelectCampeonatos();
+      aplicarFiltroCampeonato(filtroCampeonatoAtual);
+      fecharOverlay();
+    } else {
+      // Sem dados na nuvem
+      allDataRawMaster = [];
+      allSitesDataMaster = [];
+      campeonatosCarregados = [];
+      allData = [];
+      allSitesData = [];
+      resetUINoData();
+      document.getElementById('dropOverlay').classList.remove('hidden');
+      if (!isAdmin) {
+        document.getElementById('dropAdmin').style.display = 'none';
+        document.getElementById('dropUser').style.display = 'block';
+      } else {
+        document.getElementById('dropAdmin').style.display = 'block';
+        document.getElementById('dropUser').style.display = 'none';
+      }
+    }
+  });
+}
+
+function syncToFirebase() {
+  if (!isAdmin || !db) {
+    toast('Apenas o administrador pode sincronizar dados.', 'error');
+    return;
+  }
+  const payload = {
+    allDataRawMaster: allDataRawMaster || [],
+    allSitesDataMaster: allSitesDataMaster || [],
+    campeonatosCarregados: campeonatosCarregados || [],
+    timestamp: new Date().toISOString(),
+    uploadedBy: currentUser ? currentUser.email : 'admin'
+  };
+  db.ref('oddsData').set(payload)
+    .then(() => toast('☁️ Dados salvos na nuvem! Todos os usuários estão vendo agora.', 'success', 4000))
+    .catch(err => toast('Erro ao salvar na nuvem: ' + err.message, 'error', 5000));
+}
+
+function clearDataFromFirebase() {
+  if (!isAdmin || !db) return;
+  if (confirm('⚠️ TEM CERTEZA?
+
+Isso vai apagar TODOS os dados do dashboard para TODOS os usuários. Esta ação não pode ser desfeita.')) {
+    db.ref('oddsData').remove()
+      .then(() => {
+        allDataRawMaster = [];
+        allSitesDataMaster = [];
+        campeonatosCarregados = [];
+        resetUINoData();
+        toast('🗑️ Dados removidos.', 'success');
+      })
+      .catch(err => toast('Erro ao remover: ' + err.message, 'error'));
+  }
+}
+
+function resetUINoData() {
+  document.getElementById('tagJogos').textContent = 'sem dados';
+  document.getElementById('tagJogos').className = 'tag tag-gray';
+  document.getElementById('logoSub').textContent = 'aposta holandesa · cobertura total';
+  document.getElementById('top3').innerHTML = '<div class="top-card rank1"><div style="color:var(--muted);font-size:12px;text-align:center;padding:20px 0">—</div></div><div class="top-card rank2"><div style="color:var(--muted);font-size:12px;text-align:center;padding:20px 0">—</div></div><div class="top-card rank3"><div style="color:var(--muted);font-size:12px;text-align:center;padding:20px 0">—</div></div>';
+  document.getElementById('m-lucro').textContent = '—';
+  document.getElementById('m-lucro-jogo').textContent = 'carregue o arquivo';
+  document.getElementById('m-pct').textContent = '—';
+  document.getElementById('m-pct-jogo').textContent = '';
+  document.getElementById('m-positivos').textContent = '—';
+  document.getElementById('m-positivos-sub').textContent = '';
+  document.getElementById('m-margem').textContent = '—';
+  document.getElementById('tableBody').innerHTML = '<tr><td colspan="12" class="empty"><strong>Nenhum dado carregado pelo administrador</strong><br>Aguarde o admin atualizar os jogos.</td></tr>';
+  document.getElementById('tableCount').textContent = '';
+  document.getElementById('tableFooterLeft').textContent = '—';
+  document.getElementById('toplinks-cards').innerHTML = '<div style="color:var(--muted);font-size:12px;text-align:center;padding:40px 0">Aguardando dados do administrador.</div>';
+  document.getElementById('lucromax-cards').innerHTML = '<div style="color:var(--muted);font-size:12px;text-align:center;padding:40px 0">Aguardando dados do administrador.</div>';
+  document.getElementById('jogos-tbody').innerHTML = '<tr><td colspan="7" style="text-align: center; color: var(--muted); padding: 20px;">Aguardando dados do administrador.</td></tr>';
+  document.getElementById('estat-tbody').innerHTML = '<tr><td colspan="6" style="text-align:center;color:var(--muted);padding:20px;">Aguardando dados do administrador.</td></tr>';
+  if (chartInstance) { chartInstance.destroy(); chartInstance = null; }
+  document.getElementById('statsRows').innerHTML = '<div style="color:var(--muted);font-size:12px;padding:12px 0">Sem dados</div>';
+  document.getElementById('jogosCapturados').textContent = '0';
+}
+
+// Inicializa Firebase ao carregar
+document.addEventListener('DOMContentLoaded', function() {
+  initFirebase();
+});
+
+
+let allData=[], chartInstance=null;
+const fmt    = n => 'R$ '+n.toLocaleString('pt-BR',{minimumFractionDigits:2,maximumFractionDigits:2});
+const fmtDec = n => 'R$ '+n.toLocaleString('pt-BR',{minimumFractionDigits:2,maximumFractionDigits:2});
+
+function setTheme(t){
+  document.documentElement.setAttribute('data-theme',t);
+  document.querySelectorAll('.theme-btn').forEach(b=>{
+    b.classList.toggle('active', b.dataset.t===t);
+  });
+  try{localStorage.setItem('odds-theme',t);}catch(e){}
+}
+// Restaurar tema salvo
+(function(){
+  try{
+    const t=localStorage.getItem('odds-theme')||'dark';
+    setTheme(t);
+  }catch(e){setTheme('dark');}
+})();
+
+function toast(msg,tipo='info',dur=3000){
+  const el=document.getElementById('toast');
+  el.textContent=msg; el.className=`toast visible ${tipo}`;
+  clearTimeout(el._t); el._t=setTimeout(()=>el.classList.remove('visible'),dur);
+}
+
+function fecharOverlay(){ document.getElementById('dropOverlay').classList.add('hidden'); }
+
+let allSitesData=[];         // view filtrada (usada pelas funções de render existentes)
+let allSitesDataMaster=[];   // master: linhas brutas (aba 3) de TODOS os arquivos carregados
+let allDataRawMaster=[];     // master: linhas brutas (aba 1) de TODOS os arquivos carregados
+let campeonatosCarregados=[];// nomes dos campeonatos já carregados (na ordem de carregamento)
+let filtroCampeonatoAtual='__todos__';
+
+function nomeCampeonatoDoArquivo(filename){
+  let n=filename.replace(/\.xlsx$/i,'').replace(/_sincronizado$/i,'');
+  n=n.replace(/[_-]+/g,' ').trim();
+  return n.replace(/\b\w/g,c=>c.toUpperCase());
+}
+
+function lerArquivoXLSX(file){
+  return new Promise((resolve,reject)=>{
+    const reader=new FileReader();
+    reader.onload=e=>{
+      try{ resolve(XLSX.read(e.target.result,{type:'array'})); }
+      catch(err){ reject(err); }
+    };
+    reader.onerror=()=>reject(new Error('Falha ao ler o arquivo'));
+    reader.readAsArrayBuffer(file);
+  });
+}
+
+async function handleFile(input){
+  if (!isAdmin) { toast('Apenas administradores podem carregar dados.', 'error'); return; }
+  const files=Array.from(input.files||[]);
+  if(!files.length) return;
+  const modoAcumular = document.getElementById('modoAcumular')?.checked ?? true;
+  if (!modoAcumular) {
+    allDataRawMaster = [];
+    allSitesDataMaster = [];
+    campeonatosCarregados = [];
+  }
+
+  const carregadosAgora=[];
+
+  for(const file of files){
+    let wb;
+    try{ wb=await lerArquivoXLSX(file); }
+    catch(err){ toast(`Erro ao ler ${file.name}`,'error',5000); continue; }
+
+    const ws=wb.Sheets[wb.SheetNames[0]];
+    const raw=XLSX.utils.sheet_to_json(ws);
+    if(!raw.length){ toast(`${file.name}: arquivo vazio ou sem dados`,'error',5000); continue; }
+
+    const COLS_OBRIGATORIAS=['SITE','DATA','JOGO','CASA','EMPATE','FORA'];
+    const faltando=COLS_OBRIGATORIAS.filter(c=>!(c in raw[0]));
+    if(faltando.length){ toast(`${file.name}: colunas ausentes (${faltando.join(', ')})`,'error',8000); continue; }
+
+    const campeonato=nomeCampeonatoDoArquivo(file.name);
+    if(!campeonatosCarregados.includes(campeonato)) campeonatosCarregados.push(campeonato);
+    carregadosAgora.push(campeonato);
+
+    raw.forEach(r=>{ r.__campeonato=campeonato; });
+    allDataRawMaster.push(...raw);
+
+    if(wb.SheetNames.length>2){
+      const wsAllSites=wb.Sheets[wb.SheetNames[2]];
+      const rawAllSites=XLSX.utils.sheet_to_json(wsAllSites);
+      rawAllSites.forEach(r=>{ r.__campeonato=campeonato; });
+      allSitesDataMaster.push(...rawAllSites);
+    }
+  }
+
+  if(!carregadosAgora.length){
+    if(!allDataRawMaster.length) return; // nada carregado ainda, mantém overlay aberto
+  }else{
+    fecharOverlay();
+    atualizarSelectCampeonatos();
+    document.getElementById('btnAdicionar').style.display='inline-flex';
+    aplicarFiltroCampeonato(filtroCampeonatoAtual);
+    toast(`✓ Processado(s): ${carregadosAgora.join(', ')}`,'success');
+    syncToFirebase();
+  }
+  input.value='';
+}
+
+function atualizarSelectCampeonatos(){
+  const sel=document.getElementById('filtroCampeonatoSelect');
+  const atual=sel.value||'__todos__';
+  sel.innerHTML='<option value="__todos__">Todos os campeonatos</option>'+
+    campeonatosCarregados.map(c=>`<option value="${c}">${c}</option>`).join('');
+  sel.value=(atual==='__todos__'||campeonatosCarregados.includes(atual))?atual:'__todos__';
+  sel.style.display=campeonatosCarregados.length>1?'inline-block':'none';
+}
+
+function mudarFiltroCampeonato(valor){
+  filtroCampeonatoAtual=valor;
+  aplicarFiltroCampeonato(valor);
+}
+
+function aplicarFiltroCampeonato(valor){
+  const rawFiltrado=valor==='__todos__'?allDataRawMaster:allDataRawMaster.filter(r=>r.__campeonato===valor);
+  const sitesFiltrado=valor==='__todos__'?allSitesDataMaster:allSitesDataMaster.filter(r=>r.__campeonato===valor);
+
+  allSitesData=sitesFiltrado.map(r=>{
+    const parseOdd=v=>parseFloat(String(v||'').replace(',','.'));
+    const dataCompleta=String(r['DATA']||'');
+    const hora=dataCompleta.split(' ')[1]||'';
+    const data=dataCompleta.split(' ')[0]||'';
+    return{site:r['SITE']||'',jogo:r['JOGO']||'',jogo_limpo:r['JOGO_LIMPO']||'',hora:hora,data:data,campeonato:r.__campeonato||'',
+      casa:parseOdd(r['CASA']),empate:parseOdd(r['EMPATE']),fora:parseOdd(r['FORA']),
+      casa_link:r['CASA_LINK']||'#',empate_link:r['EMPATE_LINK']||'#',fora_link:r['FORA_LINK']||'#'};
+  }).filter(r=>r.jogo&&!isNaN(r.casa));
+
+  const aposta=parseFloat(document.getElementById('apostaInput').value)||5000;
+  const dados=rawFiltrado.map(r=>{
+    const parseOdd=v=>parseFloat(String(v||'').replace(',','.'));
+    const casa=parseOdd(r['CASA']),emp=parseOdd(r['EMPATE']),fora=parseOdd(r['FORA']);
+    const inv=1/casa+1/emp+1/fora;
+    const hora=String(r['DATA']||'').split(' ')[1]||'';
+    return{site:r['SITE']||'',data:String(r['DATA']||''),hora,jogo:r['JOGO']||'',jogo_limpo:r['JOGO_LIMPO']||'',campeonato:r.__campeonato||'',
+      casa,empate:emp,fora,
+      v_casa:aposta/(inv*casa),v_emp:aposta/(inv*emp),v_fora:aposta/(inv*fora),
+      retorno:aposta/inv,lucro_pct:(aposta/inv-aposta)/aposta*100,
+      casa_origem:r['CASA_ORIGEM']||'',empate_origem:r['EMPATE_ORIGEM']||'',fora_origem:r['FORA_ORIGEM']||'',
+      casa_link:r['CASA_LINK']||'#',empate_link:r['EMPATE_LINK']||'#',fora_link:r['FORA_LINK']||'#'};
+  }).filter(r=>r.jogo&&!isNaN(r.casa));
+
+  const dadosConsolidados=consolidarOdds(dados);
+  renderDados(dadosConsolidados);
+}
+
+// Drag and drop no overlay (e em qualquer lugar da página, pra "adicionar mais")
+const dropBox=document.getElementById('dropBox');
+document.addEventListener('dragover',e=>{e.preventDefault();dropBox.classList.add('drag');});
+document.addEventListener('dragleave',()=>dropBox.classList.remove('drag'));
+document.addEventListener('drop',e=>{
+  e.preventDefault();dropBox.classList.remove('drag');
+  const files=Array.from(e.dataTransfer.files||[]).filter(f=>f.name.endsWith('.xlsx'));
+  if(files.length){
+    const dt=new DataTransfer();
+    files.forEach(f=>dt.items.add(f));
+    document.getElementById('fileInput').files=dt.files;
+    handleFile(document.getElementById('fileInput'));
+  }
+});
+
+function renderDados(dados){
+  const aposta=parseFloat(document.getElementById('apostaInput').value)||5000;
+
+  // Recalcula dutching para dados consolidados
+  allData=dados.map(r=>{
+    const inv=1/r.casa+1/r.empate+1/r.fora;
+    return{...r,
+      v_casa:aposta/(inv*r.casa),v_emp:aposta/(inv*r.empate),v_fora:aposta/(inv*r.fora),
+      retorno:aposta/inv,lucro_pct:(aposta/inv-aposta)/aposta*100
+    };
+  }).sort((a,b)=>b.lucro_pct-a.lucro_pct);
+
+  const dataRef=allData[0]?.data?.split(' ')[0]||'—';
+  document.getElementById('tagJogos').textContent=allData.length+' jogos';
+  document.getElementById('tagJogos').className='tag tag-green';
+  document.getElementById('logoSub').textContent=`atualizado ${dataRef}`;
+  populateHoraFilter();renderMetrics();renderTop3();renderChart();renderStats();applyFilters();renderLucroMaximo();renderTopApostasComLinks();renderJogos();renderEstatisticas();
+}
+
+function recalc(){
+  if(!allData.length) return;
+  const a=parseFloat(document.getElementById('apostaInput').value)||5000;
+  allData=allData.map(r=>{
+    const inv=1/r.casa+1/r.empate+1/r.fora;
+    return{...r,v_casa:a/(inv*r.casa),v_emp:a/(inv*r.empate),v_fora:a/(inv*r.fora),
+      retorno:a/inv,lucro_pct:(a/inv-a)/a*100};
+  }).sort((a,b)=>b.lucro_pct-a.lucro_pct);
+  renderMetrics();renderTop3();renderStats();applyFilters();renderLucroMaximo();renderTopApostasComLinks();
+}
+
+function renderMetrics(){
+  const a=parseFloat(document.getElementById('apostaInput').value)||5000;
+  const best=allData[0];
+  const pos=allData.filter(r=>r.lucro_pct>0);
+  const avgM=allData.reduce((s,r)=>s+(1/r.casa+1/r.empate+1/r.fora-1)*100,0)/allData.length;
+  if(best){
+    const lucro=best.retorno-a;
+    document.getElementById('m-lucro').textContent=(lucro>=0?'+':'')+fmtDec(lucro);
+    document.getElementById('m-lucro-jogo').textContent=best.jogo;
+    document.getElementById('m-pct').textContent=(best.lucro_pct>=0?'+':'')+best.lucro_pct.toFixed(2)+'%';
+    document.getElementById('m-pct-jogo').textContent=best.jogo;
+  }
+  document.getElementById('m-positivos').textContent=pos.length;
+  document.getElementById('m-positivos-sub').textContent='de '+allData.length+' jogos';
+  document.getElementById('m-margem').textContent=avgM.toFixed(2)+'%';
+  document.getElementById('m-margem').className='metric-value '+(avgM>=0?'green':'amber');
+}
+
+function recalculateCard(cardIdx){
+  const a=parseFloat(document.getElementById('apostaInput').value)||5000;
+  const casa=parseFloat(document.getElementById(`odd-casa-${cardIdx}`).value);
+  const empate=parseFloat(document.getElementById(`odd-emp-${cardIdx}`).value);
+  const fora=parseFloat(document.getElementById(`odd-fora-${cardIdx}`).value);
+
+  const dutchingTotal=a/(1/casa+1/empate+1/fora);
+  const v_casa=dutchingTotal/casa;
+  const v_emp=dutchingTotal/empate;
+  const v_fora=dutchingTotal/fora;
+
+  const retorno_casa=v_casa*casa;
+  const retorno_emp=v_emp*empate;
+  const retorno_fora=v_fora*fora;
+  const retorno=Math.min(retorno_casa,retorno_emp,retorno_fora);
+  const lucro=retorno-a;
+  const lucro_pct=(lucro/a)*100;
+
+  document.getElementById(`lucro-val-${cardIdx}`).textContent=(lucro>=0?'+':'')+fmtDec(lucro);
+  document.getElementById(`lucro-pct-${cardIdx}`).textContent=(lucro_pct>=0?'+':'')+lucro_pct.toFixed(2)+'%';
+
+  // Atualiza inputs de stake também
+  const elStakeCasa = document.getElementById(`stake-casa-${cardIdx}`);
+  const elStakeEmp  = document.getElementById(`stake-emp-${cardIdx}`);
+  const elStakeFora = document.getElementById(`stake-fora-${cardIdx}`);
+  if(elStakeCasa) elStakeCasa.value = v_casa.toFixed(2);
+  if(elStakeEmp)  elStakeEmp.value  = v_emp.toFixed(2);
+  if(elStakeFora) elStakeFora.value = v_fora.toFixed(2);
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   DUTCHING COM STAKES EDITÁVEIS (Casa/Emp/Fora)
+═══════════════════════════════════════════════════════════════ */
+function recalcDutchingStake(cardIdx, campo){
+  const casa   = parseFloat(document.getElementById(`odd-casa-${cardIdx}`)?.value)  || 1;
+  const empate = parseFloat(document.getElementById(`odd-emp-${cardIdx}`)?.value)   || 1;
+  const fora   = parseFloat(document.getElementById(`odd-fora-${cardIdx}`)?.value)  || 1;
+
+  const stakeCasa = parseFloat(document.getElementById(`stake-casa-${cardIdx}`)?.value) || 0;
+  const stakeEmp  = parseFloat(document.getElementById(`stake-emp-${cardIdx}`)?.value)  || 0;
+  const stakeFora = parseFloat(document.getElementById(`stake-fora-${cardIdx}`)?.value) || 0;
+
+  let retorno;
+  if(campo==='casa')      retorno = stakeCasa * casa;
+  else if(campo==='emp')  retorno = stakeEmp  * empate;
+  else                    retorno = stakeFora * fora;
+
+  const newCasa = retorno / casa;
+  const newEmp  = retorno / empate;
+  const newFora = retorno / fora;
+  const total   = newCasa + newEmp + newFora;
+  const lucro   = retorno - total;
+  const lucroPct= total > 0 ? (lucro / total) * 100 : 0;
+
+  // Atualiza APENAS os outros dois campos (não o que está sendo editado)
+  const elCasa = document.getElementById(`stake-casa-${cardIdx}`);
+  const elEmp  = document.getElementById(`stake-emp-${cardIdx}`);
+  const elFora = document.getElementById(`stake-fora-${cardIdx}`);
+  if(campo!=='casa' && elCasa) elCasa.value = newCasa.toFixed(2);
+  if(campo!=='emp'  && elEmp)  elEmp.value  = newEmp.toFixed(2);
+  if(campo!=='fora' && elFora) elFora.value = newFora.toFixed(2);
+
+  const elLucroVal = document.getElementById(`lucro-val-${cardIdx}`);
+  const elLucroPct = document.getElementById(`lucro-pct-${cardIdx}`);
+  if(elLucroVal) elLucroVal.textContent = (lucro>=0?'+':'') + fmtDec(lucro);
+  if(elLucroPct) elLucroPct.textContent = (lucroPct>=0?'+':'') + lucroPct.toFixed(2) + '%';
+}
+
+function recalcDutchingStakeTopLinks(idx, campo, oddCasa, oddEmp, oddFora){
+  const elCasa = document.getElementById(`tl-stake-casa-${idx}`);
+  const elEmp  = document.getElementById(`tl-stake-emp-${idx}`);
+  const elFora = document.getElementById(`tl-stake-fora-${idx}`);
+
+  const stakeCasa = parseFloat(elCasa?.value) || 0;
+  const stakeEmp  = parseFloat(elEmp?.value)  || 0;
+  const stakeFora = parseFloat(elFora?.value) || 0;
+
+  let retorno;
+  if(campo==='casa')      retorno = stakeCasa * oddCasa;
+  else if(campo==='emp')  retorno = stakeEmp  * oddEmp;
+  else                    retorno = stakeFora * oddFora;
+
+  const newCasa = retorno / oddCasa;
+  const newEmp  = retorno / oddEmp;
+  const newFora = retorno / oddFora;
+  const total   = newCasa + newEmp + newFora;
+  const lucro   = retorno - total;
+  const lucroPct= total > 0 ? (lucro / total) * 100 : 0;
+
+  // Atualiza APENAS os outros dois campos
+  if(campo!=='casa' && elCasa) elCasa.value = newCasa.toFixed(2);
+  if(campo!=='emp'  && elEmp)  elEmp.value  = newEmp.toFixed(2);
+  if(campo!=='fora' && elFora) elFora.value = newFora.toFixed(2);
+
+  const elTotal = document.getElementById(`tl-total-${idx}`);
+  const elLucro = document.getElementById(`tl-lucro-${idx}`);
+  if(elTotal) elTotal.textContent = 'R$ ' + total.toLocaleString('pt-BR',{minimumFractionDigits:2,maximumFractionDigits:2});
+  if(elLucro) elLucro.textContent = (lucroPct>=0?'+':'') + lucroPct.toFixed(2) + '%';
+}
+
+function recalcLucroMaxHedge(cardIdx, scenIdx, tipo){
+  const casa   = parseFloat(document.getElementById(`lm-odd-casa-${cardIdx}`)?.value)||1;
+  const empate = parseFloat(document.getElementById(`lm-odd-emp-${cardIdx}`)?.value)||1;
+  const fora   = parseFloat(document.getElementById(`lm-odd-fora-${cardIdx}`)?.value)||1;
+
+  const slots=[
+    {odd:casa,   h1odd:empate, h2odd:fora,  h1nome:'Empate', h2nome:'Fora'},
+    {odd:empate, h1odd:casa,   h2odd:fora,  h1nome:'Casa',   h2nome:'Fora'},
+    {odd:fora,   h1odd:casa,   h2odd:empate,h1nome:'Casa',   h2nome:'Empate'},
+  ];
+  const sc=slots[scenIdx];
+
+  const elAlvo = document.getElementById(`lm-alvo-${scenIdx}-${cardIdx}`);
+  const elH1   = document.getElementById(`lm-h1-input-${scenIdx}-${cardIdx}`);
+  const elH2   = document.getElementById(`lm-h2-input-${scenIdx}-${cardIdx}`);
+
+  const alvo = parseFloat(elAlvo?.value)||0;
+  const h1   = parseFloat(elH1?.value)||0;
+  const h2   = parseFloat(elH2?.value)||0;
+
+  let newCapital;
+  if(tipo==='alvo'){
+    const factor=1-1/sc.h1odd-1/sc.h2odd;
+    if(factor<=0) return;
+    newCapital=alvo/factor;
+  }else if(tipo==='h1'){
+    newCapital=h1*sc.h1odd;
+  }else{
+    newCapital=h2*sc.h2odd;
+  }
+
+  const cen=calcLucroMax(casa, empate, fora, newCapital);
+  const validos=cen.filter(c=>c.viavel);
+  const melhor=validos.length?Math.max(...validos.map(c=>c.lucro_pct)):null;
+  const hedgeVals=[
+    [newCapital/empate, newCapital/fora],
+    [newCapital/casa,   newCapital/fora],
+    [newCapital/casa,   newCapital/empate],
+  ];
+  cen.forEach((c,ci)=>{
+    const retEl = document.getElementById(`lm-ret-${ci}-${cardIdx}`);
+    const pEl   = document.getElementById(`lm-pct-${ci}-${cardIdx}`);
+    const h1El  = document.getElementById(`lm-h1-input-${ci}-${cardIdx}`);
+    const h2El  = document.getElementById(`lm-h2-input-${ci}-${cardIdx}`);
+    const divEl = document.getElementById(`lm-scen-${ci}-${cardIdx}`);
+    const alvEl = document.getElementById(`lm-alvo-${ci}-${cardIdx}`);
+    if(!divEl) return;
+    if(!c.viavel){ if(retEl) retEl.textContent='—'; return; }
+    const isBest=melhor!==null&&Math.abs(c.lucro_pct-melhor)<0.001;
+    divEl.className='lm-scen '+(isBest?'best':c.lucro_pct>=0?'normal':'neg');
+
+    // NÃO atualiza o campo que está sendo editado
+    if(ci!==scenIdx && alvEl) alvEl.value=c.alvo.toFixed(2);
+    if(ci!==scenIdx || tipo!=='h1') { if(h1El) h1El.value=hedgeVals[ci][0].toFixed(2); }
+    if(ci!==scenIdx || tipo!=='h2') { if(h2El) h2El.value=hedgeVals[ci][1].toFixed(2); }
+
+    const retornoReal = (ci===scenIdx && tipo==='alvo') ? newCapital : c.retorno;
+    const pctReal = (retornoReal - newCapital) / newCapital * 100;
+    if(retEl) retEl.textContent='R$ '+fmtDec(retornoReal);
+    if(pEl)   pEl.textContent=(pctReal>=0?'+':'')+pctReal.toFixed(2)+'%';
+  });
+}
+
+
+
+
+function renderTop3(){
+  const a=parseFloat(document.getElementById('apostaInput').value)||5000;
+  const ranks=['rank1','rank2','rank3'],ords=['🥇','🥈','🥉'];
+  document.getElementById('top3').innerHTML=allData.slice(0,3).map((r,i)=>{
+    const lucro=r.retorno-a;
+    return`<div class="top-card ${ranks[i]}">
+      <div class="top-rank">${ords[i]}</div>
+      <div class="top-jogo">${r.jogo}</div>
+      <div class="top-odds">
+        <input type="number" id="odd-casa-${i}" class="odd-input odd-casa" step="0.01" min="1.0" value="${r.casa.toFixed(2)}" onchange="recalculateCard(${i})" oninput="recalculateCard(${i})">
+        <input type="number" id="odd-emp-${i}" class="odd-input odd-emp" step="0.01" min="1.0" value="${r.empate.toFixed(2)}" onchange="recalculateCard(${i})" oninput="recalculateCard(${i})">
+        <input type="number" id="odd-fora-${i}" class="odd-input odd-fora" step="0.01" min="1.0" value="${r.fora.toFixed(2)}" onchange="recalculateCard(${i})" oninput="recalculateCard(${i})">
+      </div>
+      <div class="top-financial">
+        <div>
+          <div class="top-lucro-val" id="lucro-val-${i}">${lucro>=0?'+':''}${fmtDec(lucro)}</div>
+          <div class="top-lucro-pct" id="lucro-pct-${i}">${r.lucro_pct>=0?'+':''}${r.lucro_pct.toFixed(2)}%</div>
+        </div>
+        <div class="top-distrib">
+          <div style="display:flex;align-items:center;gap:6px;margin-bottom:4px">
+            <input type="number" id="stake-casa-${i}" class="stake-input" step="0.01" min="0" value="${r.v_casa.toFixed(2)}" oninput="recalcDutchingStake(${i},'casa')" style="width:80px;font-family:var(--mono);font-size:13px;padding:4px 6px;background:var(--bg3);border:1.5px solid rgba(59,130,246,0.5);border-radius:6px;color:#93c5fd;text-align:right">
+            <span style="color:#93c5fd;font-size:12px">casa</span>
+          </div>
+          <div style="display:flex;align-items:center;gap:6px;margin-bottom:4px">
+            <input type="number" id="stake-emp-${i}" class="stake-input" step="0.01" min="0" value="${r.v_emp.toFixed(2)}" oninput="recalcDutchingStake(${i},'emp')" style="width:80px;font-family:var(--mono);font-size:13px;padding:4px 6px;background:var(--bg3);border:1.5px solid rgba(107,114,128,0.4);border-radius:6px;color:#9ca3af;text-align:right">
+            <span style="color:#9ca3af;font-size:12px">emp.</span>
+          </div>
+          <div style="display:flex;align-items:center;gap:6px">
+            <input type="number" id="stake-fora-${i}" class="stake-input" step="0.01" min="0" value="${r.v_fora.toFixed(2)}" oninput="recalcDutchingStake(${i},'fora')" style="width:80px;font-family:var(--mono);font-size:13px;padding:4px 6px;background:var(--bg3);border:1.5px solid rgba(245,158,11,0.5);border-radius:6px;color:#fcd34d;text-align:right">
+            <span style="color:#fcd34d;font-size:12px">fora</span>
+          </div>
+        </div>
+      </div>
+      <div style="font-size:11px;color:var(--muted);margin-top:10px;">${r.data} · ${r.site}</div>
+    </div>`;
+  }).join('');
+}
+
+function renderChart(){
+  const buckets=[-12,-10,-8,-6,-4,-2,0,2,4];
+  const labels=buckets.map((b,i)=>i===buckets.length-1?`>${b}%`:`${b}%`);
+  const counts=new Array(labels.length).fill(0);
+  allData.forEach(r=>{for(let i=buckets.length-1;i>=0;i--){if(r.lucro_pct>=buckets[i]){counts[i]++;break;}}});
+  const colors=counts.map((_,i)=>buckets[i]>=0?'rgba(34,197,94,0.7)':buckets[i]>=-4?'rgba(245,158,11,0.5)':'rgba(239,68,68,0.35)');
+  if(chartInstance)chartInstance.destroy();
+  chartInstance=new Chart(document.getElementById('marginChart'),{
+    type:'bar',data:{labels,datasets:[{data:counts,backgroundColor:colors,borderRadius:4,borderWidth:0}]},
+    options:{responsive:true,maintainAspectRatio:true,plugins:{legend:{display:false}},
+      scales:{x:{grid:{color:'rgba(255,255,255,0.04)'},ticks:{color:'#6b7280',font:{family:"'IBM Plex Mono'",size:11}}},
+              y:{grid:{color:'rgba(255,255,255,0.04)'},ticks:{color:'#6b7280',font:{family:"'IBM Plex Mono'",size:11},stepSize:10}}}}
+  });
+}
+
+function renderStats(){
+  const vals=allData.map(r=>r.lucro_pct).sort((a,b)=>a-b);
+  const n=vals.length,media=vals.reduce((s,v)=>s+v,0)/n;
+  const mediana=n%2===0?(vals[n/2-1]+vals[n/2])/2:vals[Math.floor(n/2)];
+  document.getElementById('statsRows').innerHTML=[
+    ['Total de jogos',n],['Com lucro positivo',vals.filter(v=>v>0).length],
+    ['Maior % ganho',vals[n-1].toFixed(2)+'%'],['Menor % ganho',vals[0].toFixed(2)+'%'],
+    ['Média %',media.toFixed(2)+'%'],['Mediana %',mediana.toFixed(2)+'%'],
+  ].map(([k,v])=>`<div class="stat-row"><span class="stat-name">${k}</span><span class="stat-val">${v}</span></div>`).join('');
+}
+
+function populateHoraFilter(){
+  const horas=[...new Set(allData.map(r=>r.hora))].sort();
+  const sel=document.getElementById('horaFilter');
+  sel.innerHTML='<option value="">Todos os horários</option>';
+  horas.forEach(h=>{const o=document.createElement('option');o.value=h;o.textContent=h;sel.appendChild(o);});
+}
+
+function applyFilters(){
+  const search=document.getElementById('searchInput').value.toLowerCase();
+  const hora=document.getElementById('horaFilter').value;
+  const sort=document.getElementById('sortSelect').value;
+  let f=allData.filter(r=>(!search||r.jogo.toLowerCase().includes(search))&&(!hora||r.hora===hora));
+  if(sort==='lucro_pct_asc')f.sort((a,b)=>a.lucro_pct-b.lucro_pct);
+  else if(sort==='lucro_pct_desc')f.sort((a,b)=>b.lucro_pct-a.lucro_pct);
+  else if(sort==='hora_asc')f.sort((a,b)=>a.hora.localeCompare(b.hora));
+  else if(sort==='casa_desc')f.sort((a,b)=>b.casa-a.casa);
+  else if(sort==='fora_desc')f.sort((a,b)=>b.fora-a.fora);
+  renderTable(f);
+  document.getElementById('tableCount').textContent=f.length+' de '+allData.length;
+  document.getElementById('tableFooterLeft').textContent=f.length+' jogos exibidos';
+}
+
+function normalizarNomeJogo(nome){
+  if(!nome) return '';
+  let n=nome.toLowerCase().trim();
+  // Remove acentos
+  n=n.normalize('NFD').replace(/[̀-ͯ]/g,'');
+  // Remove parênteses
+  n=n.replace(/\(.*?\)/g,'');
+  // Simplifica variações de Atlético
+  n=n.replace(/\b(atletico|atetico|athetico|ahético)\b/g,'atletico');
+  // Remove sufixos
+  const sufixos=[' fc',' sc',' riyadh',' jeddah',' cl',' sp',' rj',' mg',' rs',' u20',' u23',' women',' feminina',' feminino'];
+  sufixos.forEach(s=>n=n.replace(s,''));
+  // Normaliza separadores
+  n=n.replace(/-/g,' ').replace(/\./g,'').replace(/ vs /g,' x ');
+  // Remove espaços extras
+  n=n.replace(/\s+/g,' ').trim();
+  return n;
+}
+
+function renderJogos(){
+  if(!allSitesData.length){
+    document.getElementById('jogos-tbody').innerHTML='<tr><td colspan="7" style="text-align: center; color: var(--muted); padding: 20px;">Carregue um arquivo XLSX para ver os jogos.</td></tr>';
+    document.getElementById('jogosCapturados').textContent='0';
+    return;
+  }
+
+  // Agrupar por JOGO_LIMPO (vindo do Excel, calculado pelo Python) + campeonato.
+  // Usa jogo_limpo quando disponível (Excel gerado após a correção); cai pro
+  // normalizador JS antigo só se o arquivo for de uma versão anterior sem essa coluna.
+  const jogosMap=new Map();
+  allSitesData.forEach(r=>{
+    const jogoNorm=r.jogo_limpo||normalizarNomeJogo(r.jogo);
+    const key=(r.campeonato||'')+'|'+jogoNorm;
+    if(!jogosMap.has(key)){
+      jogosMap.set(key,{jogo:r.jogo,jogoNorm:jogoNorm,campeonato:r.campeonato||'',horas:new Set(),sites:new Map()});
+    }
+    const jogoEntry=jogosMap.get(key);
+    if(r.hora) jogoEntry.horas.add(r.hora);
+    if(!jogoEntry.sites.has(r.site)){
+      jogoEntry.sites.set(r.site,{casa:r.casa,empate:r.empate,fora:r.fora});
+    }
+  });
+
+  // Para cada jogo, usar a hora mais comum e calcular lucro%
+  jogosMap.forEach(jogo=>{
+    if(jogo.horas.size>0){
+      jogo.hora=Array.from(jogo.horas)[0];
+    }else{
+      jogo.hora='—';
+    }
+
+    // Calcular lucro_pct usando a melhor odd de cada coluna
+    const sitesTem=Array.from(jogo.sites.keys());
+    const maxCasa=Math.max(...sitesTem.map(s=>parseFloat(jogo.sites.get(s).casa)||0));
+    const maxEmp=Math.max(...sitesTem.map(s=>parseFloat(jogo.sites.get(s).empate)||0));
+    const maxFora=Math.max(...sitesTem.map(s=>parseFloat(jogo.sites.get(s).fora)||0));
+
+    const inv=1/maxCasa+1/maxEmp+1/maxFora;
+    jogo.lucro_pct=(1/inv-1)*100;
+  });
+
+  // Converter para array e ordenar por lucro_pct (melhor primeiro)
+  let jogos=Array.from(jogosMap.values());
+  jogos.sort((a,b)=>b.lucro_pct-a.lucro_pct);
+
+  // Extrair dinamicamente sites que têm dados + manter lista padrão de TODOS os sites
+  const SITES_PADRAO=['Betano','EstrelaBet','KTO','Superbet','Bet365','Betfair','F12','Betesporte','Novibet','Ona.bet','Sportingbet','Betboo','Galera.bet','Rivalo','Brazino777','BetWarrior','Pix.bet','Stake','BetMGM','1xbet'];
+  const sitesComDados=new Set();
+  allSitesData.forEach(r=>{
+    if(r.site) sitesComDados.add(r.site);
+  });
+
+  // Combinar: primeiro os que têm dados (em ordem do arquivo), depois os que não têm (em ordem padrão)
+  const TODOS_SITES=[];
+  const jaAdicionados=new Set();
+
+  // Primeiro adicionar sites com dados (em ordem de aparição no arquivo)
+  allSitesData.forEach(r=>{
+    if(r.site && !jaAdicionados.has(r.site)){
+      TODOS_SITES.push(r.site);
+      jaAdicionados.add(r.site);
+    }
+  });
+
+  // Depois adicionar sites da lista padrão que ainda não foram adicionados
+  SITES_PADRAO.forEach(site=>{
+    if(!jaAdicionados.has(site)){
+      TODOS_SITES.push(site);
+      jaAdicionados.add(site);
+    }
+  });
+
+  // Renderizar tabela
+  let html='';
+  jogos.forEach((jogo,idx)=>{
+    const sitesTem=Array.from(jogo.sites.keys());
+    const maxCasa=Math.max(...sitesTem.map(s=>parseFloat(jogo.sites.get(s).casa)||0));
+    const maxEmp=Math.max(...sitesTem.map(s=>parseFloat(jogo.sites.get(s).empate)||0));
+    const maxFora=Math.max(...sitesTem.map(s=>parseFloat(jogo.sites.get(s).fora)||0));
+
+    // Linha principal
+    const lucroClass=jogo.lucro_pct>0?'green':'muted';
+    const lucroSinal=jogo.lucro_pct>0?'+':'';
+    const tagCamp=campeonatosCarregados.length>1&&jogo.campeonato
+      ?`<span style="font-family:var(--mono);font-size:10px;color:var(--muted);border:1px solid var(--border2);border-radius:4px;padding:1px 6px;margin-right:8px;vertical-align:middle">${jogo.campeonato}</span>`
+      :'';
+    html+=`<tr class="jogos-row-main" onclick="toggleExpandGame(${idx})">
+      <td><span class="jogos-expand-icon" id="icon-${idx}">▶</span></td>
+      <td>${tagCamp}${jogo.jogo}</td>
+      <td>${jogo.hora}</td>
+      <td style="text-align:center;font-weight:500">${sitesTem.length}</td>
+      <td class="jogos-odd casa">${maxCasa.toFixed(2)}</td>
+      <td class="jogos-odd emp">${maxEmp.toFixed(2)}</td>
+      <td class="jogos-odd fora">${maxFora.toFixed(2)}</td>
+      <td style="font-family:var(--mono);font-weight:500;text-align:right;color:var(--${lucroClass})">${lucroSinal}${jogo.lucro_pct.toFixed(2)}%</td>
+    </tr>`;
+
+    // Linhas de detalhe (inicialmente ocultas)
+    html+=`<tr id="detail-${idx}" class="jogos-detail" style="display:none">
+      <td colspan="7" style="padding:0;border:none">
+        <div style="background:var(--bg3);padding:12px 14px;margin:4px 0">`;
+
+    TODOS_SITES.forEach(site=>{
+      const temSite=jogo.sites.has(site);
+      const cls=temSite?'site-sim':'site-nao';
+      if(temSite){
+        const odds=jogo.sites.get(site);
+        const casa=parseFloat(odds.casa);
+        const emp=parseFloat(odds.empate);
+        const fora=parseFloat(odds.fora);
+        const isCasaMax=casa===maxCasa;
+        const isEmpMax=emp===maxEmp;
+        const isForaMax=fora===maxFora;
+        html+=`<div style="display:flex;gap:14px;padding:8px 0;align-items:center;border-left:3px solid rgba(34,197,94,0.3);padding-left:10px" class="jogos-row-detail ${cls}">
+          <div class="jogos-site-name" style="min-width:120px">✅ ${site}</div>
+          <div class="jogos-odd casa ${isCasaMax?'highlight':''}${isCasaMax?'':''}" style="min-width:60px;text-align:center">${casa.toFixed(2)}</div>
+          <div class="jogos-odd emp ${isEmpMax?'highlight':''}${isEmpMax?'':''}" style="min-width:60px;text-align:center">${emp.toFixed(2)}</div>
+          <div class="jogos-odd fora ${isForaMax?'highlight':''}${isForaMax?'':''}" style="min-width:60px;text-align:center">${fora.toFixed(2)}</div>
+        </div>`;
+      }else{
+        html+=`<div style="display:flex;gap:14px;padding:8px 0;align-items:center;border-left:3px solid rgba(239,68,68,0.12);padding-left:10px" class="jogos-row-detail ${cls}">
+          <div class="jogos-site-name" style="min-width:120px">❌ ${site}</div>
+          <div class="jogos-odd nao" style="min-width:60px;text-align:center">—</div>
+          <div class="jogos-odd nao" style="min-width:60px;text-align:center">—</div>
+          <div class="jogos-odd nao" style="min-width:60px;text-align:center">—</div>
+        </div>`;
+      }
+    });
+
+    html+=`</div></td></tr>`;
+  });
+
+  document.getElementById('jogos-tbody').innerHTML=html;
+  // Contar todas as linhas de dados (somando todas as casas)
+  document.getElementById('jogosCapturados').textContent=allSitesData.length;
+}
+
+function toggleExpandGame(idx){
+  const detail=document.getElementById(`detail-${idx}`);
+  const icon=document.getElementById(`icon-${idx}`);
+  const isVisible=detail.style.display!=='none';
+  detail.style.display=isVisible?'none':'table-row';
+  icon.classList.toggle('expanded',!isVisible);
+}
+
+function renderEstatisticas(){
+  if(!allSitesData.length) return;
+
+  // Agrupar por JOGO_LIMPO + campeonato (mesma chave usada pelo renderJogos)
+  // Garante que variações de nome entre casas ("Operário-PR" vs "Operário Ferroviário EC PR")
+  // sejam tratadas como o mesmo jogo na hora de calcular qual casa tem a maior odd.
+  const jogosMap = new Map();
+  allSitesData.forEach(r => {
+    const key = (r.campeonato||'') + '|' + (r.jogo_limpo || normalizarNomeJogo(r.jogo));
+    if(!jogosMap.has(key)) jogosMap.set(key, []);
+    jogosMap.get(key).push(r);
+  });
+
+  // Contar para cada casa
+  const stats = new Map();
+
+  allSitesData.forEach(r => {
+    if(!stats.has(r.site)){
+      stats.set(r.site, {ganhadoras:0, ganhCasa:0, ganhEmp:0, ganhFora:0, count:0});
+    }
+  });
+
+  jogosMap.forEach((linhas) => {
+    const maxCasa  = Math.max(...linhas.map(r => parseFloat(r.casa)||0));
+    const maxEmp   = Math.max(...linhas.map(r => parseFloat(r.empate)||0));
+    const maxFora  = Math.max(...linhas.map(r => parseFloat(r.fora)||0));
+
+    linhas.forEach(r => {
+      const s = stats.get(r.site);
+      if(!s) return;
+      s.count++;
+      const c = parseFloat(r.casa)||0;
+      const e = parseFloat(r.empate)||0;
+      const f = parseFloat(r.fora)||0;
+      if(c > 0 && c === maxCasa){ s.ganhadoras++; s.ganhCasa++; }
+      if(e > 0 && e === maxEmp) { s.ganhadoras++; s.ganhEmp++;  }
+      if(f > 0 && f === maxFora){ s.ganhadoras++; s.ganhFora++; }
+    });
+  });
+
+  // Ordenar por ganhadoras desc
+  const sorted = [...stats.entries()].sort((a,b) => b[1].ganhadoras - a[1].ganhadoras);
+
+  const tbody = document.getElementById('estat-tbody');
+  if(!sorted.length){ tbody.innerHTML='<tr><td colspan="6" style="text-align:center;color:var(--muted);padding:20px;">Sem dados.</td></tr>'; return; }
+
+  tbody.innerHTML = sorted.map(([site, s], i) => {
+    const pct = s.count > 0 ? ((s.ganhadoras / (s.count * 3)) * 100).toFixed(1) : '0.0';
+    const barW = Math.round(s.ganhadoras / (sorted[0][1].ganhadoras || 1) * 100);
+    return `<tr>
+      <td style="color:var(--muted);font-family:var(--mono);font-size:11px">${i+1}</td>
+      <td><strong>${site}</strong></td>
+      <td style="text-align:center">
+        <div style="display:flex;align-items:center;gap:8px">
+          <div style="flex:1;background:var(--bg3);border-radius:4px;height:6px;overflow:hidden">
+            <div style="width:${barW}%;background:var(--green);height:100%;border-radius:4px"></div>
+          </div>
+          <span style="font-family:var(--mono);font-weight:600;color:var(--green);min-width:40px">${s.ganhadoras}</span>
+          <span style="font-family:var(--mono);font-size:10px;color:var(--muted)">${pct}%</span>
+        </div>
+      </td>
+      <td style="text-align:center;font-family:var(--mono);color:#93c5fd">${s.ganhCasa}</td>
+      <td style="text-align:center;font-family:var(--mono);color:#9ca3af">${s.ganhEmp}</td>
+      <td style="text-align:center;font-family:var(--mono);color:#fcd34d">${s.ganhFora}</td>
+    </tr>`;
+  }).join('');
+}
+
+function switchTab(tab){
+  document.querySelectorAll('.tab-panel').forEach(p=>p.classList.remove('active'));
+  document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));
+  document.getElementById('tab-'+tab).classList.add('active');
+  document.getElementById('btn-'+tab).classList.add('active');
+}
+
+function calcLucroMax(casa, empate, fora, capital){
+  const slots = [
+    {nome:'Casa',  odd:casa,   h1nome:'Empate', h1odd:empate, h2nome:'Fora',   h2odd:fora  },
+    {nome:'Empate',odd:empate, h1nome:'Casa',   h1odd:casa,   h2nome:'Fora',   h2odd:fora  },
+    {nome:'Fora',  odd:fora,   h1nome:'Casa',   h1odd:casa,   h2nome:'Empate', h2odd:empate},
+  ];
+  return slots.map(c=>{
+    const ah1=capital/c.h1odd, ah2=capital/c.h2odd, alvo=capital-ah1-ah2;
+    if(alvo<=0) return{...c, viavel:false, lucro_pct:null, alvo:0, ah1, ah2, retorno:0};
+    const retorno=alvo*c.odd;
+    return{...c, viavel:true, lucro_pct:(retorno-capital)/capital*100, alvo, ah1, ah2, retorno};
+  });
+}
+
+function recalculateLucroMaxCard(idx){
+  const capital = parseFloat(document.getElementById('apostaInput').value)||5000;
+  const casa   = parseFloat(document.getElementById(`lm-odd-casa-${idx}`).value)||1;
+  const empate = parseFloat(document.getElementById(`lm-odd-emp-${idx}`).value)||1;
+  const fora   = parseFloat(document.getElementById(`lm-odd-fora-${idx}`).value)||1;
+  const cen    = calcLucroMax(casa, empate, fora, capital);
+  const validos= cen.filter(c=>c.viavel);
+  const melhor = validos.length ? Math.max(...validos.map(c=>c.lucro_pct)) : null;
+  const hedgeVals = [
+    [capital/empate, capital/fora],
+    [capital/casa,   capital/fora],
+    [capital/casa,   capital/empate],
+  ];
+  cen.forEach((c,ci)=>{
+    const alvEl  = document.getElementById(`lm-alvo-${ci}-${idx}`);
+    const retEl  = document.getElementById(`lm-ret-${ci}-${idx}`);
+    const pEl    = document.getElementById(`lm-pct-${ci}-${idx}`);
+    const h1El   = document.getElementById(`lm-h1-${ci}-${idx}`);
+    const h2El   = document.getElementById(`lm-h2-${ci}-${idx}`);
+    const divEl  = document.getElementById(`lm-scen-${ci}-${idx}`);
+    if(!divEl) return;
+    if(!c.viavel){
+      divEl.className='lm-scen inviavel';
+      if(alvEl) alvEl.value='0';
+      if(retEl) retEl.textContent='—';
+      if(pEl)   pEl.textContent='Não viável';
+      if(h1El)  h1El.textContent='R$ '+fmtDec(hedgeVals[ci][0]);
+      if(h2El)  h2El.textContent='R$ '+fmtDec(hedgeVals[ci][1]);
+      return;
+    }
+    const isBest=melhor!==null&&Math.abs(c.lucro_pct-melhor)<0.001;
+    divEl.className='lm-scen '+(isBest?'best':c.lucro_pct>=0?'normal':'neg');
+    if(alvEl) alvEl.value=c.alvo.toFixed(2);
+    if(retEl) retEl.textContent='R$ '+fmtDec(c.retorno);
+    if(pEl)   pEl.textContent=(c.lucro_pct>=0?'+':'')+c.lucro_pct.toFixed(2)+'%';
+    if(h1El)  h1El.textContent='R$ '+fmtDec(hedgeVals[ci][0]);
+    if(h2El)  h2El.textContent='R$ '+fmtDec(hedgeVals[ci][1]);
+  });
+}
+function recalculateLucroMaxStake(idx, scenIdx){
+  const casa   = parseFloat(document.getElementById(`lm-odd-casa-${idx}`).value)||1;
+  const empate = parseFloat(document.getElementById(`lm-odd-emp-${idx}`).value)||1;
+  const fora   = parseFloat(document.getElementById(`lm-odd-fora-${idx}`).value)||1;
+  const newAlvo= parseFloat(document.getElementById(`lm-alvo-${scenIdx}-${idx}`).value)||0;
+  if(newAlvo<=0) return;
+  const slots=[
+    {odd:casa,   h1odd:empate, h2odd:fora  },
+    {odd:empate, h1odd:casa,   h2odd:fora  },
+    {odd:fora,   h1odd:casa,   h2odd:empate},
+  ];
+  const sc=slots[scenIdx];
+  const factor=1-1/sc.h1odd-1/sc.h2odd;
+  if(factor<=0) return;
+  const newCapital=newAlvo/factor;
+  const cen=calcLucroMax(casa, empate, fora, newCapital);
+  const validos=cen.filter(c=>c.viavel);
+  const melhor=validos.length?Math.max(...validos.map(c=>c.lucro_pct)):null;
+  const hedgeVals=[
+    [newCapital/empate, newCapital/fora],
+    [newCapital/casa,   newCapital/fora],
+    [newCapital/casa,   newCapital/empate],
+  ];
+  cen.forEach((c,ci)=>{
+    const retEl = document.getElementById(`lm-ret-${ci}-${idx}`);
+    const pEl   = document.getElementById(`lm-pct-${ci}-${idx}`);
+    const h1El  = document.getElementById(`lm-h1-${ci}-${idx}`);
+    const h2El  = document.getElementById(`lm-h2-${ci}-${idx}`);
+    const divEl = document.getElementById(`lm-scen-${ci}-${idx}`);
+    const alvEl = document.getElementById(`lm-alvo-${ci}-${idx}`);
+    if(!divEl) return;
+    if(!c.viavel){ if(retEl) retEl.textContent='—'; return; }
+    const isBest=melhor!==null&&Math.abs(c.lucro_pct-melhor)<0.001;
+    divEl.className='lm-scen '+(isBest?'best':c.lucro_pct>=0?'normal':'neg');
+    const alvoReal = ci===scenIdx ? newAlvo : c.alvo;
+    if(ci!==scenIdx && alvEl) alvEl.value=c.alvo.toFixed(2);
+    const retornoReal = alvoReal * c.odd;
+    const pctReal = (lucroReal => (lucroReal/newCapital)*100)(retornoReal - newCapital);
+    if(retEl) retEl.textContent='R$\u00a0'+fmtDec(retornoReal);
+    if(pEl)   pEl.textContent=(pctReal>=0?'+':'')+pctReal.toFixed(2)+'%';
+    if(h1El)  h1El.textContent='R$\u00a0'+fmtDec(hedgeVals[ci][0]);
+    if(h2El)  h2El.textContent='R$\u00a0'+fmtDec(hedgeVals[ci][1]);
+  });
+}
+
+function renderLucroMaximo(){
+  const capital=parseFloat(document.getElementById('apostaInput').value)||5000;
+  const el=document.getElementById('lucromax-cards');
+  if(!allData.length){
+    el.innerHTML='<div style="color:var(--muted);font-size:12px;text-align:center;padding:40px 0">Carregue um arquivo XLSX para ver os cenários.</div>';
+    return;
+  }
+  const comCen=allData.map(r=>{
+    const cen=calcLucroMax(r.casa,r.empate,r.fora,capital);
+    const validos=cen.filter(c=>c.viavel);
+    const melhor=validos.length?Math.max(...validos.map(c=>c.lucro_pct)):null;
+    return{r,cen,melhor};
+  });
+  const top=comCen
+    .filter(j=>j.melhor!==null&&j.melhor>0)
+    .sort((a,b)=>b.melhor-a.melhor)
+    .slice(0,6);
+  if(!top.length){
+    el.innerHTML='<div style="color:var(--muted);font-size:12px;text-align:center;padding:40px 0">Nenhum cenário com lucro positivo encontrado com o capital atual.</div>';
+    return;
+  }
+  const ranks=['rank1','rank2','rank3','rank3','rank3','rank3'];
+  const ords=['1º melhor','2º melhor','3º melhor','4º melhor','5º melhor','6º melhor'];
+  el.innerHTML=top.map(({r,cen,melhor},i)=>{
+    const oddsHtml=`<div class="top-odds" style="margin:10px 0 8px">
+      <input type="number" id="lm-odd-casa-${i}" class="odd-input odd-casa" step="0.01" min="1.0" value="${r.casa.toFixed(2)}" oninput="recalculateLucroMaxCard(${i})">
+      <input type="number" id="lm-odd-emp-${i}"  class="odd-input odd-emp"  step="0.01" min="1.0" value="${r.empate.toFixed(2)}" oninput="recalculateLucroMaxCard(${i})">
+      <input type="number" id="lm-odd-fora-${i}" class="odd-input odd-fora" step="0.01" min="1.0" value="${r.fora.toFixed(2)}" oninput="recalculateLucroMaxCard(${i})">
+    </div>`;
+    const scensHtml=cen.map((c,ci)=>{
+      if(!c.viavel) return`
+        <div class="lm-scen inviavel" id="lm-scen-${ci}-${i}" style="margin-bottom:6px">
+          <span class="lm-scen-label">${c.nome}</span>
+          <span style="color:var(--muted);font-size:11px">Não viável</span>
+        </div>`;
+      const isBest=Math.abs(c.lucro_pct-melhor)<0.001;
+      const cls=isBest?'best':c.lucro_pct>=0?'normal':'neg';
+      const s=c.lucro_pct>=0?'+':'';
+      return`
+        <div class="lm-scen ${cls}" id="lm-scen-${ci}-${i}" style="flex-direction:column;align-items:stretch;padding:10px 12px;margin-bottom:6px">
+          <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:6px">
+            <span style="font-size:13px">🎯</span>
+            <span class="lm-scen-label" style="font-size:13px;min-width:55px">${c.nome}${isBest?' ★':''}</span>
+            <input type="number" step="0.01" min="0" class="stake-input" id="lm-alvo-${ci}-${i}"
+              value="${c.alvo.toFixed(2)}" oninput="recalculateLucroMaxStake(${i},${ci})"
+              style="width:90px;font-size:13px">
+            <span style="color:var(--muted);font-size:12px">→</span>
+            <span id="lm-ret-${ci}-${i}" style="font-family:var(--mono);font-size:13px;color:#93c5fd">R$&nbsp;${fmtDec(c.retorno)}</span>
+            <span class="lm-scen-pct" id="lm-pct-${ci}-${i}" style="margin-left:auto">${s}${c.lucro_pct.toFixed(2)}%</span>
+          </div>
+          <div style="display:flex;flex-direction:column;gap:3px;padding-left:22px;border-left:2px solid rgba(255,255,255,0.1)">
+            <div style="display:flex;justify-content:space-between;align-items:center;font-size:12px;color:var(--muted);margin-bottom:4px">
+              <span>🛡️ ${c.h1nome}</span>
+              <input type="number" id="lm-h1-input-${ci}-${i}" step="0.01" min="0" value="${c.ah1.toFixed(2)}" oninput="recalcLucroMaxHedge(${i},${ci},'h1')" style="width:90px;font-family:var(--mono);font-size:12px;padding:3px 6px;background:var(--bg3);border:1px solid var(--border2);border-radius:4px;color:var(--text);text-align:right">
+            </div>
+            <div style="display:flex;justify-content:space-between;align-items:center;font-size:12px;color:var(--muted)">
+              <span>🛡️ ${c.h2nome}</span>
+              <input type="number" id="lm-h2-input-${ci}-${i}" step="0.01" min="0" value="${c.ah2.toFixed(2)}" oninput="recalcLucroMaxHedge(${i},${ci},'h2')" style="width:90px;font-family:var(--mono);font-size:12px;padding:3px 6px;background:var(--bg3);border:1px solid var(--border2);border-radius:4px;color:var(--text);text-align:right">
+            </div>
+          </div>
+        </div>`;
+    }).join('');
+    return`<div class="lm-card ${ranks[i]}">
+      <div class="lm-rank">${ords[i]}</div>
+      <div class="lm-jogo">${r.jogo}</div>
+      ${oddsHtml}
+      <div class="lm-scenarios">${scensHtml}</div>
+      <div class="lm-footer">${r.data} &middot; ${r.site}</div>
+    </div>`;
+  }).join('');
+}
+
+
+function copiarLink(url, btn){
+  navigator.clipboard.writeText(url).then(()=>{
+    const textoOriginal=btn.textContent;
+    btn.textContent='Copiado!';
+    btn.style.color='#16a34a';
+    setTimeout(()=>{
+      btn.textContent=textoOriginal;
+      btn.style.color='var(--green)';
+    },2000);
+  });
+}
+
+function consolidarOdds(rawData){
+  // Agrupa por (campeonato + JOGO) — ignora hora, que pode variar entre sites
+  const grupos={};
+
+  rawData.forEach(r=>{
+    const chave=(r.campeonato||'')+'|'+(r.jogo||'?');
+    if(!grupos[chave]){
+      grupos[chave]={
+        jogo:r.jogo||'',
+        data:r.data||'',
+        hora:r.hora||'',
+        campeonato:r.campeonato||'',
+        jogo_limpo:r.jogo_limpo||'',
+        linhas:[]
+      };
+    }
+    grupos[chave].linhas.push(r);
+  });
+
+  const consolidado=Object.values(grupos).map(grupo=>{
+    const linhas=grupo.linhas;
+
+    // Encontra melhor odd de cada resultado
+    const maxCasa=Math.max(...linhas.map(l=>l.casa||0));
+    const maxEmpate=Math.max(...linhas.map(l=>l.empate||0));
+    const maxFora=Math.max(...linhas.map(l=>l.fora||0));
+
+    // Procura na terceira aba (allSitesData) quais sites têm as maiores odds
+    // (usa JOGO_LIMPO do Excel quando disponível — mais confiável que renormalizar em JS)
+    const jogoNorm=grupo.jogo_limpo||normalizeJogo(grupo.jogo);
+    const mesmoJogo=s=>{
+      const sNorm=s.jogo_limpo||normalizeJogo(s.jogo);
+      return sNorm===jogoNorm && (s.campeonato||'')===(grupo.campeonato||'');
+    };
+    const casaSites=(allSitesData||[]).filter(s=>mesmoJogo(s)&&Math.abs(s.casa-maxCasa)<0.01);
+    const empateSites=(allSitesData||[]).filter(s=>mesmoJogo(s)&&Math.abs(s.empate-maxEmpate)<0.01);
+    const foraSites=(allSitesData||[]).filter(s=>mesmoJogo(s)&&Math.abs(s.fora-maxFora)<0.01);
+
+    // Contar TODAS as casas que oferecem este jogo
+    // A coluna SITE pode ter múltiplos sites separados por " & "
+    let totalCasas = 0;
+    const sitesSet = new Set();
+    linhas.forEach(l => {
+      if(l.site) {
+        l.site.split(' & ').forEach(s => {
+          const siteTrimmed = s.trim();
+          if(siteTrimmed) sitesSet.add(siteTrimmed);
+        });
+      }
+    });
+    totalCasas = sitesSet.size;
+
+    // Usar a hora mais comum ou a primeira encontrada
+    const horasCont = {};
+    linhas.forEach(l => {
+      const h = l.hora || '';
+      horasCont[h] = (horasCont[h] || 0) + 1;
+    });
+    const horaMaisComum = Object.keys(horasCont).reduce((a, b) =>
+      horasCont[a] > horasCont[b] ? a : b, '');
+
+    return {
+      jogo:grupo.jogo,
+      data:grupo.data,
+      hora:horaMaisComum || grupo.hora,
+      campeonato:grupo.campeonato,
+      jogo_limpo:grupo.jogo_limpo,
+      casa:maxCasa,casa_origem:casaSites[0]?.site||'',casa_link:casaSites[0]?.casa_link||'#',casa_sites:casaSites,
+      empate:maxEmpate,empate_origem:empateSites[0]?.site||'',empate_link:empateSites[0]?.empate_link||'#',empate_sites:empateSites,
+      fora:maxFora,fora_origem:foraSites[0]?.site||'',fora_link:foraSites[0]?.fora_link||'#',fora_sites:foraSites,
+      site:Array.from(sitesSet).join(' & '),
+      totalCasas:totalCasas
+    };
+  });
+
+  return consolidado;
+}
+
+function normalizeJogo(jogo){
+  return (jogo||'')
+    .toLowerCase()
+    .normalize('NFD')
+    .replace(/[̀-ͯ]/g,'')
+    .replace(/\s+/g,' ')
+    .trim();
+}
+
+function renderTopApostasComLinks(){
+  const capital=parseFloat(document.getElementById('apostaInput').value)||5000;
+  const el=document.getElementById('toplinks-cards');
+  if(!allData.length){
+    el.innerHTML='<div style="color:var(--muted);font-size:12px;text-align:center;padding:40px 0">Carregue um arquivo XLSX para ver as apostas.</div>';
+    return;
+  }
+  const comLucro=allData.filter(r=>r.lucro_pct>0);
+  if(!comLucro.length){
+    el.innerHTML='<div style="color:var(--muted);font-size:12px;text-align:center;padding:40px 0">Nenhuma aposta com lucro positivo encontrada.</div>';
+    return;
+  }
+  // Ordenar por lucro decrescente e pegar TOP 3
+  const topApostas=comLucro.sort((a,b)=>b.lucro_pct-a.lucro_pct).slice(0,3);
+  el.innerHTML=topApostas.map((r,idx)=>{
+    const inv=1/r.casa+1/r.empate+1/r.fora;
+    const v_casa=r.retorno/r.casa;
+    const v_emp=r.retorno/r.empate;
+    const v_fora=r.retorno/r.fora;
+    const lucro=r.retorno-capital;
+    // Usar os sites que têm as maiores odds (já calculados em consolidarOdds)
+    const casaSites=(r.casa_sites||[]).map(s=>({site:s.site||'?',link:s.casa_link||'#'}));
+    const empateSites=(r.empate_sites||[]).map(s=>({site:s.site||'?',link:s.empate_link||'#'}));
+    const foraSites=(r.fora_sites||[]).map(s=>({site:s.site||'?',link:s.fora_link||'#'}));
+
+    const urlsHtml=`
+      <div class="links-urls">
+        <div class="links-url-item">
+          <span class="links-url-label">Casa (${casaSites.length}):</span>
+          ${casaSites.map(s=>`<div class="links-url-text">${s.site}: <a href="${s.link}" target="_blank" style="color:var(--green);word-break:break-all">${s.link}</a></div>`).join('')}
+        </div>
+        <div class="links-url-item">
+          <span class="links-url-label">Empate (${empateSites.length}):</span>
+          ${empateSites.map(s=>`<div class="links-url-text">${s.site}: <a href="${s.link}" target="_blank" style="color:var(--green);word-break:break-all">${s.link}</a></div>`).join('')}
+        </div>
+        <div class="links-url-item">
+          <span class="links-url-label">Fora (${foraSites.length}):</span>
+          ${foraSites.map(s=>`<div class="links-url-text">${s.site}: <a href="${s.link}" target="_blank" style="color:var(--green);word-break:break-all">${s.link}</a></div>`).join('')}
+        </div>
+      </div>
+    `;
+
+    return `<div class="links-card">
+      <div class="links-jogo">${r.jogo}</div>
+      <div class="links-lucro">${lucro>=0?'+':''}${fmtDec(lucro)}</div>
+      <div class="links-lucro-pct">${r.lucro_pct>=0?'+':''}${r.lucro_pct.toFixed(2)}%</div>
+      <div class="link-row">
+        <span class="link-label">Casa</span>
+        <span class="link-url">${r.casa.toFixed(2)}</span>
+        <a href="${casaSites[0]?.link||'#'}" target="_blank" class="link-open" title="Abrir">🔗</a>
+        <button class="link-copy" onclick="copiarLink('${casaSites[0]?.link||'#'}', this)">Copiar</button>
+      </div>
+      <div class="link-row">
+        <span class="link-label">Empate</span>
+        <span class="link-url">${r.empate.toFixed(2)}</span>
+        <a href="${empateSites[0]?.link||'#'}" target="_blank" class="link-open" title="Abrir">🔗</a>
+        <button class="link-copy" onclick="copiarLink('${empateSites[0]?.link||'#'}', this)">Copiar</button>
+      </div>
+      <div class="link-row">
+        <span class="link-label">Fora</span>
+        <span class="link-url">${r.fora.toFixed(2)}</span>
+        <a href="${foraSites[0]?.link||'#'}" target="_blank" class="link-open" title="Abrir">🔗</a>
+        <button class="link-copy" onclick="copiarLink('${foraSites[0]?.link||'#'}', this)">Copiar</button>
+      </div>
+      ${urlsHtml}
+      <div style="margin-top:14px;padding-top:12px;border-top:1px solid var(--border)">
+        <div style="font-size:11px;font-family:var(--mono);color:var(--muted);margin-bottom:8px;text-transform:uppercase;letter-spacing:0.06em">💰 Distribuição de Stakes</div>
+        <div style="display:flex;gap:8px;flex-wrap:wrap">
+          <div style="flex:1;min-width:90px">
+            <div style="font-size:10px;color:#93c5fd;margin-bottom:3px">Casa</div>
+            <input type="number" id="tl-stake-casa-${idx}" step="0.01" min="0" value="${v_casa.toFixed(2)}" oninput="recalcDutchingStakeTopLinks(${idx},'casa',${r.casa},${r.empate},${r.fora})" style="width:100%;font-family:var(--mono);font-size:13px;padding:5px 6px;background:var(--bg3);border:1.5px solid rgba(59,130,246,0.5);border-radius:6px;color:#93c5fd;text-align:right">
+          </div>
+          <div style="flex:1;min-width:90px">
+            <div style="font-size:10px;color:#9ca3af;margin-bottom:3px">Empate</div>
+            <input type="number" id="tl-stake-emp-${idx}" step="0.01" min="0" value="${v_emp.toFixed(2)}" oninput="recalcDutchingStakeTopLinks(${idx},'emp',${r.casa},${r.empate},${r.fora})" style="width:100%;font-family:var(--mono);font-size:13px;padding:5px 6px;background:var(--bg3);border:1.5px solid rgba(107,114,128,0.4);border-radius:6px;color:#9ca3af;text-align:right">
+          </div>
+          <div style="flex:1;min-width:90px">
+            <div style="font-size:10px;color:#fcd34d;margin-bottom:3px">Fora</div>
+            <input type="number" id="tl-stake-fora-${idx}" step="0.01" min="0" value="${v_fora.toFixed(2)}" oninput="recalcDutchingStakeTopLinks(${idx},'fora',${r.casa},${r.empate},${r.fora})" style="width:100%;font-family:var(--mono);font-size:13px;padding:5px 6px;background:var(--bg3);border:1.5px solid rgba(245,158,11,0.5);border-radius:6px;color:#fcd34d;text-align:right">
+          </div>
+        </div>
+        <div style="display:flex;justify-content:space-between;margin-top:8px">
+          <span style="font-size:11px;color:var(--muted)">Total: <span id="tl-total-${idx}" style="font-family:var(--mono);color:var(--text)">R$ ${(v_casa+v_emp+v_fora).toLocaleString('pt-BR',{minimumFractionDigits:2,maximumFractionDigits:2})}</span></span>
+          <span style="font-size:11px;color:var(--muted)">Lucro: <span id="tl-lucro-${idx}" style="font-family:var(--mono);color:var(--green)">${r.lucro_pct>=0?'+':''}${r.lucro_pct.toFixed(2)}%</span></span>
+        </div>
+      </div>
+      <div class="links-meta">${r.data} · ${r.site}</div>
+    </div>`;
+  }).join('');
+}
+
+function renderTable(data){
+  const tbody=document.getElementById('tableBody');
+  if(!data.length){tbody.innerHTML='<tr><td colspan="12" class="empty">Nenhum jogo encontrado.</td></tr>';return;}
+  tbody.innerHTML=data.map(r=>{
+    const numCasas=r.totalCasas||(r.site||'').split('&').length;
+    const camp=r.campeonato||'';
+    const data_jogo=(r.data||'').split(' ')[0]||'';
+    const toFixed2=v=>isNaN(v)?'—':(+v).toFixed(2);
+    const campLower=camp.toLowerCase();
+    const campColor=campLower.includes('libertadores')?'#10b981':campLower.includes('sul americana')||campLower.includes('sulamericana')||campLower.includes('sul-americana')?'#ec4899':campLower.includes('serie a')||campLower.includes('série a')?'#3b82f6':campLower.includes('serie b')||campLower.includes('série b')?'#f59e0b':campLower.includes('copa')?'#a855f7':'#6b7280';
+    const campBadge=camp?`<span class="camp-badge" style="color:${campColor};border-color:${campColor}55;background:${campColor}18">${camp}</span>`:'';
+    return `<tr>
+    <td class="td-jogo" title="${r.jogo}">${r.jogo}</td>
+    <td>${campBadge}</td>
+    <td class="td-mono" style="white-space:nowrap">${data_jogo}</td>
+    <td class="td-mono">${r.hora}</td>
+    <td class="td-casas" style="text-align:center;font-weight:500;color:var(--green)">${numCasas}</td>
+    <td class="td-odd-casa td-odd-tip" data-tip="${r.casa_origem||r.site||''}">${toFixed2(r.casa)}</td>
+    <td class="td-odd-emp td-odd-tip" data-tip="${r.empate_origem||r.site||''}">${toFixed2(r.empate)}</td>
+    <td class="td-odd-fora td-odd-tip" data-tip="${r.fora_origem||r.site||''}">${toFixed2(r.fora)}</td>
+    <td class="td-val">${fmt(r.v_casa)}</td>
+    <td class="td-val">${fmt(r.v_emp)}</td>
+    <td class="td-val">${fmt(r.v_fora)}</td>
+    <td class="td-pct ${r.lucro_pct>0?'pos':'neg'}">${(r.lucro_pct>0?'+':'')+r.lucro_pct.toFixed(2)+'%'}</td>
+  </tr>`;
+  }).join('');
+}
+
+// ═══════════════════════════════════════════════════════════════════
+// EXPORTAR PDF - VERSÃO DIRETA COM jsPDF (SEM html2canvas)
+// ═══════════════════════════════════════════════════════════════════
+
+function exportarPDF() {
+  if (!allData || !allData.length) {
+    toast('⚠️ Nenhum dado carregado para exportar.', 'error', 4000);
+    return;
+  }
+
+  // Obter dados filtrados atuais
+  const search = document.getElementById('searchInput').value.toLowerCase();
+  const hora = document.getElementById('horaFilter').value;
+  const sort = document.getElementById('sortSelect').value;
+
+  let dadosFiltrados = allData.filter(r =>
+    (!search || r.jogo.toLowerCase().includes(search)) &&
+    (!hora || r.hora === hora)
+  );
+
+  if (sort === 'lucro_pct_asc') dadosFiltrados.sort((a, b) => a.lucro_pct - b.lucro_pct);
+  else if (sort === 'lucro_pct_desc') dadosFiltrados.sort((a, b) => b.lucro_pct - a.lucro_pct);
+  else if (sort === 'hora_asc') dadosFiltrados.sort((a, b) => a.hora.localeCompare(b.hora));
+  else if (sort === 'casa_desc') dadosFiltrados.sort((a, b) => b.casa - a.casa);
+  else if (sort === 'fora_desc') dadosFiltrados.sort((a, b) => b.fora - a.fora);
+
+  // Mostrar modal de opções
+  const modalHtml = `
+    <div id="pdfModal" style="position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.85);display:flex;align-items:center;justify-content:center;z-index:9999;">
+      <div style="background:#1a1e24;border-radius:12px;padding:32px;max-width:400px;width:90%;border:1px solid #2a2f3a;box-shadow:0 8px 40px rgba(0,0,0,0.6);">
+        <h3 style="margin:0 0 8px 0;font-family:Arial,sans-serif;font-size:18px;color:#e8eaed;">📄 Exportar PDF</h3>
+        <p style="color:#6b7280;font-size:13px;margin-bottom:20px;">${dadosFiltrados.length} jogos disponíveis</p>
+        <div style="display:flex;flex-direction:column;gap:10px;">
+          <button onclick="gerarPDFDireto('todos')" style="padding:12px 20px;background:#252a32;border:1px solid #2a2f3a;border-radius:8px;cursor:pointer;color:#e8eaed;font-size:14px;font-weight:600;display:flex;align-items:center;gap:10px;font-family:Arial,sans-serif;">
+            <span style="font-size:20px;">📄</span> Todos os jogos (${dadosFiltrados.length})
+          </button>
+          <button onclick="gerarPDFDireto('lucro')" style="padding:12px 20px;background:rgba(34,197,94,0.12);border:1px solid rgba(34,197,94,0.3);border-radius:8px;cursor:pointer;color:#22c55e;font-size:14px;font-weight:600;display:flex;align-items:center;gap:10px;font-family:Arial,sans-serif;">
+            <span style="font-size:20px;">💚</span> Apenas com lucro positivo (${dadosFiltrados.filter(r=>r.lucro_pct>0).length})
+          </button>
+          <button onclick="fecharModalPDF()" style="padding:10px;background:none;border:none;color:#6b7280;cursor:pointer;font-size:13px;margin-top:4px;font-family:Arial,sans-serif;">Cancelar</button>
+        </div>
+      </div>
+    </div>
+  `;
+
+  const modalExistente = document.getElementById('pdfModal');
+  if (modalExistente) modalExistente.remove();
+
+  const div = document.createElement('div');
+  div.innerHTML = modalHtml;
+  document.body.appendChild(div.firstElementChild);
+}
+
+function fecharModalPDF() {
+  const modal = document.getElementById('pdfModal');
+  if (modal) modal.remove();
+}
+
+function gerarPDFDireto(tipo) {
+  fecharModalPDF();
+
+  // Obter dados filtrados
+  const search = document.getElementById('searchInput').value.toLowerCase();
+  const hora = document.getElementById('horaFilter').value;
+  const sort = document.getElementById('sortSelect').value;
+
+  let dadosFiltrados = allData.filter(r =>
+    (!search || r.jogo.toLowerCase().includes(search)) &&
+    (!hora || r.hora === hora)
+  );
+
+  if (sort === 'lucro_pct_asc') dadosFiltrados.sort((a, b) => a.lucro_pct - b.lucro_pct);
+  else if (sort === 'lucro_pct_desc') dadosFiltrados.sort((a, b) => b.lucro_pct - a.lucro_pct);
+  else if (sort === 'hora_asc') dadosFiltrados.sort((a, b) => a.hora.localeCompare(b.hora));
+  else if (sort === 'casa_desc') dadosFiltrados.sort((a, b) => b.casa - a.casa);
+  else if (sort === 'fora_desc') dadosFiltrados.sort((a, b) => b.fora - a.fora);
+
+  const dadosExportar = tipo === 'lucro'
+    ? dadosFiltrados.filter(r => r.lucro_pct > 0)
+    : dadosFiltrados;
+
+  if (!dadosExportar.length) {
+    toast('⚠️ Nenhum jogo para exportar.', 'error', 4000);
+    return;
+  }
+
+  const dadosOrdenados = [...dadosExportar].sort((a, b) => b.lucro_pct - a.lucro_pct);
+
+  toast('⏳ Gerando PDF...', 'info', 3000);
+
+  const { jsPDF } = window.jspdf;
+  const doc = new jsPDF({
+    orientation: 'landscape',
+    unit: 'mm',
+    format: 'a4',
+    compress: true
+  });
+
+  const agora = new Date();
+  const dataStr = agora.toLocaleDateString('pt-BR') + ' ' + agora.toLocaleTimeString('pt-BR');
+  const apostaValor = parseFloat(document.getElementById('apostaInput').value) || 5000;
+
+  const toFixed2 = v => isNaN(v) ? '—' : (+v).toFixed(2);
+  const fmtValor = n => 'R$ ' + n.toLocaleString('pt-BR', {minimumFractionDigits: 2, maximumFractionDigits: 2});
+
+  // Configurações da página
+  const pageWidth = doc.internal.pageSize.getWidth();
+  const pageHeight = doc.internal.pageSize.getHeight();
+  const margin = 8;
+  const lineHeight = 5.5;
+  let y = margin + 8;
+
+  // Cores
+  const verde = '#22c55e';
+  const verdeEscuro = '#16a34a';
+  const cinza = '#6b7280';
+  const cinzaClaro = '#9ca3af';
+  const azulClaro = '#93c5fd';
+  const amarelo = '#fcd34d';
+  const branco = '#e8eaed';
+  const fundo = '#0d0f12';
+  const fundoTabela = '#1a1e24';
+
+  // ========== CABEÇALHO ==========
+  doc.setFillColor('#0d0f12');
+  doc.rect(0, 0, pageWidth, pageHeight, 'F');
+
+  // Título
+  doc.setFont('helvetica', 'bold');
+  doc.setFontSize(14);
+  doc.setTextColor(verde);
+  doc.text('📊 Análise de Odds · Aposta Holandesa', margin, y);
+  y += 5;
+
+  // Subtítulo
+  doc.setFont('helvetica', 'normal');
+  doc.setFontSize(9);
+  doc.setTextColor(cinza);
+  doc.text(`${dadosOrdenados.length} jogos · ${dadosOrdenados.filter(r=>r.lucro_pct>0).length} com lucro positivo`, margin, y);
+  y += 2;
+
+  // Data e valor
+  doc.setFontSize(8);
+  doc.setTextColor(cinza);
+  const metaX = pageWidth - margin - 40;
+  doc.text(`Exportado: ${dataStr}`, metaX, y - 5);
+  doc.text(`Valor: R$ ${apostaValor.toFixed(2)}`, metaX, y);
+
+  y += 6;
+
+  // ========== RESUMO ==========
+  const totalLucro = dadosOrdenados.filter(r => r.lucro_pct > 0).length;
+  const totalNegativo = dadosOrdenados.filter(r => r.lucro_pct < 0).length;
+  const totalZero = dadosOrdenados.filter(r => r.lucro_pct === 0).length;
+
+  doc.setFillColor('#13161a');
+  doc.roundedRect(margin, y - 2, 140, 7, 2, 2, 'F');
+
+  doc.setFontSize(8);
+  doc.setTextColor(cinzaClaro);
+  doc.text(`📊 Total: ${dadosOrdenados.length}`, margin + 3, y + 4);
+  doc.setTextColor(verde);
+  doc.text(`💚 ${totalLucro}`, margin + 40, y + 4);
+  doc.setTextColor('#f59e0b');
+  doc.text(`🟡 ${totalZero}`, margin + 65, y + 4);
+  doc.setTextColor(cinza);
+  doc.text(`⚫ ${totalNegativo}`, margin + 90, y + 4);
+
+  y += 10;
+
+  // ========== CABEÇALHO DA TABELA ==========
+  const colunas = [
+    { label: 'Jogo', w: 45, align: 'left' },
+    { label: 'Camp.', w: 22, align: 'center' },
+    { label: 'Data', w: 18, align: 'center' },
+    { label: 'Hora', w: 12, align: 'center' },
+    { label: 'Casas', w: 10, align: 'center' },
+    { label: 'Casa', w: 13, align: 'center' },
+    { label: 'Emp.', w: 13, align: 'center' },
+    { label: 'Fora', w: 13, align: 'center' },
+    { label: 'Val.Casa', w: 20, align: 'right' },
+    { label: 'Val.Emp.', w: 20, align: 'right' },
+    { label: 'Val.Fora', w: 20, align: 'right' },
+    { label: '% Ganho', w: 18, align: 'right' }
+  ];
+
+  // Desenhar cabeçalho
+  let x = margin;
+  doc.setFillColor(fundoTabela);
+  doc.roundedRect(margin - 1, y - 2, pageWidth - margin * 2 + 2, 6, 2, 2, 'F');
+
+  doc.setFont('helvetica', 'bold');
+  doc.setFontSize(6);
+  doc.setTextColor(cinza);
+  colunas.forEach(col => {
+    doc.text(col.label, x + (col.align === 'right' ? col.w - 1 : col.align === 'center' ? col.w / 2 : 1), y + 3, {
+      align: col.align === 'right' ? 'right' : col.align === 'center' ? 'center' : 'left'
+    });
+    x += col.w;
+  });
+
+  y += 6;
+
+  // ========== LINHAS DA TABELA ==========
+  doc.setFont('helvetica', 'normal');
+  doc.setFontSize(6.5);
+
+  let pageCount = 0;
+  const maxLinhasPorPagina = Math.floor((pageHeight - margin - 50) / lineHeight);
+
+  dadosOrdenados.forEach((r, idx) => {
+    // Verificar se precisa de nova página
+    if (pageCount >= maxLinhasPorPagina) {
+      doc.addPage();
+      y = margin + 8;
+      pageCount = 0;
+
+      // Re-desenhar cabeçalho na nova página
+      doc.setFillColor(fundoTabela);
+      doc.roundedRect(margin - 1, y - 2, pageWidth - margin * 2 + 2, 6, 2, 2, 'F');
+      doc.setFont('helvetica', 'bold');
+      doc.setFontSize(6);
+      doc.setTextColor(cinza);
+      let x2 = margin;
+      colunas.forEach(col => {
+        doc.text(col.label, x2 + (col.align === 'right' ? col.w - 1 : col.align === 'center' ? col.w / 2 : 1), y + 3, {
+          align: col.align === 'right' ? 'right' : col.align === 'center' ? 'center' : 'left'
+        });
+        x2 += col.w;
+      });
+      y += 6;
+    }
+
+    // Cor da linha (alternada)
+    const bgRow = idx % 2 === 0 ? '#0d0f12' : '#13161a';
+    doc.setFillColor(bgRow);
+    doc.rect(margin - 1, y - 1.5, pageWidth - margin * 2 + 2, lineHeight, 'F');
+
+    // Cor do % ganho
+    const corLucro = r.lucro_pct > 0 ? verde : (r.lucro_pct === 0 ? '#f59e0b' : cinza);
+    const sinal = r.lucro_pct > 0 ? '+' : '';
+
+    // Determinar cor do campeonato
+    const camp = r.campeonato || '';
+    const cl = camp.toLowerCase();
+    let campColor = cinza;
+    if (cl.includes('libertadores')) campColor = '#10b981';
+    else if (cl.includes('sul americana') || cl.includes('sulamericana')) campColor = '#ec4899';
+    else if (cl.includes('serie a') || cl.includes('série a')) campColor = '#3b82f6';
+    else if (cl.includes('serie b') || cl.includes('série b')) campColor = '#f59e0b';
+    else if (cl.includes('copa')) campColor = '#a855f7';
+
+    const valores = [
+      r.jogo.substring(0, 30),
+      camp,
+      (r.data || '').split(' ')[0] || '',
+      r.hora,
+      r.totalCasas || (r.site || '').split('&').length || '—',
+      toFixed2(r.casa),
+      toFixed2(r.empate),
+      toFixed2(r.fora),
+      fmtValor(r.v_casa),
+      fmtValor(r.v_emp),
+      fmtValor(r.v_fora),
+      `${sinal}${r.lucro_pct.toFixed(2)}%`
+    ];
+
+    x = margin;
+    colunas.forEach((col, ci) => {
+      doc.setTextColor(branco);
+      
+      // Tratamento especial para campeonato com cor
+      if (ci === 1 && camp) {
+        doc.setTextColor(campColor);
+        doc.setFont('helvetica', 'bold');
+        doc.setFontSize(5.5);
+        const campText = camp.length > 12 ? camp.substring(0, 10) + '…' : camp;
+        doc.text(campText, x + col.w / 2, y + 2, { align: 'center' });
+        doc.setFont('helvetica', 'normal');
+        doc.setFontSize(6.5);
+      } 
+      // Tratamento especial para % ganho com cor
+      else if (ci === colunas.length - 1) {
+        doc.setTextColor(corLucro);
+        doc.setFont('helvetica', 'bold');
+        doc.setFontSize(7);
+        doc.text(valores[ci], x + col.w - 1, y + 2, { align: 'right' });
+        doc.setFont('helvetica', 'normal');
+        doc.setFontSize(6.5);
+      }
+      // Cores específicas para odds
+      else if (ci === 5) { // Casa
+        doc.setTextColor(azulClaro);
+        doc.text(valores[ci], x + (col.align === 'center' ? col.w / 2 : col.align === 'right' ? col.w - 1 : 1), y + 2, {
+          align: col.align === 'right' ? 'right' : col.align === 'center' ? 'center' : 'left'
+        });
+      }
+      else if (ci === 6) { // Empate
+        doc.setTextColor(cinzaClaro);
+        doc.text(valores[ci], x + (col.align === 'center' ? col.w / 2 : col.align === 'right' ? col.w - 1 : 1), y + 2, {
+          align: col.align === 'right' ? 'right' : col.align === 'center' ? 'center' : 'left'
+        });
+      }
+      else if (ci === 7) { // Fora
+        doc.setTextColor(amarelo);
+        doc.text(valores[ci], x + (col.align === 'center' ? col.w / 2 : col.align === 'right' ? col.w - 1 : 1), y + 2, {
+          align: col.align === 'right' ? 'right' : col.align === 'center' ? 'center' : 'left'
+        });
+      }
+      else {
+        doc.setTextColor(branco);
+        const text = String(valores[ci] || '');
+        const displayText = text.length > 25 && ci === 0 ? text.substring(0, 23) + '…' : text;
+        doc.text(displayText, x + (col.align === 'right' ? col.w - 1 : col.align === 'center' ? col.w / 2 : 1), y + 2, {
+          align: col.align === 'right' ? 'right' : col.align === 'center' ? 'center' : 'left'
+        });
+      }
+      x += col.w;
+    });
+
+    y += lineHeight;
+    pageCount++;
+  });
+
+  // ========== RODAPÉ ==========
+  const footerY = pageHeight - 8;
+  doc.setFontSize(7);
+  doc.setTextColor(cinza);
+  doc.text(`📊 ${dadosOrdenados.length} jogos · ${totalLucro} com lucro positivo · ${totalZero} neutros · ${totalNegativo} negativos`, margin, footerY);
+  doc.text('aposta holandesa · cobertura total 3 resultados', pageWidth - margin - 50, footerY, { align: 'right' });
+
+  // ========== SALVAR ==========
+  try {
+    doc.save(`odds_${agora.toISOString().slice(0,10)}.pdf`);
+    toast('✅ PDF gerado com sucesso!', 'success', 3000);
+  } catch (err) {
+    console.error('Erro ao salvar PDF:', err);
+    toast('❌ Erro ao salvar PDF. Tente novamente.', 'error', 4000);
+  }
+}
+
+
+
+// ═══════════════════════════════════════════════════════════════════
+// HISTÓRICO - GERENCIAMENTO DE APOSTAS
+// ═══════════════════════════════════════════════════════════════════
+
+let historicoData = { jogadores: [], apostas: [] };
+let ordenacaoAtual = { coluna: 'data', direcao: 'desc' };
+let apostaSendoEditada = null;
+
+async function carregarHistorico() {
+  try {
+    const response = await fetch('historico.json');
+    if (response.ok) {
+      historicoData = await response.json();
+      renderizarJogadores();
+      renderizarTabela();
+      preencherSelectJogadores();
+      document.getElementById('form-data').valueAsDate = new Date();
+    } else {
+      console.warn('Arquivo historico.json não encontrado. Use: python -m http.server 8080');
+      mostrarMensagem('⚠️ Para usar o histórico, inicie um servidor HTTP:\npython -m http.server 8080', 'warning');
+    }
+  } catch (e) {
+    console.error('Erro ao carregar histórico:', e);
+    mostrarMensagem('⚠️ Para usar o histórico, inicie um servidor HTTP:\npython -m http.server 8080', 'warning');
+  }
+}
+
+function preencherSelectJogadores() {
+  const select = document.getElementById('form-jogador');
+  select.innerHTML = '';
+  historicoData.jogadores.forEach(j => {
+    const opt = document.createElement('option');
+    opt.value = j.id;
+    opt.textContent = j.nome;
+    select.appendChild(opt);
+  });
+
+  const selectFiltro = document.getElementById('filtro-jogador');
+  selectFiltro.innerHTML = '<option value="">Todos os jogadores</option>';
+  historicoData.jogadores.forEach(j => {
+    const opt = document.createElement('option');
+    opt.value = j.id;
+    opt.textContent = j.nome;
+    selectFiltro.appendChild(opt);
+  });
+}
+
+function renderizarJogadores() {
+  const container = document.getElementById('historico-jogadores');
+  container.innerHTML = '';
+
+  const filtroPeriodo = document.getElementById('filtro-periodo')?.value || 'total';
+
+  // Função para verificar se a data está no período selecionado
+  const estaEmPeriodo = (dataStr) => {
+    try {
+      let dataAposta;
+      if (dataStr.includes('T')) {
+        dataAposta = new Date(dataStr);
+      } else if (dataStr.includes('/')) {
+        const [dia, mes, ano, ...timeParts] = dataStr.split(/[\/\s:]/);
+        const horas = timeParts[0] || '0';
+        const minutos = timeParts[1] || '0';
+        dataAposta = new Date(ano, mes - 1, dia, horas, minutos);
+      } else {
+        dataAposta = new Date(dataStr);
+      }
+
+      if (isNaN(dataAposta.getTime())) return false;
+
+      const agora = new Date();
+      const mesAtual = agora.getMonth();
+      const anoAtual = agora.getFullYear();
+      const mesAposta = dataAposta.getMonth();
+      const anoAposta = dataAposta.getFullYear();
+
+      if (filtroPeriodo === 'mes') {
+        return mesAposta === mesAtual && anoAposta === anoAtual;
+      } else if (filtroPeriodo === 'ano') {
+        return anoAposta === anoAtual;
+      }
+      return true;
+    } catch (e) {
+      return true;
+    }
+  };
+
+  historicoData.jogadores.forEach(jogador => {
+    // Filtrar apostas do jogador E pelo período selecionado E excluindo Pendente
+    const apostas = historicoData.apostas.filter(a =>
+      a.jogador_id == jogador.id && estaEmPeriodo(a.data) && a.status !== 'Pendente'
+    );
+
+    const lucroTotal = apostas.reduce((sum, a) => sum + (parseFloat(a.lucro) || 0), 0);
+    const percentualUsado = (lucroTotal / jogador.limite) * 100;
+
+    let corBarra = 'verde';
+    let alertaTexto = '';
+    if (percentualUsado >= 90) {
+      corBarra = 'vermelho';
+      alertaTexto = '⚠️ Próximo do limite!';
+    } else if (percentualUsado >= 70) {
+      corBarra = 'amarelo';
+    }
+
+    const ganhos = apostas.filter(a => a.status === 'Ganhou').length;
+    const perdidos = apostas.filter(a => a.status === 'Perdeu').length;
+    const taxaAcerto = apostas.length > 0 ? ((ganhos / apostas.length) * 100).toFixed(1) : 0;
+
+    // Calcular lucro em percentual sobre o valor total apostado
+    const totalApostado = apostas.reduce((sum, a) => sum + a.valor, 0);
+    const lucroPercentual = totalApostado > 0 ? ((lucroTotal / totalApostado) * 100).toFixed(2) : 0;
+
+    const card = document.createElement('div');
+    card.className = 'historico-card';
+    card.innerHTML = `
+      <div class="historico-card-header">
+        <div class="historico-card-nome">${jogador.nome}</div>
+        <div class="historico-card-limite">Limite: R$ ${jogador.limite.toLocaleString('pt-BR', {minimumFractionDigits: 2})}</div>
+      </div>
+      <div class="historico-barra">
+        <div class="historico-barra-fill ${corBarra}" style="width: ${Math.min(percentualUsado, 100)}%"></div>
+      </div>
+      <div class="historico-stat">
+        <span class="historico-stat-label">Lucro total:</span>
+        <span class="historico-stat-value ${lucroTotal >= 0 ? '' : 'negativo'}">R$ ${lucroTotal.toLocaleString('pt-BR', {minimumFractionDigits: 2})} (${lucroPercentual}%)</span>
+      </div>
+      <div class="historico-stat">
+        <span class="historico-stat-label">IR estimado:</span>
+        <span class="historico-stat-value">${lucroTotal >= 2000 ? '📊 Consulte contador' : '✅ Isento'}</span>
+      </div>
+      <div class="historico-stat">
+        <span class="historico-stat-label">Total apostas:</span>
+        <span class="historico-stat-value">${apostas.length}</span>
+      </div>
+      <div class="historico-stat">
+        <span class="historico-stat-label">Ganhos / Perdidos:</span>
+        <span class="historico-stat-value">${ganhos} / ${perdidos}</span>
+      </div>
+      <div class="historico-stat">
+        <span class="historico-stat-label">Taxa de acerto:</span>
+        <span class="historico-stat-value">${taxaAcerto}%</span>
+      </div>
+      ${alertaTexto ? `<div class="historico-alerta">${alertaTexto}</div>` : ''}
+    `;
+    container.appendChild(card);
+  });
+}
+
+function toggleFormularioAposta() {
+  const form = document.getElementById('formulario-aposta');
+  form.style.display = form.style.display === 'none' ? 'block' : 'none';
+  if (form.style.display === 'block') {
+    document.getElementById('form-data').valueAsDate = new Date();
+    document.getElementById('form-titulo').textContent = '➕ Nova Aposta';
+    document.getElementById('btn-salvar-aposta').textContent = '💾 Salvar';
+    apostaSendoEditada = null;
+    form.reset();
+    document.getElementById('form-bonus').value = '0';
+    document.getElementById('form-retorno').value = '0';
+    document.getElementById('formulario-aposta').scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }
+}
+
+document.addEventListener('DOMContentLoaded', function() {
+  // Carregar histórico ao abrir a página (PRIMEIRO!)
+  carregarHistoricoInicial();
+
+  // Atualizar retorno ao mudar odd ou valor
+  const inputOdd = document.getElementById('form-odd');
+  const inputValor = document.getElementById('form-valor');
+  const inputRetorno = document.getElementById('form-retorno');
+
+  function atualizarRetorno() {
+    const odd = parseFloat(inputOdd.value) || 0;
+    const valor = parseFloat(inputValor.value) || 0;
+    const retorno = odd * valor;
+    inputRetorno.value = retorno.toFixed(2);
+  }
+
+  if (inputOdd) inputOdd.addEventListener('input', atualizarRetorno);
+  if (inputValor) inputValor.addEventListener('input', atualizarRetorno);
+
+  // Setup filtros
+  const filtroJogador = document.getElementById('filtro-jogador');
+  const filtroStatus = document.getElementById('filtro-status');
+  const filtroPeriodo = document.getElementById('filtro-periodo');
+  const filtroData = document.getElementById('filtro-data');
+  const filtroEvento = document.getElementById('filtro-evento');
+
+  function aplicarFiltros() {
+    renderizarTabela();
+    renderizarJogadores();
+  }
+
+  if (filtroJogador) filtroJogador.addEventListener('change', aplicarFiltros);
+  if (filtroStatus) filtroStatus.addEventListener('change', aplicarFiltros);
+  if (filtroPeriodo) filtroPeriodo.addEventListener('change', aplicarFiltros);
+  if (filtroData) filtroData.addEventListener('change', aplicarFiltros);
+  if (filtroEvento) filtroEvento.addEventListener('input', aplicarFiltros);
+});
+
+function salvarAposta() {
+  const jogadorId = parseInt(document.getElementById('form-jogador').value);
+  const dataHoraInput = document.getElementById('form-data').value;
+  const data = dataHoraInput;
+
+  const esporte = document.getElementById('form-esporte').value;
+  const liga = document.getElementById('form-liga').value;
+  const evento = document.getElementById('form-evento').value;
+  const mercado = document.getElementById('form-mercado').value;
+  const casa = document.getElementById('form-casa').value;
+  const odd = parseFloat(document.getElementById('form-odd').value);
+  const valor = parseFloat(document.getElementById('form-valor').value);
+  const bonus = parseFloat(document.getElementById('form-bonus').value) || 0;
+  const resultado = document.getElementById('form-resultado').value;
+  const status = document.getElementById('form-status').value;
+
+  // Calcular retorno e lucro baseado no status
+  let retorno, lucro;
+  if (status === 'Perdeu') {
+    retorno = 0;
+    lucro = -valor;
+  } else if (status === 'Ganhou') {
+    retorno = (odd * valor) + bonus;
+    lucro = retorno - valor;
+  } else {
+    retorno = (odd * valor) + bonus;
+    lucro = 0;
+  }
+
+  if (apostaSendoEditada !== null && apostaSendoEditada !== undefined) {
+    // Modo de edição: atualizar aposta existente
+    const index = historicoData.apostas.findIndex(a => a.id === apostaSendoEditada);
+
+    if (index !== -1) {
+      historicoData.apostas[index] = {
+        id: apostaSendoEditada,
+        jogador_id: jogadorId,
+        data,
+        esporte,
+        liga,
+        evento,
+        mercado,
+        casa,
+        odd,
+        valor,
+        bonus,
+        retorno,
+        resultado,
+        lucro,
+        status
+      };
+      mostrarMensagem('✅ Aposta atualizada com sucesso!', 'success');
+      apostaSendoEditada = null;
+    }
+  } else {
+    // Modo de nova aposta
+    const novaAposta = {
+      id: Date.now(),
+      jogador_id: jogadorId,
+      data,
+      esporte,
+      liga,
+      evento,
+      mercado,
+      casa,
+      odd,
+      valor,
+      bonus,
+      retorno,
+      resultado,
+      lucro,
+      status
+    };
+    historicoData.apostas.push(novaAposta);
+    mostrarMensagem('✅ Aposta salva com sucesso!', 'success');
+  }
+
+  salvarHistoricoLocalStorage();
+  renderizarJogadores();
+  renderizarTabela();
+  preencherSelectJogadores();
+  cancelarEdicao();
+}
+
+function duplicarAposta(apostaSelecionada = null) {
+  // Implementação simplificada - copia os campos não-sensíveis
+  alert('Funcionalidade de duplicar aposta - preencha manualmente os novos valores');
+}
+
+function renderizarTabela() {
+  const tbody = document.getElementById('historico-tbody');
+  if (!tbody) return;
+
+  // Garantir que historicoData e suas propriedades existem
+  if (!historicoData) {
+    console.warn('historicoData não inicializado');
+    tbody.innerHTML = '<tr><td colspan="13" style="text-align: center; padding: 20px;">Nenhuma aposta registrada</td></tr>';
+    return;
+  }
+
+  if (!historicoData.apostas || !Array.isArray(historicoData.apostas) || historicoData.apostas.length === 0) {
+    tbody.innerHTML = '<tr><td colspan="13" style="text-align: center; padding: 20px;">Nenhuma aposta registrada</td></tr>';
+    return;
+  }
+
+  const filtroJogador = document.getElementById('filtro-jogador').value;
+  const filtroStatus = document.getElementById('filtro-status').value;
+  const filtroPeriodo = document.getElementById('filtro-periodo').value;
+  const filtroData = document.getElementById('filtro-data').value;
+  const filtroEvento = document.getElementById('filtro-evento').value.toLowerCase();
+
+  // Função para verificar se a data está no período selecionado
+  const estaEmPeriodo = (dataStr) => {
+    try {
+      // Converter ISO 8601 ou DD/MM/YYYY para Date
+      let dataAposta;
+      if (dataStr.includes('T')) {
+        dataAposta = new Date(dataStr);
+      } else if (dataStr.includes('/')) {
+        const [dia, mes, ano, ...timeParts] = dataStr.split(/[\/\s:]/);
+        const horas = timeParts[0] || '0';
+        const minutos = timeParts[1] || '0';
+        dataAposta = new Date(ano, mes - 1, dia, horas, minutos);
+      } else {
+        dataAposta = new Date(dataStr);
+      }
+
+      if (isNaN(dataAposta.getTime())) return false;
+
+      const agora = new Date();
+      const mesAtual = agora.getMonth();
+      const anoAtual = agora.getFullYear();
+      const mesAposta = dataAposta.getMonth();
+      const anoAposta = dataAposta.getFullYear();
+
+      if (filtroPeriodo === 'mes') {
+        return mesAposta === mesAtual && anoAposta === anoAtual;
+      } else if (filtroPeriodo === 'ano') {
+        return anoAposta === anoAtual;
+      }
+      // 'total' ou 'custom' mostra tudo
+      return true;
+    } catch (e) {
+      console.warn('Erro ao filtrar por período:', dataStr, e);
+      return true;
+    }
+  };
+
+  let apostas = historicoData.apostas.filter(a => {
+    if (!a) return false;
+    if (filtroJogador && a.jogador_id != filtroJogador) return false;
+    if (filtroStatus && a.status !== filtroStatus) return false;
+    if (!estaEmPeriodo(a.data)) return false;
+
+    // Filtro de data exata (se selecionada)
+    if (filtroData) {
+      try {
+        // filtroData vem como YYYY-MM-DD
+        let dataApostaStr;
+        if (a.data.includes('T')) {
+          // ISO 8601: 2026-06-24T17:00 → extrair só a data
+          dataApostaStr = a.data.split('T')[0];
+        } else if (a.data.includes('/')) {
+          // DD/MM/YYYY HH:MM → converter para YYYY-MM-DD
+          const partes = a.data.split(' ')[0]; // pega só a data
+          const [dia, mes, ano] = partes.split('/');
+          dataApostaStr = `${ano}-${mes.padStart(2, '0')}-${dia.padStart(2, '0')}`;
+        } else {
+          dataApostaStr = a.data;
+        }
+
+        if (filtroData !== dataApostaStr) {
+          return false;
+        }
+      } catch (e) {
+        return false;
+      }
+    }
+
+    // Filtro de evento (busca por texto)
+    if (filtroEvento && !a.evento.toLowerCase().includes(filtroEvento)) {
+      return false;
+    }
+
+    return true;
+  });
+
+  // Ordenar
+  apostas.sort((a, b) => {
+    let valA = a[ordenacaoAtual.coluna];
+    let valB = b[ordenacaoAtual.coluna];
+    if (typeof valA === 'string') valA = valA.toLowerCase();
+    if (typeof valB === 'string') valB = valB.toLowerCase();
+    return ordenacaoAtual.direcao === 'asc' ? (valA > valB ? 1 : -1) : (valA < valB ? 1 : -1);
+  });
+
+  tbody.innerHTML = apostas.map(aposta => {
+    const jogador = historicoData.jogadores.find(j => j.id == aposta.jogador_id);
+
+    // Formatar data de ISO 8601 (2026-06-24T17:00) para "24/06/2026 17:00"
+    let dataExibicao = 'Data inválida';
+    if (aposta.data) {
+      try {
+        // Se for ISO 8601 (2026-06-24T17:00)
+        if (aposta.data.includes('T')) {
+          const [dataParte, horaParte] = aposta.data.split('T');
+          const [ano, mes, dia] = dataParte.split('-');
+          const [horas, minutos] = horaParte.split(':');
+          dataExibicao = `${dia}/${mes}/${ano} ${horas}:${minutos}`;
+        } else if (aposta.data.includes(' ')) {
+          // Se for DD/MM/YYYY HH:MM (formato antigo)
+          dataExibicao = aposta.data;
+        } else {
+          // Tentar parsear como Date
+          const d = new Date(aposta.data);
+          if (!isNaN(d.getTime())) {
+            const dia = String(d.getDate()).padStart(2, '0');
+            const mes = String(d.getMonth() + 1).padStart(2, '0');
+            const ano = d.getFullYear();
+            const horas = String(d.getHours()).padStart(2, '0');
+            const minutos = String(d.getMinutes()).padStart(2, '0');
+            dataExibicao = `${dia}/${mes}/${ano} ${horas}:${minutos}`;
+          }
+        }
+      } catch (e) {
+        console.warn('Erro ao formatar data:', aposta.data, e);
+      }
+    }
+
+    // Calcular percentual
+    const percentual = aposta.valor > 0 ? (aposta.lucro / aposta.valor * 100).toFixed(2) : 0;
+    // Compatibilidade com dados antigos (campo bonus pode não existir)
+    const bonus = aposta.bonus || 0;
+
+    return `<tr>
+      <td>${dataExibicao}</td>
+      <td>${aposta.evento}</td>
+      <td>${aposta.casa}</td>
+      <td>${aposta.odd.toFixed(2)}</td>
+      <td>R$ ${aposta.valor.toLocaleString('pt-BR', {minimumFractionDigits: 2})}</td>
+      <td>R$ ${bonus.toLocaleString('pt-BR', {minimumFractionDigits: 2})}</td>
+      <td>R$ ${aposta.retorno.toLocaleString('pt-BR', {minimumFractionDigits: 2})}</td>
+      <td>${aposta.resultado}</td>
+      <td style="color: ${aposta.lucro >= 0 ? '#10b981' : '#ef4444'}">R$ ${aposta.lucro.toLocaleString('pt-BR', {minimumFractionDigits: 2})}</td>
+      <td>${percentual}%</td>
+      <td>${jogador?.nome || '?'}</td>
+      <td>${aposta.status}</td>
+      <td>
+        <button class="btn-editar" onclick="editarAposta(${aposta.id})">✏️</button>
+        <button class="btn-excluir" onclick="excluirAposta(${aposta.id})">🗑️</button>
+      </td>
+    </tr>`;
+  }).join('');
+
+  // Atualizar totais (apenas Ganhou e Perdeu, excluindo Pendente)
+  const apostasFinalizadas = apostas.filter(a => a.status !== 'Pendente');
+  const totalInvestido = apostasFinalizadas.reduce((sum, a) => sum + a.valor, 0);
+  const totalBonus = apostasFinalizadas.reduce((sum, a) => sum + (a.bonus || 0), 0);
+  const totalRetorno = apostasFinalizadas.reduce((sum, a) => sum + a.retorno, 0);
+  const totalLucro = apostasFinalizadas.reduce((sum, a) => sum + a.lucro, 0);
+  const totalPercentual = totalInvestido > 0 ? ((totalLucro / totalInvestido) * 100).toFixed(2) : 0;
+
+  document.getElementById('total-investido').textContent = `R$ ${totalInvestido.toLocaleString('pt-BR', {minimumFractionDigits: 2})}`;
+  document.getElementById('total-bonus').textContent = `R$ ${totalBonus.toLocaleString('pt-BR', {minimumFractionDigits: 2})}`;
+  document.getElementById('total-retorno').textContent = `R$ ${totalRetorno.toLocaleString('pt-BR', {minimumFractionDigits: 2})}`;
+  document.getElementById('total-lucro').textContent = `R$ ${totalLucro.toLocaleString('pt-BR', {minimumFractionDigits: 2})}`;
+  document.getElementById('total-percentual').textContent = `${totalPercentual}%`;
+}
+
+function ordenarTabela(coluna) {
+  if (ordenacaoAtual.coluna === coluna) {
+    ordenacaoAtual.direcao = ordenacaoAtual.direcao === 'asc' ? 'desc' : 'asc';
+  } else {
+    ordenacaoAtual.coluna = coluna;
+    ordenacaoAtual.direcao = 'desc';
+  }
+  renderizarTabela();
+}
+
+function abrirEdicaoAposta(id) {
+  // Garantir que id é um número
+  id = parseInt(id);
+  const aposta = historicoData.apostas.find(a => a.id === id);
+  if (!aposta) {
+    mostrarMensagem('❌ Aposta não encontrada', 'error');
+    return;
+  }
+
+  // Preencher formulário com dados da aposta
+  document.getElementById('form-jogador').value = aposta.jogador_id;
+  document.getElementById('form-data').value = aposta.data;
+  document.getElementById('form-esporte').value = aposta.esporte;
+  document.getElementById('form-liga').value = aposta.liga;
+  document.getElementById('form-evento').value = aposta.evento;
+  document.getElementById('form-mercado').value = aposta.mercado;
+  document.getElementById('form-casa').value = aposta.casa;
+  document.getElementById('form-odd').value = aposta.odd;
+  document.getElementById('form-valor').value = aposta.valor;
+  document.getElementById('form-bonus').value = aposta.bonus || 0;
+  document.getElementById('form-resultado').value = aposta.resultado;
+  document.getElementById('form-status').value = aposta.status;
+
+  // Atualizar estado de edição
+  apostaSendoEditada = id;
+
+  // Atualizar UI
+  document.getElementById('form-titulo').textContent = '✏️ Editar Aposta';
+  document.getElementById('btn-salvar-aposta').textContent = '🔄 Atualizar';
+
+  // Mostrar formulário e switch para aba histórico
+  document.getElementById('formulario-aposta').style.display = 'block';
+  switchTab('historico');
+
+  // Scroll para o formulário
+  setTimeout(() => {
+    document.getElementById('formulario-aposta').scrollIntoView({ behavior: 'smooth', block: 'start' });
+    document.getElementById('form-jogador').focus();
+  }, 100);
+}
+
+function cancelarEdicao() {
+  apostaSendoEditada = null;
+  document.getElementById('form-titulo').textContent = '➕ Nova Aposta';
+  document.getElementById('btn-salvar-aposta').textContent = '💾 Salvar';
+
+  // Reset completo do formulário
+  const form = document.getElementById('formulario-aposta');
+  form.reset();
+  form.style.display = 'none';
+
+  // Reset dos campos específicos
+  document.getElementById('form-bonus').value = '0';
+  document.getElementById('form-retorno').value = '0';
+  document.getElementById('form-data').valueAsDate = new Date();
+}
+
+function editarAposta(id) {
+  abrirEdicaoAposta(id);
+}
+
+function excluirAposta(id) {
+  if (confirm('Tem certeza que deseja excluir esta aposta?')) {
+    historicoData.apostas = historicoData.apostas.filter(a => a.id !== id);
+    salvarHistoricoLocalStorage();
+    renderizarJogadores();
+    renderizarTabela();
+    mostrarMensagem('✅ Aposta excluída!', 'success');
+  }
+}
+
+function exportarHistoricoExcel() {
+  if (historicoData.apostas.length === 0) {
+    alert('Nenhuma aposta para exportar');
+    return;
+  }
+
+  const dados = historicoData.apostas.map(a => ({
+    'Data': new Date(a.data).toLocaleDateString('pt-BR'),
+    'Evento': a.evento,
+    'Esporte': a.esporte,
+    'Liga': a.liga,
+    'Mercado': a.mercado,
+    'Casa': a.casa,
+    'Odd': a.odd,
+    'Valor (R$)': a.valor,
+    'Bônus (R$)': a.bonus || 0,
+    'Retorno (R$)': a.retorno,
+    'Resultado': a.resultado,
+    'Lucro (R$)': a.lucro,
+    'Lucro (%)': (a.lucro / a.valor * 100).toFixed(2),
+    'Status': a.status,
+    'Jogador': historicoData.jogadores.find(j => j.id == a.jogador_id)?.nome || '?'
+  }));
+
+  const ws = XLSX.utils.json_to_sheet(dados);
+  const wb = XLSX.utils.book_new();
+  XLSX.utils.book_append_sheet(wb, ws, 'Apostas');
+  XLSX.writeFile(wb, 'historico_apostas.xlsx');
+  mostrarMensagem('✅ Excel exportado!', 'success');
+}
+
+function salvarHistoricoLocalStorage() {
+  // Salvar em localStorage
+  const json = JSON.stringify(historicoData, null, 2);
+  localStorage.setItem('historico_dados', json);
+
+  // Atualizar timestamp
+  const agora = new Date();
+  const horas = String(agora.getHours()).padStart(2, '0');
+  const minutos = String(agora.getMinutes()).padStart(2, '0');
+  const timestamp = `${horas}:${minutos}`;
+  localStorage.setItem('historico_timestamp', timestamp);
+
+  // Atualizar indicador na página
+  const elemento = document.getElementById('timestamp-salvamento');
+  if (elemento) {
+    elemento.textContent = `Salvo automaticamente às ${timestamp}`;
+  }
+}
+
+function mostrarMensagem(texto, tipo = 'info') {
+  // Usar toast do dashboard existente
+  const div = document.createElement('div');
+  div.style.cssText = 'position:fixed;top:20px;right:20px;padding:12px 16px;background:var(--green);color:#000;border-radius:4px;z-index:9999;animation:slideIn 0.3s';
+  div.textContent = texto;
+  document.body.appendChild(div);
+  setTimeout(() => div.remove(), 3000);
+}
+
+
+// ═══════════════════════════════════════════════════════════════════
+// GERENCIAR JOGADORES
+// ═══════════════════════════════════════════════════════════════════
+
+function abrirGerenciadorJogadores() {
+  document.getElementById('modal-jogadores').style.display = 'flex';
+  renderizarListaJogadores();
+}
+
+function fecharGerenciadorJogadores() {
+  document.getElementById('modal-jogadores').style.display = 'none';
+}
+
+function renderizarListaJogadores() {
+  const container = document.getElementById('lista-jogadores');
+  container.innerHTML = '';
+
+  historicoData.jogadores.forEach(jogador => {
+    const div = document.createElement('div');
+    div.className = 'jogador-item';
+    div.innerHTML = `
+      <div class="jogador-info">
+        <div class="jogador-nome">${jogador.nome}</div>
+        <div class="jogador-limite">Limite: R$ ${jogador.limite.toLocaleString('pt-BR', {minimumFractionDigits: 2})}</div>
+        <div class="${jogador.ativo ? 'jogador-ativo' : 'jogador-inativo'}">
+          ${jogador.ativo ? '✅ Ativo' : '❌ Inativo'}
+        </div>
+      </div>
+      <div class="jogador-acoes">
+        <button class="btn-editar-jogador" onclick="editarJogador(${jogador.id})">✏️ Editar</button>
+        <button class="btn-ativar-jogador" onclick="toggleAtivarJogador(${jogador.id})">
+          ${jogador.ativo ? '❌ Desativar' : '✅ Ativar'}
+        </button>
+        <button class="btn-excluir-jogador" onclick="excluirJogador(${jogador.id})">🗑️</button>
+      </div>
+    `;
+    container.appendChild(div);
+  });
+}
+
+function adicionarJogador() {
+  const nome = document.getElementById('novo-jogador-nome').value.trim();
+  const limite = parseFloat(document.getElementById('novo-jogador-limite').value) || 5000;
+
+  if (!nome) {
+    alert('⚠️ Insira um nome para o jogador');
+    return;
+  }
+
+  const novoId = Math.max(...historicoData.jogadores.map(j => j.id), 0) + 1;
+  historicoData.jogadores.push({
+    id: novoId,
+    nome,
+    limite,
+    ativo: true
+  });
+
+  salvarHistoricoLocalStorage();
+  preencherSelectJogadores();
+  renderizarListaJogadores();
+  renderizarJogadores();
+
+  document.getElementById('novo-jogador-nome').value = '';
+  document.getElementById('novo-jogador-limite').value = '5000';
+  mostrarMensagem('✅ Jogador adicionado!', 'success');
+}
+
+function editarJogador(id) {
+  const jogador = historicoData.jogadores.find(j => j.id === id);
+  if (!jogador) return;
+
+  const novoNome = prompt('Novo nome:', jogador.nome);
+  if (novoNome === null) return;
+
+  const novoLimite = prompt('Novo limite (R$):', jogador.limite);
+  if (novoLimite === null) return;
+
+  jogador.nome = novoNome.trim() || jogador.nome;
+  jogador.limite = parseFloat(novoLimite) || jogador.limite;
+
+  salvarHistoricoLocalStorage();
+  preencherSelectJogadores();
+  renderizarListaJogadores();
+  renderizarJogadores();
+  renderizarTabela();
+  mostrarMensagem('✅ Jogador editado!', 'success');
+}
+
+function toggleAtivarJogador(id) {
+  const jogador = historicoData.jogadores.find(j => j.id === id);
+  if (jogador) {
+    jogador.ativo = !jogador.ativo;
+    salvarHistoricoLocalStorage();
+    preencherSelectJogadores();
+    renderizarListaJogadores();
+    renderizarJogadores();
+    mostrarMensagem(`${jogador.ativo ? '✅ Jogador ativado!' : '❌ Jogador desativado!'}`, 'success');
+  }
+}
+
+function excluirJogador(id) {
+  if (confirm('⚠️ Tem certeza que deseja excluir este jogador?')) {
+    historicoData.jogadores = historicoData.jogadores.filter(j => j.id !== id);
+    historicoData.apostas = historicoData.apostas.filter(a => a.jogador_id !== id);
+    salvarHistoricoLocalStorage();
+    preencherSelectJogadores();
+    renderizarListaJogadores();
+    renderizarJogadores();
+    renderizarTabela();
+    mostrarMensagem('✅ Jogador excluído!', 'success');
+  }
+}
+
+// ═══════════════════════════════════════════════════════════════════
+// CARREGAR/IMPORTAR ARQUIVO JSON
+// ═══════════════════════════════════════════════════════════════════
+
+function importarBackup(event) {
+  const file = event.target.files[0];
+  if (!file) return;
+
+  const reader = new FileReader();
+  reader.onload = (e) => {
+    try {
+      let dados = JSON.parse(e.target.result);
+
+      // Validar e corrigir estrutura
+      if (!dados.jogadores) dados.jogadores = [];
+      if (!dados.apostas) dados.apostas = [];
+
+      // Se o JSON é um array de apostas (formato alternativo), converter
+      if (Array.isArray(dados) && !Array.isArray(dados.jogadores)) {
+        dados = {
+          jogadores: historicoData.jogadores || [],
+          apostas: dados
+        };
+      }
+
+      // Validar que temos pelo menos um dos dois
+      if (!dados.jogadores && !dados.apostas) {
+        throw new Error('Arquivo não contém jogadores ou apostas');
+      }
+
+      // Limpar dados inválidos em apostas
+      if (Array.isArray(dados.apostas)) {
+        dados.apostas = dados.apostas.filter(a => a && a.id && a.data && a.valor !== undefined);
+        // Compatibilidade com dados antigos - adicionar campo bonus se não existir
+        dados.apostas = dados.apostas.map(aposta => {
+          if (typeof aposta.bonus === 'undefined') {
+            aposta.bonus = 0;
+          }
+          return aposta;
+        });
+      }
+
+      // Carregar dados
+      historicoData = dados;
+      salvarHistoricoLocalStorage();
+
+      // Atualizar interface
+      preencherSelectJogadores();
+      renderizarJogadores();
+      renderizarTabela();
+
+      // Feedback
+      const quantidadeApostas = dados.apostas ? dados.apostas.length : 0;
+      const quantidadeJogadores = dados.jogadores ? dados.jogadores.length : 0;
+      mostrarMensagem(`✅ Importado: ${quantidadeJogadores} jogador(es), ${quantidadeApostas} aposta(s)!`, 'success');
+
+      // Limpar input
+      event.target.value = '';
+    } catch (err) {
+      console.error('Erro ao importar:', err);
+      alert('❌ Erro ao importar arquivo.\n\nErro: ' + err.message + '\n\nCertifique-se de que é um arquivo JSON válido com estrutura {jogadores: [], apostas: []}');
+      event.target.value = '';
+    }
+  };
+  reader.readAsText(file);
+}
+
+function exportarBackup() {
+  const json = JSON.stringify(historicoData, null, 2);
+  const blob = new Blob([json], { type: 'application/json' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = 'historico.json';
+  a.click();
+  URL.revokeObjectURL(url);
+  mostrarMensagem('✅ Backup exportado como historico.json!', 'success');
+}
+
+// ═══════════════════════════════════════════════════════════════════
+// CARREGAR HISTÓRICO AO ABRIR A PÁGINA
+// ═══════════════════════════════════════════════════════════════════
+
+function carregarHistoricoInicial() {
+  // Carregar do localStorage (principal)
+  const dadosArmazenados = localStorage.getItem('historico_dados');
+  if (dadosArmazenados) {
+    try {
+      historicoData = JSON.parse(dadosArmazenados);
+
+      // Compatibilidade com dados antigos - adicionar campo bonus se não existir
+      if (historicoData.apostas && Array.isArray(historicoData.apostas)) {
+        historicoData.apostas = historicoData.apostas.map(aposta => {
+          if (aposta && typeof aposta.bonus === 'undefined') {
+            aposta.bonus = 0;
+          }
+          return aposta;
+        });
+      }
+
+      preencherSelectJogadores();
+      renderizarJogadores();
+      renderizarTabela();
+
+      // Mostrar timestamp do último salvamento
+      const timestamp = localStorage.getItem('historico_timestamp');
+      if (timestamp) {
+        const elemento = document.getElementById('timestamp-salvamento');
+        if (elemento) {
+          elemento.textContent = `Salvo automaticamente às ${timestamp}`;
+        }
+      }
+      return;
+    } catch (e) {
+      console.warn('Erro ao carregar do localStorage');
+    }
+  }
+
+  // Se não houver dados no localStorage, tentar carregar arquivo historico.json padrão
+  fetch('historico.json')
+    .then(response => response.json())
+    .then(dados => {
+      historicoData = dados;
+      salvarHistoricoLocalStorage();
+      preencherSelectJogadores();
+      renderizarJogadores();
+      renderizarTabela();
+      mostrarMensagem('✅ Arquivo padrão carregado', 'success');
+    })
+    .catch(() => {
+      // Nenhum arquivo encontrado, inicializar vazio
+      historicoData = { jogadores: [], apostas: [] };
+      document.getElementById('timestamp-salvamento').textContent = 'Nenhum dado carregado. Clique em "Importar backup" para carregar um arquivo.';
+    });
+}
+</script>
+</div>
+</body>
+</html>
