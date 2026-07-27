@@ -963,7 +963,7 @@ td{padding:11px 14px;white-space:nowrap;}
 
 // === CONFIGURACAO FIREBASE (PREENCHA COM SEUS DADOS DO CONSOLE) ===
 const firebaseConfig = {
-  apiKey: "AIzaSyAkNVAA4nP9K0LYgJQiqJQSXSunMpyYLL0I",
+  apiKey: "AIzaSyAkNVA4nP9K0LYgJQiqJQ5XSunMpyYLL0I",
   authDomain: "odds-dashboard-27024.firebaseapp.com",
   databaseURL: "https://odds-dashboard-27024-default-rtdb.firebaseio.com",
   projectId: "odds-dashboard-27024",
@@ -1156,9 +1156,9 @@ function syncToFirebase() {
 
 function clearDataFromFirebase() {
   if (!isAdmin || !db) return;
-  if (confirm(` TEM CERTEZA?
+  if (confirm(' TEM CERTEZA?
 
-Isso vai apagar TODOS os dados do dashboard para TODOS os usuarios. Esta acao nao pode ser desfeita.`)) {
+Isso vai apagar TODOS os dados do dashboard para TODOS os usuarios. Esta acao nao pode ser desfeita.')) {
     db.ref('oddsData').remove()
       .then(() => {
         allDataRawMaster = [];
