@@ -978,6 +978,25 @@ let currentUser = null;
 let registerMode = false;
 let dataListener = null;
 
+/* REGRAS FIREBASE RECOMENDADAS:
+{
+  "rules": {
+    ".read": false,
+    ".write": false,
+    "oddsData": {
+      ".read": "auth != null",
+      ".write": "auth != null && root.child('config').child('adminEmail').val() == auth.token.email"
+    },
+    "config": {
+      ".read": "auth != null",
+      ".write": "auth != null && !root.child('config').child('adminEmail').exists()"
+    }
+  }
+}
+A regra .write de config permite que o PRIMEIRO usuario a logar defina o admin.
+Depois que adminEmail existe, so o admin pode alterar.
+*/
+
 function initFirebase() {
   try {
     firebase.initializeApp(firebaseConfig);
@@ -1091,25 +1110,26 @@ function checkAdmin(user) {
   }
   console.log('[DEBUG] Verificando admin para:', user.email);
 
-  db.ref('config/adminEmail').once('value')
-    .then(snap => {
-      const adminEmail = snap.val();
-      console.log('[DEBUG] adminEmail no Firebase:', adminEmail);
-      console.log('[DEBUG] user.email:', user.email);
-      console.log('[DEBUG] Sao iguais?', user.email === adminEmail);
-      console.log('[DEBUG] lowercase comparação:', user.email.toLowerCase() === (adminEmail || '').toLowerCase());
+  // Primeiro tenta ler o nó config inteiro para debug
+  db.ref('config').once('value')
+    .then(configSnap => {
+      const configVal = configSnap.val();
+      console.log('[DEBUG] Nó config inteiro:', configVal);
 
-      // Comparacao case-insensitive para evitar problemas de maiusculas/minusculas
+      const adminEmail = configVal ? configVal.adminEmail : null;
+      console.log('[DEBUG] adminEmail extraído:', adminEmail);
+      console.log('[DEBUG] user.email:', user.email);
+
+      // Comparacao case-insensitive
       isAdmin = user.email.toLowerCase() === (adminEmail || '').toLowerCase();
 
       if (isAdmin) {
         console.log('[DEBUG] USUARIO E ADMIN!');
+      } else if (!adminEmail) {
+        console.log('[DEBUG] ATENCAO: config/adminEmail esta VAZIO!');
+        console.log('[DEBUG] Clique no botao "Tornar-se Admin" no site.');
       } else {
-        console.log('[DEBUG] Usuario NAO e admin.');
-        if (!adminEmail) {
-          console.log('[DEBUG] ATENCAO: config/adminEmail esta VAZIO ou nao existe no Firebase!');
-          console.log('[DEBUG] Va em Realtime Database > Dados e crie: config > adminEmail =', user.email);
-        }
+        console.log('[DEBUG] Usuario NAO e admin. Admin atual:', adminEmail);
       }
 
       setupUIForRole();
@@ -1117,8 +1137,7 @@ function checkAdmin(user) {
       listenToData();
     })
     .catch((err) => {
-      console.error('[DEBUG] ERRO ao ler config/adminEmail:', err.code, err.message);
-      console.log('[DEBUG] Verifique as regras de seguranca do Realtime Database.');
+      console.error('[DEBUG] ERRO ao ler config:', err.code, err.message);
       isAdmin = false;
       setupUIForRole();
       showApp();
@@ -1190,6 +1209,24 @@ function listenToData() {
       }
     }
   });
+}
+
+function tornarSeAdmin() {
+  if (!currentUser || !db) {
+    toast('Erro: nao esta logado.', 'error');
+    return;
+  }
+  if (!confirm('Deseja definir ' + currentUser.email + ' como administrador?')) return;
+
+  db.ref('config/adminEmail').set(currentUser.email)
+    .then(() => {
+      toast('Admin configurado! Recarregando...', 'success');
+      setTimeout(() => location.reload(), 1500);
+    })
+    .catch(err => {
+      console.error('[DEBUG] Erro ao definir admin:', err);
+      toast('Erro: ' + err.message + '. Verifique as regras de seguranca.', 'error', 6000);
+    });
 }
 
 function syncToFirebase() {
