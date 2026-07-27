@@ -1156,9 +1156,9 @@ function syncToFirebase() {
 
 function clearDataFromFirebase() {
   if (!isAdmin || !db) return;
-  if (confirm(' TEM CERTEZA?
+  if (confirm(` TEM CERTEZA?
 
-Isso vai apagar TODOS os dados do dashboard para TODOS os usuarios. Esta acao nao pode ser desfeita.')) {
+Isso vai apagar TODOS os dados do dashboard para TODOS os usuarios. Esta acao nao pode ser desfeita.`)) {
     db.ref('oddsData').remove()
       .then(() => {
         allDataRawMaster = [];
