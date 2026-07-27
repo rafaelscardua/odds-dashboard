@@ -480,6 +480,7 @@ td{padding:11px 14px;white-space:nowrap;}
     <button class="login-btn" onclick="doLogin()">Entrar</button>
     <div class="login-error" id="loginError"></div>
     <div style="margin-top:10px;font-size:11px;color:var(--muted);text-align:center">Acesso apenas para contas autorizadas pelo administrador.</div>
+    <div id="loginUpdatesStatus" style="margin-top:16px;padding-top:14px;border-top:1px solid var(--border2);font-family:var(--mono);font-size:11px;color:var(--muted);line-height:1.8;text-align:left"></div>
   </div>
 </div>
 
@@ -574,6 +575,8 @@ td{padding:11px 14px;white-space:nowrap;}
       <span class="aposta-label" style="margin-left: 40px;">Jogos capturados</span>
       <span class="aposta-hint" id="jogosCapturados" style="font-weight: 500; color: var(--green);">0</span>
     </div>
+
+    <div id="appUpdatesStatus" style="font-family:var(--mono);font-size:11px;color:var(--muted);line-height:1.8;margin:-4px 0 16px 0"></div>
 
     <div class="metrics">
       <div class="metric"><div class="metric-label">Melhor lucro</div><div class="metric-value green" id="m-lucro">—</div><div class="metric-sub" id="m-lucro-jogo">carregue o arquivo</div></div>
@@ -994,6 +997,7 @@ let currentUser = null;
 let registerMode = false;
 let dataListener = null;
 let hiddenTabs = {}; // { comparativo:false, toplinks:true, ... } - true = oculta para usuarios comuns
+let atualizacoesCampeonatos = {}; // { "Serie A": 1690000000000, "Libertadores": 1689000000000 }
 const TAB_LIST = [
   { key: 'comparativo',   label: '📊 Comparativo' },
   { key: 'toplinks',      label: '🔗 Top Apostas c/ Links' },
@@ -1026,6 +1030,9 @@ function initFirebase() {
   try {
     firebase.initializeApp(firebaseConfig);
     db = firebase.database();
+
+    // Le o status publico de "ultima atualizacao por campeonato" - funciona mesmo sem login
+    carregarStatusPublico();
 
     // Configurar persistencia para SESSION (desloga ao fechar o navegador)
     firebase.auth().setPersistence(firebase.auth.Auth.Persistence.SESSION)
@@ -1203,7 +1210,51 @@ function setupUIForRole() {
   }
 }
 
-function applyTabVisibility() {
+/* ===============================================================
+   STATUS PUBLICO DE ATUALIZACAO POR CAMPEONATO
+   (visivel na tela de login E dentro do app, sem exigir permissao de admin)
+=============================================================== */
+
+function formatarDataAtualizacao(timestamp) {
+  const d = new Date(timestamp);
+  const dia = String(d.getDate()).padStart(2, '0');
+  const mes = String(d.getMonth() + 1).padStart(2, '0');
+  const ano = d.getFullYear();
+  const hora = String(d.getHours()).padStart(2, '0');
+  const min = String(d.getMinutes()).padStart(2, '0');
+  return `${dia}/${mes}/${ano} às ${hora}:${min} horas`;
+}
+
+function renderizarStatusAtualizacoes(elId) {
+  const el = document.getElementById(elId);
+  if (!el) return;
+  const chaves = Object.keys(atualizacoesCampeonatos || {});
+  if (!chaves.length) { el.innerHTML = ''; return; }
+  const linhas = chaves
+    .sort((a, b) => atualizacoesCampeonatos[b] - atualizacoesCampeonatos[a])
+    .map(nome => `<div class="update-line">Atualizado em: <strong>${nome}</strong> ${formatarDataAtualizacao(atualizacoesCampeonatos[nome])}</div>`)
+    .join('');
+  el.innerHTML = linhas;
+}
+
+function carregarStatusPublico() {
+  if (!db) return;
+  db.ref('publicStatus/atualizacoes').on('value', snap => {
+    atualizacoesCampeonatos = snap.val() || {};
+    renderizarStatusAtualizacoes('loginUpdatesStatus');
+    renderizarStatusAtualizacoes('appUpdatesStatus');
+  }, err => {
+    console.warn('[DEBUG] Nao foi possivel ler publicStatus:', err.message);
+  });
+}
+
+function salvarStatusPublico() {
+  if (!isAdmin || !db) return;
+  db.ref('publicStatus/atualizacoes').set(atualizacoesCampeonatos)
+    .catch(err => console.warn('[DEBUG] Erro ao salvar publicStatus:', err.message));
+}
+
+
   const btnGerenciarAbas = document.getElementById('btnGerenciarAbas');
   if (btnGerenciarAbas) btnGerenciarAbas.style.display = isAdmin ? 'inline-flex' : 'none';
 
@@ -1335,7 +1386,10 @@ function syncToFirebase() {
     uploadedBy: currentUser ? currentUser.email : 'admin'
   };
   db.ref('oddsData').set(payload)
-    .then(() => toast(' Dados salvos na nuvem! Todos os usuarios estao vendo agora.', 'success', 4000))
+    .then(() => {
+      toast(' Dados salvos na nuvem! Todos os usuarios estao vendo agora.', 'success', 4000);
+      salvarStatusPublico();
+    })
     .catch(err => toast('Erro ao salvar na nuvem: ' + err.message, 'error', 5000));
 }
 
@@ -1349,7 +1403,12 @@ Isso vai apagar TODOS os dados do dashboard para TODOS os usuarios. Esta acao na
         allDataRawMaster = [];
         allSitesDataMaster = [];
         campeonatosCarregados = [];
+        atualizacoesCampeonatos = {};
         resetUINoData();
+        renderizarStatusAtualizacoes('appUpdatesStatus');
+        return db.ref('publicStatus/atualizacoes').remove();
+      })
+      .then(() => {
         toast(' Dados removidos.', 'success');
       })
       .catch(err => toast('Erro ao remover: ' + err.message, 'error'));
@@ -1456,6 +1515,7 @@ async function handleFile(input){
     allDataRawMaster = [];
     allSitesDataMaster = [];
     campeonatosCarregados = [];
+    atualizacoesCampeonatos = {};
   }
 
   const carregadosAgora=[];
@@ -1476,6 +1536,7 @@ async function handleFile(input){
     const campeonato=nomeCampeonatoDoArquivo(file.name);
     if(!campeonatosCarregados.includes(campeonato)) campeonatosCarregados.push(campeonato);
     carregadosAgora.push(campeonato);
+    atualizacoesCampeonatos[campeonato] = Date.now(); // data/hora do upload deste arquivo
 
     raw.forEach(r=>{ r.__campeonato=campeonato; });
     allDataRawMaster.push(...raw);
@@ -1495,6 +1556,7 @@ async function handleFile(input){
     atualizarSelectCampeonatos();
     document.getElementById('btnAdicionar').style.display='inline-flex';
     aplicarFiltroCampeonato(filtroCampeonatoAtual);
+    renderizarStatusAtualizacoes('appUpdatesStatus');
     toast(` Processado(s): ${carregadosAgora.join(', ')}`,'success');
     syncToFirebase();
   }
