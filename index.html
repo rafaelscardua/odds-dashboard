@@ -967,7 +967,7 @@ const firebaseConfig = {
   authDomain: "odds-dashboard-27024.firebaseapp.com",
   databaseURL: "https://odds-dashboard-27024-default-rtdb.firebaseio.com",
   projectId: "odds-dashboard-27024",
-  storageBucket: "odds-dashboard-27024.firebasestorage.app",
+  storageBucket: "odds-dashboard-27024.appspot.com",
   messagingSenderId: "343560951959",
   appId: "1:343560951959:web:7160d27de8ab0049d071d2"
 };
@@ -982,11 +982,24 @@ function initFirebase() {
   try {
     firebase.initializeApp(firebaseConfig);
     db = firebase.database();
+
+    // Configurar persistencia para SESSION (desloga ao fechar o navegador)
+    firebase.auth().setPersistence(firebase.auth.Auth.Persistence.SESSION)
+      .then(() => {
+        console.log('[DEBUG] Persistencia de auth configurada: SESSION');
+      })
+      .catch((err) => {
+        console.warn('[DEBUG] Erro ao configurar persistencia:', err);
+      });
+
     firebase.auth().onAuthStateChanged(user => {
+      console.log('[DEBUG] onAuthStateChanged - user:', user ? user.email : 'null');
       if (user) {
         currentUser = user;
+        console.log('[DEBUG] Usuario logado:', user.email);
         checkAdmin(user);
       } else {
+        console.log('[DEBUG] Nenhum usuario logado, mostrando tela de login');
         showLogin();
       }
     });
@@ -1008,6 +1021,12 @@ function showApp() {
   document.getElementById('loginScreen').style.display = 'none';
   document.getElementById('appContainer').style.display = 'block';
   document.getElementById('userBadge').textContent = currentUser ? currentUser.email : '';
+
+  // Se nao houver dados carregados, mostrar overlay apropriado
+  if ((!allDataRawMaster || allDataRawMaster.length === 0) && (!allData || allData.length === 0)) {
+    const overlay = document.getElementById('dropOverlay');
+    if (overlay) overlay.classList.remove('hidden');
+  }
 }
 
 function toggleRegisterMode() {
@@ -1055,48 +1074,84 @@ function doRegister() {
 }
 
 function doLogout() {
-  firebase.auth().signOut();
-}
-
-function checkAdmin(user) {
-  if (!db) return;
-  // Verifica no Realtime Database se o email do usuario e o admin configurado
-  db.ref('config/adminEmail').once('value').then(snap => {
-    const adminEmail = snap.val();
-    isAdmin = (user.email === adminEmail);
-    setupUIForRole();
-    showApp();
-    listenToData();
-  }).catch(() => {
-    // Se nao conseguir ler config, assume nao-admin
+  firebase.auth().signOut().then(() => {
+    console.log('[DEBUG] Logout realizado com sucesso');
+    currentUser = null;
     isAdmin = false;
-    setupUIForRole();
-    showApp();
-    listenToData();
+    showLogin();
+  }).catch((err) => {
+    console.error('[DEBUG] Erro no logout:', err);
   });
 }
 
+function checkAdmin(user) {
+  if (!db) {
+    console.error('[DEBUG] db nao inicializado!');
+    return;
+  }
+  console.log('[DEBUG] Verificando admin para:', user.email);
+
+  db.ref('config/adminEmail').once('value')
+    .then(snap => {
+      const adminEmail = snap.val();
+      console.log('[DEBUG] adminEmail no Firebase:', adminEmail);
+      console.log('[DEBUG] user.email:', user.email);
+      console.log('[DEBUG] Sao iguais?', user.email === adminEmail);
+      console.log('[DEBUG] lowercase comparação:', user.email.toLowerCase() === (adminEmail || '').toLowerCase());
+
+      // Comparacao case-insensitive para evitar problemas de maiusculas/minusculas
+      isAdmin = user.email.toLowerCase() === (adminEmail || '').toLowerCase();
+
+      if (isAdmin) {
+        console.log('[DEBUG] USUARIO E ADMIN!');
+      } else {
+        console.log('[DEBUG] Usuario NAO e admin.');
+        if (!adminEmail) {
+          console.log('[DEBUG] ATENCAO: config/adminEmail esta VAZIO ou nao existe no Firebase!');
+          console.log('[DEBUG] Va em Realtime Database > Dados e crie: config > adminEmail =', user.email);
+        }
+      }
+
+      setupUIForRole();
+      showApp();
+      listenToData();
+    })
+    .catch((err) => {
+      console.error('[DEBUG] ERRO ao ler config/adminEmail:', err.code, err.message);
+      console.log('[DEBUG] Verifique as regras de seguranca do Realtime Database.');
+      isAdmin = false;
+      setupUIForRole();
+      showApp();
+      listenToData();
+    });
+}
+
 function setupUIForRole() {
+  console.log('[DEBUG] setupUIForRole - isAdmin:', isAdmin);
   const adminBadge = document.getElementById('adminBadge');
   const btnLimpar = document.getElementById('btnLimpar');
   const btnAdicionar = document.getElementById('btnAdicionar');
   const dropAdmin = document.getElementById('dropAdmin');
   const dropUser = document.getElementById('dropUser');
-  const fileInput = document.getElementById('fileInput');
+  const btnLoad = document.querySelector('.btn-load[onclick*="fileInput"]');
 
   if (isAdmin) {
-    adminBadge.style.display = 'inline-block';
-    btnLimpar.style.display = 'inline-flex';
-    btnAdicionar.style.display = 'inline-flex';
+    console.log('[DEBUG] Configurando UI como ADMIN');
+    if (adminBadge) adminBadge.style.display = 'inline-block';
+    if (btnLimpar) btnLimpar.style.display = 'inline-flex';
+    if (btnAdicionar) btnAdicionar.style.display = 'inline-flex';
     if (dropAdmin) dropAdmin.style.display = 'block';
     if (dropUser) dropUser.style.display = 'none';
-    fileInput.style.display = 'none'; // mantem hidden, mas funciona via click
+    // Esconde o botao "Carregar XLSX" principal do header (admin usa o overlay ou + Adicionar)
+    if (btnLoad) btnLoad.style.display = 'none';
   } else {
-    adminBadge.style.display = 'none';
-    btnLimpar.style.display = 'none';
-    btnAdicionar.style.display = 'none';
+    console.log('[DEBUG] Configurando UI como USUARIO COMUM');
+    if (adminBadge) adminBadge.style.display = 'none';
+    if (btnLimpar) btnLimpar.style.display = 'none';
+    if (btnAdicionar) btnAdicionar.style.display = 'none';
     if (dropAdmin) dropAdmin.style.display = 'none';
     if (dropUser) dropUser.style.display = 'block';
+    if (btnLoad) btnLoad.style.display = 'none'; // usuario comum nao carrega arquivo
   }
 }
 
