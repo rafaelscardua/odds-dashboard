@@ -1193,7 +1193,17 @@ function resetUINoData() {
 // Inicializa Firebase ao carregar
 document.addEventListener('DOMContentLoaded', function() {
   initFirebase();
+  initLoginUI();
 });
+
+function initLoginUI() {
+  const btnReg = document.getElementById('btnRegister');
+  const btnMain = document.querySelector('#loginScreen .login-btn');
+  if (btnReg && btnMain) {
+    btnReg.style.display = 'none';
+    btnMain.style.display = 'block';
+  }
+}
 
 
 let allData=[], chartInstance=null;
