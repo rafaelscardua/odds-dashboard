@@ -555,6 +555,7 @@ td{padding:11px 14px;white-space:nowrap;}
         <span class="user-badge" id="userBadge"></span>
         <span class="admin-badge" id="adminBadge" style="display:none">ADMIN</span>
         <button class="btn-clear admin-only" id="btnLimpar" style="display:none" onclick="clearDataFromFirebase()">🗑️ Limpar Dados</button>
+        <button class="btn-clear admin-only" id="btnRelatorioUso" style="display:none;background:var(--bg3);color:var(--text);border:1px solid var(--border2)" onclick="abrirRelatorioUso()">📊 Relatório de Uso</button>
         <button class="btn-logout" onclick="doLogout()">Sair</button>
       </div>
     </div>
@@ -771,6 +772,21 @@ td{padding:11px 14px;white-space:nowrap;}
       </div>
 
       <!-- MODAL GERENCIAR JOGADORES -->
+      <div class="modal-overlay" id="modal-relatorio-uso" style="display: none;">
+        <div class="modal-content" style="max-width:640px;max-height:80vh;overflow-y:auto">
+          <div class="modal-header">
+            <h3>📊 Relatório de Tempo de Uso</h3>
+            <button class="btn-fechar" onclick="fecharRelatorioUso()">✕</button>
+          </div>
+          <div class="modal-section">
+            <div id="corpo-relatorio-uso"></div>
+          </div>
+          <div class="modal-footer">
+            <button class="btn-fechar-modal" onclick="fecharRelatorioUso()">Fechar</button>
+          </div>
+        </div>
+      </div>
+
       <div class="modal-overlay" id="modal-gerenciar-abas" style="display: none;">
         <div class="modal-content">
           <div class="modal-header">
@@ -1125,6 +1141,8 @@ function doRegister() {
 }
 
 function doLogout() {
+  tickUso(); // registra o ultimo trecho de tempo antes de sair
+  pararRastreioDeUso();
   firebase.auth().signOut().then(() => {
     console.log('[DEBUG] Logout realizado com sucesso');
     currentUser = null;
@@ -1170,6 +1188,7 @@ function checkAdmin(user) {
       applyTabVisibility();
       showApp();
       listenToData();
+      iniciarRastreioDeUso();
     })
     .catch((err) => {
       console.error('[DEBUG] ERRO ao ler config:', err.code, err.message);
@@ -1178,6 +1197,7 @@ function checkAdmin(user) {
       applyTabVisibility();
       showApp();
       listenToData();
+      iniciarRastreioDeUso();
     });
 }
 
@@ -1189,6 +1209,7 @@ function setupUIForRole() {
   const dropAdmin = document.getElementById('dropAdmin');
   const dropUser = document.getElementById('dropUser');
   const btnLoad = document.querySelector('.btn-load[onclick*="fileInput"]');
+  const btnRelatorioUso = document.getElementById('btnRelatorioUso');
 
   if (isAdmin) {
     console.log('[DEBUG] Configurando UI como ADMIN');
@@ -1197,6 +1218,7 @@ function setupUIForRole() {
     if (btnAdicionar) btnAdicionar.style.display = 'inline-flex';
     if (dropAdmin) dropAdmin.style.display = 'block';
     if (dropUser) dropUser.style.display = 'none';
+    if (btnRelatorioUso) btnRelatorioUso.style.display = 'inline-flex';
     // Esconde o botao "Carregar XLSX" principal do header (admin usa o overlay ou + Adicionar)
     if (btnLoad) btnLoad.style.display = 'none';
   } else {
@@ -1206,8 +1228,134 @@ function setupUIForRole() {
     if (btnAdicionar) btnAdicionar.style.display = 'none';
     if (dropAdmin) dropAdmin.style.display = 'none';
     if (dropUser) dropUser.style.display = 'block';
+    if (btnRelatorioUso) btnRelatorioUso.style.display = 'none';
     if (btnLoad) btnLoad.style.display = 'none'; // usuario comum nao carrega arquivo
   }
+}
+
+/* ===============================================================
+   RASTREIO DE TEMPO DE USO POR USUARIO (visivel so para o admin)
+=============================================================== */
+
+let usageInterval = null;
+let usageState = { lastTick: null };
+const USAGE_TICK_MS = 15000;       // grava a cada 15s
+const USAGE_MAX_SALTO_S = 120;     // ignora saltos > 2min (ex: PC hibernou)
+
+function chaveDataHoje() {
+  const d = new Date();
+  const ano = d.getFullYear();
+  const mes = String(d.getMonth() + 1).padStart(2, '0');
+  const dia = String(d.getDate()).padStart(2, '0');
+  return `${ano}-${mes}-${dia}`;
+}
+
+function registrarTempoDeUso(segundosIncremento) {
+  if (!currentUser || !db || segundosIncremento <= 0) return;
+  const data = chaveDataHoje();
+  const uid = currentUser.uid;
+  const ref = db.ref(`usageLog/${data}/${uid}`);
+  ref.child('email').set(currentUser.email);
+  ref.child('ultimaAtividade').set(Date.now());
+  ref.child('segundos').transaction(cur => (cur || 0) + segundosIncremento);
+}
+
+function tickUso() {
+  if (!usageState.lastTick) return;
+  const agora = Date.now();
+  const decorrido = Math.round((agora - usageState.lastTick) / 1000);
+  usageState.lastTick = agora;
+  if (document.visibilityState === 'visible' && decorrido > 0 && decorrido < USAGE_MAX_SALTO_S) {
+    registrarTempoDeUso(decorrido);
+  }
+}
+
+function onVisibilityChangeUso() {
+  if (document.visibilityState === 'visible') {
+    usageState.lastTick = Date.now();
+  } else {
+    tickUso();
+  }
+}
+
+function iniciarRastreioDeUso() {
+  if (!currentUser || !db) return;
+  pararRastreioDeUso();
+  usageState.lastTick = Date.now();
+  usageInterval = setInterval(tickUso, USAGE_TICK_MS);
+  document.addEventListener('visibilitychange', onVisibilityChangeUso);
+  window.addEventListener('beforeunload', tickUso);
+}
+
+function pararRastreioDeUso() {
+  if (usageInterval) { clearInterval(usageInterval); usageInterval = null; }
+  document.removeEventListener('visibilitychange', onVisibilityChangeUso);
+  window.removeEventListener('beforeunload', tickUso);
+  usageState.lastTick = null;
+}
+
+function formatarDuracao(segundos) {
+  segundos = Math.round(segundos);
+  const h = Math.floor(segundos / 3600);
+  const m = Math.floor((segundos % 3600) / 60);
+  const s = segundos % 60;
+  if (h > 0) return `${h}h ${m}min`;
+  if (m > 0) return `${m}min ${s}s`;
+  return `${s}s`;
+}
+
+function formatarDataSimples(dataISO) {
+  const [ano, mes, dia] = dataISO.split('-');
+  return `${dia}/${mes}/${ano}`;
+}
+
+function abrirRelatorioUso() {
+  if (!isAdmin || !db) return;
+  const corpo = document.getElementById('corpo-relatorio-uso');
+  corpo.innerHTML = '<div style="padding:20px;text-align:center;color:var(--muted)">Carregando...</div>';
+  document.getElementById('modal-relatorio-uso').style.display = 'flex';
+
+  db.ref('usageLog').once('value').then(snap => {
+    const val = snap.val() || {};
+    const linhas = [];
+    Object.keys(val).forEach(data => {
+      const usuarios = val[data];
+      Object.keys(usuarios).forEach(uid => {
+        const u = usuarios[uid] || {};
+        linhas.push({ data, email: u.email || '(desconhecido)', segundos: u.segundos || 0 });
+      });
+    });
+    if (!linhas.length) {
+      corpo.innerHTML = '<div style="padding:20px;text-align:center;color:var(--muted)">Nenhum uso registrado ainda.</div>';
+      return;
+    }
+    linhas.sort((a, b) => b.data.localeCompare(a.data) || b.segundos - a.segundos);
+
+    corpo.innerHTML = `
+      <table style="width:100%;border-collapse:collapse;font-size:13px">
+        <thead>
+          <tr style="text-align:left;border-bottom:1px solid var(--border2)">
+            <th style="padding:8px">Usuário</th>
+            <th style="padding:8px">Data</th>
+            <th style="padding:8px">Tempo utilizado</th>
+          </tr>
+        </thead>
+        <tbody>
+          ${linhas.map(l => `
+            <tr style="border-bottom:1px solid var(--border2)">
+              <td style="padding:8px">${l.email}</td>
+              <td style="padding:8px;font-family:var(--mono)">${formatarDataSimples(l.data)}</td>
+              <td style="padding:8px;font-family:var(--mono)">${formatarDuracao(l.segundos)}</td>
+            </tr>`).join('')}
+        </tbody>
+      </table>`;
+  }).catch(err => {
+    corpo.innerHTML = `<div style="padding:20px;color:var(--red)">Erro ao carregar relatório: ${err.message}</div>`;
+  });
+}
+
+function fecharRelatorioUso() {
+  document.getElementById('modal-relatorio-uso').style.display = 'none';
 }
 
 /* ===============================================================
