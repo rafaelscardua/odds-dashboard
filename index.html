@@ -172,6 +172,32 @@ body{
   background-attachment:fixed;
   color:var(--text);font-family:var(--sans);font-size:14px;line-height:1.5;min-height:100vh;
   transition:background-color .3s,color .3s;
+  position:relative;
+}
+
+/* ===============================================================
+   FUNDO CAMISA DO FLAMENGO (tema dark)
+=============================================================== */
+[data-theme="dark"] body::before{
+  content:'';
+  position:fixed;
+  inset:0;
+  background:
+    repeating-linear-gradient(
+      180deg,
+      #0f0f0f 0px,
+      #0f0f0f 32px,
+      #1a0505 32px,
+      #1a0505 64px
+    );
+  opacity:0.55;
+  pointer-events:none;
+  z-index:0;
+  mix-blend-mode:normal;
+}
+[data-theme="dark"] body > *{
+  position:relative;
+  z-index:1;
 }
 .shell{max-width:1280px;margin:0 auto;padding:0 24px;}
 header{border-bottom:1px solid var(--border);padding:16px 0;position:sticky;top:0;background:color-mix(in srgb,var(--bg) 88%,transparent);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);z-index:100;}
