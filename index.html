@@ -16,53 +16,72 @@
 /* ===============================================
    TEMAS
 =============================================== */
-:root,[data-theme="dark"] {
-  --bg:#090b0f;--bg2:#12151b;--bg3:#191d25;
-  --border:#20242e;--border2:#2a3040;
-  --text:#eef1f6;--muted:#747d8f;
-  --green:#2ee6a6;--green-dim:rgba(46,230,166,0.12);
-  --amber:#f5a623;--amber-dim:rgba(245,166,35,0.12);
-  --red:#f2495c;--blue-dim:rgba(88,166,255,0.12);
-  --accent:#2ee6a6;--accent-dim:rgba(46,230,166,0.12);
-  --accent2:#58a6ff;--accent2-dim:rgba(88,166,255,0.12);
-  --mono:'IBM Plex Mono',monospace;--sans:'DM Sans',sans-serif;--display:'Space Grotesk',var(--sans);
-  --radius:9px;--radius-lg:14px;
+/* ===============================================
+   TEMAS — 6 paletas distintas
+=============================================== */
+
+/* ---------- Dark Pro (único com verde) ---------- */
+:root, [data-theme="dark"] {
+  --bg:#090b0f; --bg2:#12151b; --bg3:#191d25;
+  --border:#20242e; --border2:#2a3040;
+  --text:#eef1f6; --muted:#747d8f;
+  --accent:#2ee6a6; --accent-dim:rgba(46,230,166,0.12);
+  --accent2:#58a6ff; --accent2-dim:rgba(88,166,255,0.12);
+  --green:#2ee6a6; --green-dim:rgba(46,230,166,0.12);
+  --amber:#f5a623; --amber-dim:rgba(245,166,35,0.12);
+  --red:#f2495c;
+  --odd-casa:#60a5fa; --odd-emp:#9ca3af; --odd-fora:#fbbf24;
+  --odd-casa-bg:rgba(59,130,246,0.10); --odd-emp-bg:rgba(107,114,128,0.08); --odd-fora-bg:rgba(245,158,11,0.10);
+  --mono:'IBM Plex Mono',monospace; --sans:'DM Sans',sans-serif; --display:'Space Grotesk',var(--sans);
+  --radius:9px; --radius-lg:14px;
   --shadow:0 1px 2px rgba(0,0,0,0.3),0 12px 32px rgba(0,0,0,0.45);
   --shadow-sm:0 1px 3px rgba(0,0,0,0.35);
   --glow:0 0 0 1px rgba(46,230,166,0.18),0 0 24px rgba(46,230,166,0.1);
   --row-hover:rgba(255,255,255,0.035);
   --row-alt:rgba(255,255,255,0.016);
-  --tab-active-border:var(--green);
+  --tab-active-border:var(--accent);
   --grid-line:rgba(255,255,255,0.025);
+  --icon-stroke:var(--accent);
+  --glass-bg:rgba(9,11,15,0.72);
+  --glass-border:rgba(255,255,255,0.06);
 }
 
+/* ---------- Clean Light (azul royal) ---------- */
 [data-theme="light"] {
-  --bg:#eef0f4;--bg2:#ffffff;--bg3:#f4f5f8;
-  --border:#dfe3ea;--border2:#cdd3dd;
-  --text:#161a22;--muted:#69707e;
-  --green:#0f9d63;--green-dim:rgba(15,157,99,0.1);
-  --amber:#c2760a;--amber-dim:rgba(194,118,10,0.1);
-  --red:#d33a4b;--blue-dim:rgba(37,99,235,0.1);
-  --accent:#0f9d63;--accent-dim:rgba(15,157,99,0.1);
-  --accent2:#2563eb;--accent2-dim:rgba(37,99,235,0.1);
+  --bg:#eef0f4; --bg2:#ffffff; --bg3:#f4f5f8;
+  --border:#dfe3ea; --border2:#cdd3dd;
+  --text:#161a22; --muted:#69707e;
+  --accent:#2563eb; --accent-dim:rgba(37,99,235,0.10);
+  --accent2:#0f9d63; --accent2-dim:rgba(15,157,99,0.10);
+  --green:#0f9d63; --green-dim:rgba(15,157,99,0.10);
+  --amber:#c2760a; --amber-dim:rgba(194,118,10,0.10);
+  --red:#d33a4b;
+  --odd-casa:#2563eb; --odd-emp:#6b7280; --odd-fora:#d97706;
+  --odd-casa-bg:rgba(37,99,235,0.08); --odd-emp-bg:rgba(107,114,128,0.06); --odd-fora-bg:rgba(217,119,6,0.08);
   --shadow:0 1px 2px rgba(20,25,35,0.04),0 10px 28px rgba(20,25,35,0.08);
   --shadow-sm:0 1px 3px rgba(20,25,35,0.06);
-  --glow:0 0 0 1px rgba(15,157,99,0.12),0 4px 16px rgba(15,157,99,0.08);
+  --glow:0 0 0 1px rgba(37,99,235,0.12),0 4px 16px rgba(37,99,235,0.08);
   --row-hover:rgba(20,25,35,0.028);
   --row-alt:rgba(20,25,35,0.014);
-  --tab-active-border:var(--green);
+  --tab-active-border:var(--accent);
   --grid-line:rgba(20,25,35,0.028);
+  --icon-stroke:var(--accent);
+  --glass-bg:rgba(255,255,255,0.78);
+  --glass-border:rgba(0,0,0,0.06);
 }
 
+/* ---------- Cyber Neon (ciano + roxo) ---------- */
 [data-theme="neon"] {
-  --bg:#050208;--bg2:#0b0714;--bg3:#120c1e;
-  --border:#1e1530;--border2:#2a1d42;
-  --text:#eae6ff;--muted:#8a80b5;
-  --green:#00ffb3;--green-dim:rgba(0,255,179,0.1);
-  --amber:#ffc93c;--amber-dim:rgba(255,201,60,0.1);
-  --red:#ff4d7d;--blue-dim:rgba(0,229,255,0.1);
-  --accent:#00ffb3;--accent-dim:rgba(0,255,179,0.1);
-  --accent2:#00e5ff;--accent2-dim:rgba(0,229,255,0.1);
+  --bg:#050208; --bg2:#0b0714; --bg3:#120c1e;
+  --border:#1e1530; --border2:#2a1d42;
+  --text:#eae6ff; --muted:#8a80b5;
+  --accent:#00ffb3; --accent-dim:rgba(0,255,179,0.10);
+  --accent2:#00e5ff; --accent2-dim:rgba(0,229,255,0.10);
+  --green:#00ffb3; --green-dim:rgba(0,255,179,0.10);
+  --amber:#ffc93c; --amber-dim:rgba(255,201,60,0.10);
+  --red:#ff4d7d;
+  --odd-casa:#00e5ff; --odd-emp:#a78bfa; --odd-fora:#fbbf24;
+  --odd-casa-bg:rgba(0,229,255,0.10); --odd-emp-bg:rgba(167,139,250,0.08); --odd-fora-bg:rgba(251,191,36,0.10);
   --shadow:0 0 1px rgba(0,255,179,0.4),0 0 44px rgba(157,0,255,0.16);
   --shadow-sm:0 0 16px rgba(0,255,179,0.12);
   --glow:0 0 0 1px rgba(0,255,179,0.35),0 0 28px rgba(0,255,179,0.22);
@@ -70,22 +89,118 @@
   --row-alt:rgba(157,0,255,0.03);
   --tab-active-border:#00e5ff;
   --grid-line:rgba(157,0,255,0.06);
+  --icon-stroke:var(--accent);
+  --glass-bg:rgba(5,2,8,0.72);
+  --glass-border:rgba(0,255,179,0.08);
+}
+
+/* ---------- Gold Luxe (âmbar dourado · sofisticado) ---------- */
+[data-theme="luxe"] {
+  --bg:#0c0a09; --bg2:#1c1917; --bg3:#292524;
+  --border:#44403c; --border2:#57534e;
+  --text:#fafaf9; --muted:#a8a29e;
+  --accent:#fbbf24; --accent-dim:rgba(251,191,36,0.12);
+  --accent2:#f5f5f4; --accent2-dim:rgba(245,245,244,0.08);
+  --green:#d97706; --green-dim:rgba(217,119,6,0.12);
+  --amber:#f59e0b; --amber-dim:rgba(245,158,11,0.12);
+  --red:#ef4444;
+  --odd-casa:#60a5fa; --odd-emp:#a8a29e; --odd-fora:#fbbf24;
+  --odd-casa-bg:rgba(96,165,250,0.10); --odd-emp-bg:rgba(168,162,158,0.08); --odd-fora-bg:rgba(251,191,36,0.10);
+  --shadow:0 1px 2px rgba(0,0,0,0.4),0 12px 32px rgba(0,0,0,0.5);
+  --shadow-sm:0 1px 3px rgba(0,0,0,0.4);
+  --glow:0 0 0 1px rgba(251,191,36,0.20),0 0 24px rgba(251,191,36,0.12);
+  --row-hover:rgba(251,191,36,0.04);
+  --row-alt:rgba(255,255,255,0.02);
+  --tab-active-border:var(--accent);
+  --grid-line:rgba(251,191,36,0.04);
+  --icon-stroke:var(--accent);
+  --glass-bg:rgba(12,10,9,0.78);
+  --glass-border:rgba(251,191,36,0.08);
+}
+
+/* ---------- Game On (rosa choque · estilo arcade) ---------- */
+[data-theme="game"] {
+  --bg:#0f172a; --bg2:#1e293b; --bg3:#334155;
+  --border:#334155; --border2:#475569;
+  --text:#f8fafc; --muted:#94a3b8;
+  --accent:#f43f5e; --accent-dim:rgba(244,63,94,0.12);
+  --accent2:#3b82f6; --accent2-dim:rgba(59,130,246,0.12);
+  --green:#22c55e; --green-dim:rgba(34,197,94,0.12);
+  --amber:#f59e0b; --amber-dim:rgba(245,158,11,0.12);
+  --red:#ef4444;
+  --odd-casa:#3b82f6; --odd-emp:#94a3b8; --odd-fora:#f43f5e;
+  --odd-casa-bg:rgba(59,130,246,0.10); --odd-emp-bg:rgba(148,163,184,0.08); --odd-fora-bg:rgba(244,63,94,0.10);
+  --shadow:0 1px 2px rgba(0,0,0,0.35),0 12px 32px rgba(0,0,0,0.5);
+  --shadow-sm:0 1px 3px rgba(0,0,0,0.4);
+  --glow:0 0 0 1px rgba(244,63,94,0.20),0 0 24px rgba(244,63,94,0.12);
+  --row-hover:rgba(244,63,94,0.04);
+  --row-alt:rgba(59,130,246,0.03);
+  --tab-active-border:var(--accent);
+  --grid-line:rgba(244,63,94,0.04);
+  --icon-stroke:var(--accent);
+  --glass-bg:rgba(15,23,42,0.78);
+  --glass-border:rgba(244,63,94,0.08);
+}
+
+/* ---------- Candy Pop (roxo · divertido · vibrante) ---------- */
+[data-theme="candy"] {
+  --bg:#fdf4ff; --bg2:#ffffff; --bg3:#fae8ff;
+  --border:#e9d5ff; --border2:#d8b4fe;
+  --text:#4c1d95; --muted:#7c3aed;
+  --accent:#9333ea; --accent-dim:rgba(147,51,234,0.10);
+  --accent2:#f97316; --accent2-dim:rgba(249,115,22,0.10);
+  --green:#10b981; --green-dim:rgba(16,185,129,0.10);
+  --amber:#f97316; --amber-dim:rgba(249,115,22,0.10);
+  --red:#ef4444;
+  --odd-casa:#3b82f6; --odd-emp:#7c3aed; --odd-fora:#f97316;
+  --odd-casa-bg:rgba(59,130,246,0.08); --odd-emp-bg:rgba(124,58,237,0.06); --odd-fora-bg:rgba(249,115,22,0.08);
+  --shadow:0 1px 2px rgba(76,29,149,0.06),0 10px 28px rgba(76,29,149,0.10);
+  --shadow-sm:0 1px 3px rgba(76,29,149,0.08);
+  --glow:0 0 0 1px rgba(147,51,234,0.15),0 4px 16px rgba(147,51,234,0.08);
+  --row-hover:rgba(147,51,234,0.04);
+  --row-alt:rgba(249,115,22,0.03);
+  --tab-active-border:var(--accent);
+  --grid-line:rgba(147,51,234,0.04);
+  --icon-stroke:var(--accent);
+  --glass-bg:rgba(253,244,255,0.82);
+  --glass-border:rgba(147,51,234,0.10);
 }
 
 /* ===============================================
-   SELETOR DE TEMA
+   SELETOR DE TEMA — Preview visual
 =============================================== */
-.theme-switcher{display:flex;align-items:center;gap:7px;}
-.theme-btn{
-  width:24px;height:24px;border-radius:50%;border:2px solid transparent;
-  cursor:pointer;transition:transform .2s cubic-bezier(.34,1.56,.64,1),box-shadow .2s;position:relative;outline:none;
-}
-.theme-btn:hover{transform:scale(1.18);}
-.theme-btn.active{border-color:var(--text);box-shadow:0 0 0 3px var(--bg2),0 0 0 4px var(--border2);}
-.theme-btn[data-t="dark"]{background:radial-gradient(circle at 30% 30%,#2a2f3a,#090b0f);}
-.theme-btn[data-t="light"]{background:radial-gradient(circle at 30% 30%,#ffffff,#d1d5db);}
-.theme-btn[data-t="neon"]{background:radial-gradient(circle at 30% 30%,#00ffb388,#050208);border-color:#00ffb344;}
+.theme-switcher{display:flex;align-items:center;gap:10px;}
 .theme-label{font-size:10px;font-family:var(--mono);color:var(--muted);text-transform:uppercase;letter-spacing:.08em;margin-right:2px;}
+.theme-picker{display:flex;gap:6px;align-items:center;}
+.theme-chip{
+  display:flex;align-items:center;gap:6px;
+  padding:5px 10px 5px 6px;
+  border-radius:20px;border:1.5px solid transparent;
+  background:var(--bg3);cursor:pointer;
+  transition:all 0.3s cubic-bezier(.2,.8,.2,1);
+  position:relative;
+}
+.theme-chip:hover{transform:translateY(-1px);border-color:var(--border2);}
+.theme-chip.active{border-color:var(--accent);background:var(--accent-dim);box-shadow:var(--glow);}
+.theme-chip .chip-dot{
+  width:14px;height:14px;border-radius:50%;border:1.5px solid rgba(255,255,255,0.15);
+  flex-shrink:0;
+}
+.theme-chip .chip-name{
+  font-size:10px;font-weight:600;font-family:var(--sans);
+  color:var(--muted);letter-spacing:0.02em;
+  transition:color 0.3s;
+}
+.theme-chip.active .chip-name{color:var(--accent);}
+
+/* Cores dos chips */
+.theme-chip[data-t="dark"] .chip-dot{background:radial-gradient(circle at 30% 30%,#2a2f3a,#090b0f);}
+.theme-chip[data-t="light"] .chip-dot{background:radial-gradient(circle at 30% 30%,#ffffff,#d1d5db);}
+.theme-chip[data-t="neon"] .chip-dot{background:radial-gradient(circle at 30% 30%,#00ffb388,#050208);}
+.theme-chip[data-t="luxe"] .chip-dot{background:radial-gradient(circle at 30% 30%,#fbbf24,#0c0a09);}
+.theme-chip[data-t="game"] .chip-dot{background:radial-gradient(circle at 30% 30%,#f43f5e,#0f172a);}
+.theme-chip[data-t="candy"] .chip-dot{background:radial-gradient(circle at 30% 30%,#9333ea,#fdf4ff);}
+
 *{box-sizing:border-box;margin:0;padding:0;}
 *:focus-visible{outline:2px solid var(--accent);outline-offset:2px;}
 ::selection{background:var(--accent);color:var(--bg);}
@@ -252,9 +367,9 @@ tbody tr:nth-child(10){animation-delay:.20s;}
 td{padding:11px 14px;white-space:nowrap;}
 .td-jogo{font-weight:500;max-width:220px;overflow:hidden;text-overflow:ellipsis;}
 .td-mono{font-family:var(--mono);font-size:12px;}
-.td-odd-casa{font-family:var(--mono);font-size:12px;color:#93c5fd;}
-.td-odd-emp{font-family:var(--mono);font-size:12px;color:#9ca3af;}
-.td-odd-fora{font-family:var(--mono);font-size:12px;color:#fcd34d;}
+.td-odd-casa{font-family:var(--mono);font-size:12px;color:var(--odd-casa) !important;}
+.td-odd-emp{font-family:var(--mono);font-size:12px;color:var(--odd-emp) !important;}
+.td-odd-fora{font-family:var(--mono);font-size:12px;color:var(--odd-fora) !important;}
 /* Tooltip nas odds */
 .td-odd-tip{position:relative;cursor:default;}
 .td-odd-tip::after{
@@ -363,9 +478,9 @@ td{padding:11px 14px;white-space:nowrap;}
 .jogos-site-nao .jogos-site-name{color:var(--muted);}
 
 .jogos-odd{font-family:var(--mono);font-size:12px;text-align:center;}
-.jogos-odd.casa{color:#93c5fd;}
-.jogos-odd.emp{color:#9ca3af;}
-.jogos-odd.fora{color:#fcd34d;}
+.jogos-odd.casa{color:var(--odd-casa) !important;}
+.jogos-odd.emp{color:var(--odd-emp) !important;}
+.jogos-odd.fora{color:var(--odd-fora) !important;}
 .jogos-odd.highlight{background:rgba(245,158,11,0.25);color:#000;font-weight:600;border-radius:4px;padding:4px 8px;}
 .jogos-odd.nao{color:var(--muted);}
 
@@ -471,6 +586,66 @@ td{padding:11px 14px;white-space:nowrap;}
 .btn-importar-backup:hover{background:#4f46e5;}
 
 #input-arquivo{display:none;}
+
+/* ===============================================
+   MICRO-INTERAÇÕES & GLASSMORPHISM
+=============================================== */
+header{
+  background:var(--glass-bg);
+  backdrop-filter:blur(20px) saturate(1.4);
+  -webkit-backdrop-filter:blur(20px) saturate(1.4);
+  border-bottom:1px solid var(--glass-border);
+}
+
+.metric, .top-card, .links-card, .lm-card, .chart-box, .stats-box{
+  transition:border-color 0.3s,transform 0.25s cubic-bezier(.2,.8,.2,1),box-shadow 0.25s;
+}
+.metric:hover, .top-card:hover, .links-card:hover, .lm-card:hover{
+  transform:translateY(-3px) scale(1.005);
+  box-shadow:var(--shadow);
+}
+
+/* Destaque de valores nos cards */
+.valor-destaque{
+  font-family:var(--mono);font-size:20px;font-weight:600;letter-spacing:-0.02em;
+  line-height:1.1;
+}
+.valor-lucro{color:var(--green);background:var(--green-dim);padding:4px 10px;border-radius:8px;border:1px solid rgba(255,255,255,0.06);display:inline-block;}
+.valor-odd-casa{color:var(--odd-casa);background:var(--odd-casa-bg);padding:4px 10px;border-radius:8px;border:1px solid rgba(255,255,255,0.06);display:inline-block;}
+.valor-odd-emp{color:var(--odd-emp);background:var(--odd-emp-bg);padding:4px 10px;border-radius:8px;border:1px solid rgba(255,255,255,0.06);display:inline-block;}
+.valor-odd-fora{color:var(--odd-fora);background:var(--odd-fora-bg);padding:4px 10px;border-radius:8px;border:1px solid rgba(255,255,255,0.06);display:inline-block;}
+
+/* Badge de lucro ↑ ↓ */
+.lucro-badge{
+  display:inline-flex;align-items:center;gap:3px;
+  font-family:var(--mono);font-size:11px;font-weight:600;
+  padding:2px 8px;border-radius:20px;
+}
+.lucro-badge.pos{background:var(--green-dim);color:var(--green);border:1px solid rgba(255,255,255,0.06);}
+.lucro-badge.neg{background:rgba(239,68,68,0.08);color:var(--red);border:1px solid rgba(239,68,68,0.15);}
+.lucro-badge.neu{background:rgba(245,158,11,0.08);color:var(--amber);border:1px solid rgba(245,158,11,0.15);}
+
+/* Odds coloridas consistentes em todos os temas */
+.td-odd-casa{color:var(--odd-casa) !important;}
+.td-odd-emp{color:var(--odd-emp) !important;}
+.td-odd-fora{color:var(--odd-fora) !important;}
+
+/* Odd inputs com cores do tema */
+.odd-input.odd-casa{border-color:rgba(59,130,246,0.5);color:var(--odd-casa);}
+.odd-input.odd-casa:focus{border-color:#3b82f6;background:rgba(59,130,246,0.15);box-shadow:0 0 10px rgba(59,130,246,0.2);}
+.odd-input.odd-emp{border-color:rgba(107,114,128,0.4);color:var(--odd-emp);}
+.odd-input.odd-emp:focus{border-color:#6b7280;background:rgba(107,114,128,0.12);box-shadow:0 0 8px rgba(107,114,128,0.15);}
+.odd-input.odd-fora{border-color:rgba(245,158,11,0.5);color:var(--odd-fora);}
+.odd-input.odd-fora:focus{border-color:#f59e0b;background:rgba(245,158,11,0.15);box-shadow:0 0 10px rgba(245,158,11,0.2);}
+
+/* Transição suave entre temas */
+*, *::before, *::after{
+  transition:background-color 0.4s ease, color 0.4s ease, border-color 0.4s ease, box-shadow 0.4s ease;
+}
+/* Exceções para não animar transform e outras propriedades de interação */
+.metric, .top-card, .links-card, .lm-card, .theme-chip, .tab-btn{
+  transition:border-color 0.3s,transform 0.25s cubic-bezier(.2,.8,.2,1),box-shadow 0.25s,background-color 0.4s ease,color 0.4s ease;
+}
 
 /* ===============================================
    LOGIN & ADMIN
@@ -588,11 +763,34 @@ td{padding:11px 14px;white-space:nowrap;}
       </div>
       <div class="header-actions">
         <div class="theme-switcher">
-          <span class="theme-label">Tema</span>
-          <button class="theme-btn active" data-t="dark" onclick="setTheme('dark')" title="Dark"></button>
-          <button class="theme-btn" data-t="light" onclick="setTheme('light')" title="Light"></button>
-          <button class="theme-btn" data-t="neon" onclick="setTheme('neon')" title="Neon"></button>
-        </div>
+  <span class="theme-label">Tema</span>
+  <div class="theme-picker">
+    <div class="theme-chip active" data-t="dark" onclick="setTheme('dark')" title="Dark Pro">
+      <div class="chip-dot"></div>
+      <span class="chip-name">Dark</span>
+    </div>
+    <div class="theme-chip" data-t="light" onclick="setTheme('light')" title="Clean Light">
+      <div class="chip-dot"></div>
+      <span class="chip-name">Light</span>
+    </div>
+    <div class="theme-chip" data-t="neon" onclick="setTheme('neon')" title="Cyber Neon">
+      <div class="chip-dot"></div>
+      <span class="chip-name">Neon</span>
+    </div>
+    <div class="theme-chip" data-t="luxe" onclick="setTheme('luxe')" title="Gold Luxe">
+      <div class="chip-dot"></div>
+      <span class="chip-name">Luxe</span>
+    </div>
+    <div class="theme-chip" data-t="game" onclick="setTheme('game')" title="Game On">
+      <div class="chip-dot"></div>
+      <span class="chip-name">Game</span>
+    </div>
+    <div class="theme-chip" data-t="candy" onclick="setTheme('candy')" title="Candy Pop">
+      <div class="chip-dot"></div>
+      <span class="chip-name">Candy</span>
+    </div>
+  </div>
+</div>
         <span class="tag tag-gray" id="tagJogos">sem dados</span>
         <select id="filtroCampeonatoSelect" class="filter-input" style="display:none" onchange="mudarFiltroCampeonato(this.value)">
           <option value="__todos__">Todos os campeonatos</option>
@@ -641,14 +839,14 @@ td{padding:11px 14px;white-space:nowrap;}
     </div>
 
     <div class="tabs-nav">
-      <button class="tab-btn active" id="btn-comparativo" onclick="switchTab('comparativo')">📊 Comparativo</button>
-      <button class="tab-btn" id="btn-toplinks" onclick="switchTab('toplinks')">🔗 Top Apostas c/ Links</button>
-      <button class="tab-btn" id="btn-lucromax" onclick="switchTab('lucromax')">💰 Lucro Máximo</button>
-      <button class="tab-btn" id="btn-jogos" onclick="switchTab('jogos')">🎮 Jogos</button>
-      <button class="tab-btn" id="btn-estatisticas" onclick="switchTab('estatisticas')">📈 Estatísticas</button>
-      <button class="tab-btn" id="btn-historico" onclick="switchTab('historico')">📋 Histórico</button>
-      <button class="tab-btn" id="btnGerenciarAbas" onclick="abrirGerenciadorAbas()" style="display:none;margin-left:auto;color:var(--muted)">⚙️ Gerenciar Abas</button>
-    </div>
+  <button class="tab-btn active" id="btn-comparativo" onclick="switchTab('comparativo')"><svg class="tab-icon" viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18"/><path d="M9 21V9"/></svg>Comparativo</button>
+  <button class="tab-btn" id="btn-toplinks" onclick="switchTab('toplinks')"><svg class="tab-icon" viewBox="0 0 24 24"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>Top Apostas</button>
+  <button class="tab-btn" id="btn-lucromax" onclick="switchTab('lucromax')"><svg class="tab-icon" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M16 8h-6a2 2 0 0 0-2 2v4a2 2 0 0 0 2 2h6"/><path d="M12 12h.01"/></svg>Lucro Máximo</button>
+  <button class="tab-btn" id="btn-jogos" onclick="switchTab('jogos')"><svg class="tab-icon" viewBox="0 0 24 24"><path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6"/><path d="M18 9h1.5a2.5 2.5 0 0 0 0-5H18"/><path d="M4 22h16"/><path d="M10 14.66V17c0 .55-.47.98-.97 1.21C7.85 18.75 7 20.24 7 22"/><path d="M14 14.66V17c0 .55.47.98.97 1.21C16.15 18.75 17 20.24 17 22"/><path d="M18 2H6v7a6 6 0 0 0 12 0V2Z"/></svg>Jogos</button>
+  <button class="tab-btn" id="btn-estatisticas" onclick="switchTab('estatisticas')"><svg class="tab-icon" viewBox="0 0 24 24"><path d="M3 3v18h18"/><path d="m19 9-5 5-4-4-3 3"/></svg>Estatísticas</button>
+  <button class="tab-btn" id="btn-historico" onclick="switchTab('historico')"><svg class="tab-icon" viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6"/><path d="M16 13H8"/><path d="M16 17H8"/><path d="M10 9H8"/></svg>Histórico</button>
+  <button class="tab-btn" id="btnGerenciarAbas" onclick="abrirGerenciadorAbas()" style="display:none;margin-left:auto"><svg class="tab-icon" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06A1.65 1.65 0 0 0 4.67 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06A1.65 1.65 0 0 0 9 4.67a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>Gerenciar</button>
+</div>
 
     <div class="tab-panel active" id="tab-comparativo">
 
@@ -1665,7 +1863,7 @@ const fmtDec = n => 'R$ '+n.toLocaleString('pt-BR',{minimumFractionDigits:2,maxi
 
 function setTheme(t){
   document.documentElement.setAttribute('data-theme',t);
-  document.querySelectorAll('.theme-btn').forEach(b=>{
+  document.querySelectorAll('.theme-chip').forEach(b=>{
     b.classList.toggle('active', b.dataset.t===t);
   });
   try{localStorage.setItem('odds-theme',t);}catch(e){}
@@ -1866,6 +2064,7 @@ function renderMetrics(){
   if(best){
     const lucro=best.retorno-a;
     document.getElementById('m-lucro').textContent=(lucro>=0?'+':'')+fmtDec(lucro);
+    document.getElementById('m-lucro').className='metric-value green valor-destaque';
     document.getElementById('m-lucro-jogo').textContent=best.jogo;
     document.getElementById('m-pct').textContent=(best.lucro_pct>=0?'+':'')+best.lucro_pct.toFixed(2)+'%';
     document.getElementById('m-pct-jogo').textContent=best.jogo;
@@ -2057,8 +2256,8 @@ function renderTop3(){
       </div>
       <div class="top-financial">
         <div>
-          <div class="top-lucro-val" id="lucro-val-${i}">${lucro>=0?'+':''}${fmtDec(lucro)}</div>
-          <div class="top-lucro-pct" id="lucro-pct-${i}">${r.lucro_pct>=0?'+':''}${r.lucro_pct.toFixed(2)}%</div>
+          <div class="top-lucro-val valor-destaque valor-lucro" id="lucro-val-${i}">${lucro>=0?'+':''}${fmtDec(lucro)}</div>
+          <div class="top-lucro-pct valor-destaque valor-lucro" id="lucro-pct-${i}">${r.lucro_pct>=0?'+':''}${r.lucro_pct.toFixed(2)}%</div>
         </div>
         <div class="top-distrib">
           <div style="display:flex;align-items:center;gap:6px;margin-bottom:4px">
@@ -2354,9 +2553,9 @@ function renderEstatisticas(){
           <span style="font-family:var(--mono);font-size:10px;color:var(--muted)">${pct}%</span>
         </div>
       </td>
-      <td style="text-align:center;font-family:var(--mono);color:#93c5fd">${s.ganhCasa}</td>
-      <td style="text-align:center;font-family:var(--mono);color:#9ca3af">${s.ganhEmp}</td>
-      <td style="text-align:center;font-family:var(--mono);color:#fcd34d">${s.ganhFora}</td>
+      <td style="text-align:center;font-family:var(--mono);color:var(--odd-casa)">${s.ganhCasa}</td>
+      <td style="text-align:center;font-family:var(--mono);color:var(--odd-emp)">${s.ganhEmp}</td>
+      <td style="text-align:center;font-family:var(--mono);color:var(--odd-fora)">${s.ganhFora}</td>
     </tr>`;
   }).join('');
 }
@@ -2682,8 +2881,8 @@ function renderTopApostasComLinks(){
 
     return `<div class="links-card">
       <div class="links-jogo">${r.jogo}</div>
-      <div class="links-lucro">${lucro>=0?'+':''}${fmtDec(lucro)}</div>
-      <div class="links-lucro-pct">${r.lucro_pct>=0?'+':''}${r.lucro_pct.toFixed(2)}%</div>
+      <div class="links-lucro valor-destaque valor-lucro">${lucro>=0?'+':''}${fmtDec(lucro)}</div>
+      <div class="links-lucro-pct valor-destaque valor-lucro">${r.lucro_pct>=0?'+':''}${r.lucro_pct.toFixed(2)}%</div>
       <div class="link-row">
         <span class="link-label">Casa</span>
         <span class="link-url">${r.casa.toFixed(2)}</span>
@@ -2752,7 +2951,7 @@ function renderTable(data){
     <td class="td-val">${fmt(r.v_casa)}</td>
     <td class="td-val">${fmt(r.v_emp)}</td>
     <td class="td-val">${fmt(r.v_fora)}</td>
-    <td class="td-pct ${r.lucro_pct>0?'pos':'neg'}">${(r.lucro_pct>0?'+':'')+r.lucro_pct.toFixed(2)+'%'}</td>
+    <td class="td-pct ${r.lucro_pct>0?'pos':'neg'}"><span class="lucro-badge ${r.lucro_pct>0?'pos':r.lucro_pct<0?'neg':'neu'}">${r.lucro_pct>0?'↑':r.lucro_pct<0?'↓':'→'} ${(r.lucro_pct>0?'+':'')+r.lucro_pct.toFixed(2)+'%'}</span></td>
   </tr>`;
   }).join('');
 }
