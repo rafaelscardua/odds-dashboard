@@ -20,13 +20,13 @@
   --bg:#0a0a0a;--bg2:#111111;--bg3:#1a0a0a;
   --border:#2a1515;--border2:#3d1f1f;
   --text:#f5f0eb;--muted:#9e8e8e;
-  --green:#e01e2c;--green-dim:rgba(224,30,44,0.12);
+  --green:#e8c25f;--green-dim:rgba(232,194,95,0.14);
   --amber:#d4a843;--amber-dim:rgba(212,168,67,0.12);
   --red:#ff4d5e;--blue-dim:rgba(224,30,44,0.10);
   --accent:#e01e2c;--accent-dim:rgba(224,30,44,0.12);
   --accent2:#d4a843;--accent2-dim:rgba(212,168,67,0.12);
-  --casa:#ff6b7a;--casa-dim:rgba(255,107,122,0.14);--emp:#9e8e8e;--emp-dim:rgba(158,142,142,0.14);--fora:#d4a843;--fora-dim:rgba(212,168,67,0.14);
-  --pct:#e01e2c;--pct-dim:rgba(224,30,44,0.14);
+  --casa:#f5f0eb;--casa-dim:rgba(245,240,235,0.12);--emp:#9e8e8e;--emp-dim:rgba(158,142,142,0.14);--fora:#d4a843;--fora-dim:rgba(212,168,67,0.14);
+  --pct:#ff3b4e;--pct-dim:rgba(255,59,78,0.22);
   --mono:'IBM Plex Mono',monospace;--sans:'DM Sans',sans-serif;--display:'Space Grotesk',var(--sans);
   --radius:9px;--radius-lg:14px;
   --shadow:0 1px 2px rgba(0,0,0,0.4),0 12px 32px rgba(0,0,0,0.55);
@@ -306,7 +306,7 @@ main{padding:28px 0;}
 .odd-input.odd-fora:focus{border-color:var(--fora);background:var(--fora-dim);box-shadow:0 0 8px var(--fora-dim);}
 .top-financial{border-top:1px solid var(--border);padding-top:12px;display:flex;justify-content:space-between;align-items:flex-end;}
 .top-lucro-val{font-family:var(--mono);font-size:15px;font-weight:600;color:var(--text);}
-.top-lucro-pct{font-family:var(--mono);font-size:20px;font-weight:700;color:var(--pct);background:var(--pct-dim);padding:3px 11px;border-radius:7px;letter-spacing:-0.01em;}
+.top-lucro-pct{font-family:var(--mono);font-size:20px;font-weight:700;color:var(--pct);background:var(--pct-dim);border:1px solid color-mix(in srgb,var(--pct) 30%,transparent);padding:3px 11px;border-radius:7px;letter-spacing:-0.01em;}
 .top-distrib{font-size:15px;color:var(--muted);text-align:right;line-height:1.7;}
 
 .grid2{display:grid;grid-template-columns:1fr 340px;gap:20px;align-items:start;margin-bottom:28px;}
@@ -366,7 +366,7 @@ td{padding:11px 14px;white-space:nowrap;}
 }
 .td-odd-tip:hover::after{opacity:1;}
 .td-pct{font-family:var(--mono);font-size:12.5px;font-weight:700;text-align:right;}
-.td-pct.pos{color:var(--pct);background:var(--pct-dim);padding:3px 9px;border-radius:6px;}
+.td-pct.pos{color:var(--pct);background:var(--pct-dim);border:1px solid color-mix(in srgb,var(--pct) 30%,transparent);padding:3px 9px;border-radius:6px;}
 .td-pct.neg{color:var(--muted);}
 .td-val{font-family:var(--mono);font-size:12px;color:var(--muted);text-align:right;}
 /* Badge campeonato */
@@ -404,7 +404,7 @@ th .btn-icon{width:11px;height:11px;vertical-align:-1px;opacity:0.7;margin-left:
 .links-card::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,var(--green),var(--accent));border-radius:var(--radius-lg) var(--radius-lg) 0 0;}
 .links-jogo{font-size:15px;font-weight:500;margin-bottom:12px;line-height:1.3;color:var(--text);}
 .links-lucro{font-family:var(--mono);font-size:13px;font-weight:600;color:var(--text);margin-bottom:16px;}
-.links-lucro-pct{font-family:var(--mono);font-size:25px;font-weight:700;color:var(--pct);background:var(--pct-dim);padding:4px 13px;border-radius:8px;letter-spacing:-0.01em;}
+.links-lucro-pct{font-family:var(--mono);font-size:25px;font-weight:700;color:var(--pct);background:var(--pct-dim);border:1px solid color-mix(in srgb,var(--pct) 30%,transparent);padding:4px 13px;border-radius:8px;letter-spacing:-0.01em;}
 .link-row{display:flex;align-items:center;gap:10px;padding:10px;background:var(--bg3);border-radius:6px;margin-bottom:8px;border:1px solid var(--border2);}
 .link-row:last-child{margin-bottom:0;}
 .link-label{font-size:12px;font-family:var(--mono);color:var(--muted);text-transform:uppercase;min-width:60px;}
@@ -468,9 +468,9 @@ th .btn-icon{width:11px;height:11px;vertical-align:-1px;opacity:0.7;margin-left:
 .jogos-site-nao .jogos-site-name{color:var(--muted);}
 
 .jogos-odd{font-family:var(--mono);font-size:12px;text-align:center;}
-.jogos-odd.casa{color:#93c5fd;}
-.jogos-odd.emp{color:#9ca3af;}
-.jogos-odd.fora{color:#fcd34d;}
+.jogos-odd.casa{color:var(--casa);}
+.jogos-odd.emp{color:var(--emp);}
+.jogos-odd.fora{color:var(--fora);}
 .jogos-odd.highlight{background:rgba(245,158,11,0.25);color:#000;font-weight:600;border-radius:4px;padding:4px 8px;}
 .jogos-odd.nao{color:var(--muted);}
 
@@ -2171,16 +2171,16 @@ function renderTop3(){
         </div>
         <div class="top-distrib">
           <div style="display:flex;align-items:center;gap:6px;margin-bottom:4px">
-            <input type="number" id="stake-casa-${i}" class="stake-input" step="0.01" min="0" value="${r.v_casa.toFixed(2)}" oninput="recalcDutchingStake(${i},'casa')" style="width:80px;font-family:var(--mono);font-size:13px;padding:4px 6px;background:var(--bg3);border:1.5px solid rgba(59,130,246,0.5);border-radius:6px;color:#93c5fd;text-align:right">
-            <span style="color:#93c5fd;font-size:12px">casa</span>
+            <input type="number" id="stake-casa-${i}" class="stake-input" step="0.01" min="0" value="${r.v_casa.toFixed(2)}" oninput="recalcDutchingStake(${i},'casa')" style="width:80px;font-family:var(--mono);font-size:13px;padding:4px 6px;background:var(--bg3);border:1.5px solid color-mix(in srgb,var(--casa) 55%,transparent);border-radius:6px;color:var(--casa);text-align:right">
+            <span style="color:var(--casa);font-size:12px">casa</span>
           </div>
           <div style="display:flex;align-items:center;gap:6px;margin-bottom:4px">
-            <input type="number" id="stake-emp-${i}" class="stake-input" step="0.01" min="0" value="${r.v_emp.toFixed(2)}" oninput="recalcDutchingStake(${i},'emp')" style="width:80px;font-family:var(--mono);font-size:13px;padding:4px 6px;background:var(--bg3);border:1.5px solid rgba(107,114,128,0.4);border-radius:6px;color:#9ca3af;text-align:right">
-            <span style="color:#9ca3af;font-size:12px">emp.</span>
+            <input type="number" id="stake-emp-${i}" class="stake-input" step="0.01" min="0" value="${r.v_emp.toFixed(2)}" oninput="recalcDutchingStake(${i},'emp')" style="width:80px;font-family:var(--mono);font-size:13px;padding:4px 6px;background:var(--bg3);border:1.5px solid color-mix(in srgb,var(--emp) 45%,transparent);border-radius:6px;color:var(--emp);text-align:right">
+            <span style="color:var(--emp);font-size:12px">emp.</span>
           </div>
           <div style="display:flex;align-items:center;gap:6px">
-            <input type="number" id="stake-fora-${i}" class="stake-input" step="0.01" min="0" value="${r.v_fora.toFixed(2)}" oninput="recalcDutchingStake(${i},'fora')" style="width:80px;font-family:var(--mono);font-size:13px;padding:4px 6px;background:var(--bg3);border:1.5px solid rgba(245,158,11,0.5);border-radius:6px;color:#fcd34d;text-align:right">
-            <span style="color:#fcd34d;font-size:12px">fora</span>
+            <input type="number" id="stake-fora-${i}" class="stake-input" step="0.01" min="0" value="${r.v_fora.toFixed(2)}" oninput="recalcDutchingStake(${i},'fora')" style="width:80px;font-family:var(--mono);font-size:13px;padding:4px 6px;background:var(--bg3);border:1.5px solid color-mix(in srgb,var(--fora) 55%,transparent);border-radius:6px;color:var(--fora);text-align:right">
+            <span style="color:var(--fora);font-size:12px">fora</span>
           </div>
         </div>
       </div>
@@ -2463,9 +2463,9 @@ function renderEstatisticas(){
           <span style="font-family:var(--mono);font-size:10px;color:var(--muted)">${pct}%</span>
         </div>
       </td>
-      <td style="text-align:center;font-family:var(--mono);color:#93c5fd">${s.ganhCasa}</td>
-      <td style="text-align:center;font-family:var(--mono);color:#9ca3af">${s.ganhEmp}</td>
-      <td style="text-align:center;font-family:var(--mono);color:#fcd34d">${s.ganhFora}</td>
+      <td style="text-align:center;font-family:var(--mono);color:var(--casa)">${s.ganhCasa}</td>
+      <td style="text-align:center;font-family:var(--mono);color:var(--emp)">${s.ganhEmp}</td>
+      <td style="text-align:center;font-family:var(--mono);color:var(--fora)">${s.ganhFora}</td>
     </tr>`;
   }).join('');
 }
@@ -2622,7 +2622,7 @@ function renderLucroMaximo(){
               value="${c.alvo.toFixed(2)}" oninput="recalculateLucroMaxStake(${i},${ci})"
               style="width:90px;font-size:13px">
             <span style="color:var(--muted);font-size:12px"></span>
-            <span id="lm-ret-${ci}-${i}" style="font-family:var(--mono);font-size:13px;color:#93c5fd">R$&nbsp;${fmtDec(c.retorno)}</span>
+            <span id="lm-ret-${ci}-${i}" style="font-family:var(--mono);font-size:13px;color:var(--text)">R$&nbsp;${fmtDec(c.retorno)}</span>
             <span class="lm-scen-pct" id="lm-pct-${ci}-${i}" style="margin-left:auto">${s}${c.lucro_pct.toFixed(2)}%</span>
           </div>
           <div style="display:flex;flex-direction:column;gap:3px;padding-left:22px;border-left:2px solid rgba(255,255,255,0.1)">
@@ -2816,21 +2816,21 @@ function renderTopApostasComLinks(){
         <div style="font-size:11px;font-family:var(--mono);color:var(--muted);margin-bottom:8px;text-transform:uppercase;letter-spacing:0.06em"> Distribuicao de Stakes</div>
         <div style="display:flex;gap:8px;flex-wrap:wrap">
           <div style="flex:1;min-width:90px">
-            <div style="font-size:10px;color:#93c5fd;margin-bottom:3px">Casa</div>
-            <input type="number" id="tl-stake-casa-${idx}" step="0.01" min="0" value="${v_casa.toFixed(2)}" oninput="recalcDutchingStakeTopLinks(${idx},'casa',${r.casa},${r.empate},${r.fora})" style="width:100%;font-family:var(--mono);font-size:13px;padding:5px 6px;background:var(--bg3);border:1.5px solid rgba(59,130,246,0.5);border-radius:6px;color:#93c5fd;text-align:right">
+            <div style="font-size:10px;color:var(--casa);margin-bottom:3px">Casa</div>
+            <input type="number" id="tl-stake-casa-${idx}" step="0.01" min="0" value="${v_casa.toFixed(2)}" oninput="recalcDutchingStakeTopLinks(${idx},'casa',${r.casa},${r.empate},${r.fora})" style="width:100%;font-family:var(--mono);font-size:13px;padding:5px 6px;background:var(--bg3);border:1.5px solid color-mix(in srgb,var(--casa) 55%,transparent);border-radius:6px;color:var(--casa);text-align:right">
           </div>
           <div style="flex:1;min-width:90px">
-            <div style="font-size:10px;color:#9ca3af;margin-bottom:3px">Empate</div>
-            <input type="number" id="tl-stake-emp-${idx}" step="0.01" min="0" value="${v_emp.toFixed(2)}" oninput="recalcDutchingStakeTopLinks(${idx},'emp',${r.casa},${r.empate},${r.fora})" style="width:100%;font-family:var(--mono);font-size:13px;padding:5px 6px;background:var(--bg3);border:1.5px solid rgba(107,114,128,0.4);border-radius:6px;color:#9ca3af;text-align:right">
+            <div style="font-size:10px;color:var(--emp);margin-bottom:3px">Empate</div>
+            <input type="number" id="tl-stake-emp-${idx}" step="0.01" min="0" value="${v_emp.toFixed(2)}" oninput="recalcDutchingStakeTopLinks(${idx},'emp',${r.casa},${r.empate},${r.fora})" style="width:100%;font-family:var(--mono);font-size:13px;padding:5px 6px;background:var(--bg3);border:1.5px solid color-mix(in srgb,var(--emp) 45%,transparent);border-radius:6px;color:var(--emp);text-align:right">
           </div>
           <div style="flex:1;min-width:90px">
-            <div style="font-size:10px;color:#fcd34d;margin-bottom:3px">Fora</div>
-            <input type="number" id="tl-stake-fora-${idx}" step="0.01" min="0" value="${v_fora.toFixed(2)}" oninput="recalcDutchingStakeTopLinks(${idx},'fora',${r.casa},${r.empate},${r.fora})" style="width:100%;font-family:var(--mono);font-size:13px;padding:5px 6px;background:var(--bg3);border:1.5px solid rgba(245,158,11,0.5);border-radius:6px;color:#fcd34d;text-align:right">
+            <div style="font-size:10px;color:var(--fora);margin-bottom:3px">Fora</div>
+            <input type="number" id="tl-stake-fora-${idx}" step="0.01" min="0" value="${v_fora.toFixed(2)}" oninput="recalcDutchingStakeTopLinks(${idx},'fora',${r.casa},${r.empate},${r.fora})" style="width:100%;font-family:var(--mono);font-size:13px;padding:5px 6px;background:var(--bg3);border:1.5px solid color-mix(in srgb,var(--fora) 55%,transparent);border-radius:6px;color:var(--fora);text-align:right">
           </div>
         </div>
         <div style="display:flex;justify-content:space-between;margin-top:8px">
           <span style="font-size:11px;color:var(--muted)">Total: <span id="tl-total-${idx}" style="font-family:var(--mono);color:var(--text)">R$ ${(v_casa+v_emp+v_fora).toLocaleString('pt-BR',{minimumFractionDigits:2,maximumFractionDigits:2})}</span></span>
-          <span style="font-size:11px;color:var(--muted)">Lucro: <span id="tl-lucro-${idx}" style="font-family:var(--mono);color:var(--green)">${r.lucro_pct>=0?'+':''}${r.lucro_pct.toFixed(2)}%</span></span>
+          <span style="font-size:11px;color:var(--muted)">Lucro: <span id="tl-lucro-${idx}" style="font-family:var(--mono);color:var(--pct)">${r.lucro_pct>=0?'+':''}${r.lucro_pct.toFixed(2)}%</span></span>
         </div>
       </div>
       <div class="links-meta">${r.data}   ${r.site}</div>
