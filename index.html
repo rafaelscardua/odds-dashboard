@@ -16,72 +16,59 @@
 /* ===============================================
    TEMAS
 =============================================== */
-/* ===============================================
-   TEMAS — 6 paletas distintas
-=============================================== */
-
-/* ---------- Dark Pro (único com verde) ---------- */
-:root, [data-theme="dark"] {
-  --bg:#090b0f; --bg2:#12151b; --bg3:#191d25;
-  --border:#20242e; --border2:#2a3040;
-  --text:#eef1f6; --muted:#747d8f;
-  --accent:#2ee6a6; --accent-dim:rgba(46,230,166,0.12);
-  --accent2:#58a6ff; --accent2-dim:rgba(88,166,255,0.12);
-  --green:#2ee6a6; --green-dim:rgba(46,230,166,0.12);
-  --amber:#f5a623; --amber-dim:rgba(245,166,35,0.12);
-  --red:#f2495c;
-  --odd-casa:#60a5fa; --odd-emp:#9ca3af; --odd-fora:#fbbf24;
-  --odd-casa-bg:rgba(59,130,246,0.10); --odd-emp-bg:rgba(107,114,128,0.08); --odd-fora-bg:rgba(245,158,11,0.10);
-  --mono:'IBM Plex Mono',monospace; --sans:'DM Sans',sans-serif; --display:'Space Grotesk',var(--sans);
-  --radius:9px; --radius-lg:14px;
+:root,[data-theme="dark"] {
+  --bg:#090b0f;--bg2:#12151b;--bg3:#191d25;
+  --border:#20242e;--border2:#2a3040;
+  --text:#eef1f6;--muted:#747d8f;
+  --green:#2ee6a6;--green-dim:rgba(46,230,166,0.12);
+  --amber:#f5a623;--amber-dim:rgba(245,166,35,0.12);
+  --red:#f2495c;--blue-dim:rgba(88,166,255,0.12);
+  --accent:#2ee6a6;--accent-dim:rgba(46,230,166,0.12);
+  --accent2:#58a6ff;--accent2-dim:rgba(88,166,255,0.12);
+  --casa:#93c5fd;--casa-dim:rgba(147,197,253,0.14);--emp:#9ca3af;--emp-dim:rgba(156,163,175,0.14);--fora:#fcd34d;--fora-dim:rgba(252,211,77,0.14);
+  --pct:#2ee6a6;--pct-dim:rgba(46,230,166,0.14);
+  --mono:'IBM Plex Mono',monospace;--sans:'DM Sans',sans-serif;--display:'Space Grotesk',var(--sans);
+  --radius:9px;--radius-lg:14px;
   --shadow:0 1px 2px rgba(0,0,0,0.3),0 12px 32px rgba(0,0,0,0.45);
   --shadow-sm:0 1px 3px rgba(0,0,0,0.35);
   --glow:0 0 0 1px rgba(46,230,166,0.18),0 0 24px rgba(46,230,166,0.1);
   --row-hover:rgba(255,255,255,0.035);
   --row-alt:rgba(255,255,255,0.016);
-  --tab-active-border:var(--accent);
+  --tab-active-border:var(--green);
   --grid-line:rgba(255,255,255,0.025);
-  --icon-stroke:var(--accent);
-  --glass-bg:rgba(9,11,15,0.72);
-  --glass-border:rgba(255,255,255,0.06);
 }
 
-/* ---------- Clean Light (azul royal) ---------- */
 [data-theme="light"] {
-  --bg:#eef0f4; --bg2:#ffffff; --bg3:#f4f5f8;
-  --border:#dfe3ea; --border2:#cdd3dd;
-  --text:#161a22; --muted:#69707e;
-  --accent:#2563eb; --accent-dim:rgba(37,99,235,0.10);
-  --accent2:#0f9d63; --accent2-dim:rgba(15,157,99,0.10);
-  --green:#0f9d63; --green-dim:rgba(15,157,99,0.10);
-  --amber:#c2760a; --amber-dim:rgba(194,118,10,0.10);
-  --red:#d33a4b;
-  --odd-casa:#2563eb; --odd-emp:#6b7280; --odd-fora:#d97706;
-  --odd-casa-bg:rgba(37,99,235,0.08); --odd-emp-bg:rgba(107,114,128,0.06); --odd-fora-bg:rgba(217,119,6,0.08);
+  --bg:#eef0f4;--bg2:#ffffff;--bg3:#f4f5f8;
+  --border:#dfe3ea;--border2:#cdd3dd;
+  --text:#161a22;--muted:#69707e;
+  --green:#0f9d63;--green-dim:rgba(15,157,99,0.1);
+  --amber:#c2760a;--amber-dim:rgba(194,118,10,0.1);
+  --red:#d33a4b;--blue-dim:rgba(37,99,235,0.1);
+  --accent:#0f9d63;--accent-dim:rgba(15,157,99,0.1);
+  --accent2:#2563eb;--accent2-dim:rgba(37,99,235,0.1);
+  --casa:#2563eb;--casa-dim:rgba(37,99,235,0.1);--emp:#6b7280;--emp-dim:rgba(107,114,128,0.1);--fora:#c2760a;--fora-dim:rgba(194,118,10,0.1);
+  --pct:#0f9d63;--pct-dim:rgba(15,157,99,0.1);
   --shadow:0 1px 2px rgba(20,25,35,0.04),0 10px 28px rgba(20,25,35,0.08);
   --shadow-sm:0 1px 3px rgba(20,25,35,0.06);
-  --glow:0 0 0 1px rgba(37,99,235,0.12),0 4px 16px rgba(37,99,235,0.08);
+  --glow:0 0 0 1px rgba(15,157,99,0.12),0 4px 16px rgba(15,157,99,0.08);
   --row-hover:rgba(20,25,35,0.028);
   --row-alt:rgba(20,25,35,0.014);
-  --tab-active-border:var(--accent);
+  --tab-active-border:var(--green);
   --grid-line:rgba(20,25,35,0.028);
-  --icon-stroke:var(--accent);
-  --glass-bg:rgba(255,255,255,0.78);
-  --glass-border:rgba(0,0,0,0.06);
 }
 
-/* ---------- Cyber Neon (ciano + roxo) ---------- */
 [data-theme="neon"] {
-  --bg:#050208; --bg2:#0b0714; --bg3:#120c1e;
-  --border:#1e1530; --border2:#2a1d42;
-  --text:#eae6ff; --muted:#8a80b5;
-  --accent:#00ffb3; --accent-dim:rgba(0,255,179,0.10);
-  --accent2:#00e5ff; --accent2-dim:rgba(0,229,255,0.10);
-  --green:#00ffb3; --green-dim:rgba(0,255,179,0.10);
-  --amber:#ffc93c; --amber-dim:rgba(255,201,60,0.10);
-  --red:#ff4d7d;
-  --odd-casa:#00e5ff; --odd-emp:#a78bfa; --odd-fora:#fbbf24;
-  --odd-casa-bg:rgba(0,229,255,0.10); --odd-emp-bg:rgba(167,139,250,0.08); --odd-fora-bg:rgba(251,191,36,0.10);
+  --bg:#050208;--bg2:#0b0714;--bg3:#120c1e;
+  --border:#1e1530;--border2:#2a1d42;
+  --text:#eae6ff;--muted:#8a80b5;
+  --green:#00ffb3;--green-dim:rgba(0,255,179,0.1);
+  --amber:#ffc93c;--amber-dim:rgba(255,201,60,0.1);
+  --red:#ff4d7d;--blue-dim:rgba(0,229,255,0.1);
+  --accent:#00ffb3;--accent-dim:rgba(0,255,179,0.1);
+  --accent2:#00e5ff;--accent2-dim:rgba(0,229,255,0.1);
+  --casa:#00e5ff;--casa-dim:rgba(0,229,255,0.12);--emp:#8a80b5;--emp-dim:rgba(138,128,181,0.12);--fora:#ffc93c;--fora-dim:rgba(255,201,60,0.12);
+  --pct:#00ffb3;--pct-dim:rgba(0,255,179,0.14);
   --shadow:0 0 1px rgba(0,255,179,0.4),0 0 44px rgba(157,0,255,0.16);
   --shadow-sm:0 0 16px rgba(0,255,179,0.12);
   --glow:0 0 0 1px rgba(0,255,179,0.35),0 0 28px rgba(0,255,179,0.22);
@@ -89,118 +76,85 @@
   --row-alt:rgba(157,0,255,0.03);
   --tab-active-border:#00e5ff;
   --grid-line:rgba(157,0,255,0.06);
-  --icon-stroke:var(--accent);
-  --glass-bg:rgba(5,2,8,0.72);
-  --glass-border:rgba(0,255,179,0.08);
 }
 
-/* ---------- Gold Luxe (âmbar dourado · sofisticado) ---------- */
-[data-theme="luxe"] {
-  --bg:#0c0a09; --bg2:#1c1917; --bg3:#292524;
-  --border:#44403c; --border2:#57534e;
-  --text:#fafaf9; --muted:#a8a29e;
-  --accent:#fbbf24; --accent-dim:rgba(251,191,36,0.12);
-  --accent2:#f5f5f4; --accent2-dim:rgba(245,245,244,0.08);
-  --green:#d97706; --green-dim:rgba(217,119,6,0.12);
-  --amber:#f59e0b; --amber-dim:rgba(245,158,11,0.12);
-  --red:#ef4444;
-  --odd-casa:#60a5fa; --odd-emp:#a8a29e; --odd-fora:#fbbf24;
-  --odd-casa-bg:rgba(96,165,250,0.10); --odd-emp-bg:rgba(168,162,158,0.08); --odd-fora-bg:rgba(251,191,36,0.10);
-  --shadow:0 1px 2px rgba(0,0,0,0.4),0 12px 32px rgba(0,0,0,0.5);
+[data-theme="premium"] {
+  --bg:#0f0d0a;--bg2:#171310;--bg3:#1f1a15;
+  --border:#2e281f;--border2:#3d3527;
+  --text:#f0e8d8;--muted:#8f8471;
+  --green:#7fb88a;--green-dim:rgba(127,184,138,0.12);
+  --amber:#d4af6a;--amber-dim:rgba(212,175,106,0.12);
+  --red:#c1596e;--blue-dim:rgba(124,63,82,0.14);
+  --accent:#d4af6a;--accent-dim:rgba(212,175,106,0.14);
+  --accent2:#c98aa0;--accent2-dim:rgba(201,138,160,0.14);
+  --casa:#c98aa0;--casa-dim:rgba(201,138,160,0.14);--emp:#8f8471;--emp-dim:rgba(143,132,113,0.14);--fora:#d4af6a;--fora-dim:rgba(212,175,106,0.14);
+  --pct:#d4af6a;--pct-dim:rgba(212,175,106,0.16);
+  --shadow:0 1px 2px rgba(0,0,0,0.4),0 14px 36px rgba(0,0,0,0.5);
   --shadow-sm:0 1px 3px rgba(0,0,0,0.4);
-  --glow:0 0 0 1px rgba(251,191,36,0.20),0 0 24px rgba(251,191,36,0.12);
-  --row-hover:rgba(251,191,36,0.04);
-  --row-alt:rgba(255,255,255,0.02);
+  --glow:0 0 0 1px rgba(212,175,106,0.22),0 0 22px rgba(212,175,106,0.1);
+  --row-hover:rgba(212,175,106,0.035);
+  --row-alt:rgba(212,175,106,0.02);
   --tab-active-border:var(--accent);
-  --grid-line:rgba(251,191,36,0.04);
-  --icon-stroke:var(--accent);
-  --glass-bg:rgba(12,10,9,0.78);
-  --glass-border:rgba(251,191,36,0.08);
+  --grid-line:rgba(212,175,106,0.04);
 }
 
-/* ---------- Game On (rosa choque · estilo arcade) ---------- */
-[data-theme="game"] {
-  --bg:#0f172a; --bg2:#1e293b; --bg3:#334155;
-  --border:#334155; --border2:#475569;
-  --text:#f8fafc; --muted:#94a3b8;
-  --accent:#f43f5e; --accent-dim:rgba(244,63,94,0.12);
-  --accent2:#3b82f6; --accent2-dim:rgba(59,130,246,0.12);
-  --green:#22c55e; --green-dim:rgba(34,197,94,0.12);
-  --amber:#f59e0b; --amber-dim:rgba(245,158,11,0.12);
-  --red:#ef4444;
-  --odd-casa:#3b82f6; --odd-emp:#94a3b8; --odd-fora:#f43f5e;
-  --odd-casa-bg:rgba(59,130,246,0.10); --odd-emp-bg:rgba(148,163,184,0.08); --odd-fora-bg:rgba(244,63,94,0.10);
-  --shadow:0 1px 2px rgba(0,0,0,0.35),0 12px 32px rgba(0,0,0,0.5);
-  --shadow-sm:0 1px 3px rgba(0,0,0,0.4);
-  --glow:0 0 0 1px rgba(244,63,94,0.20),0 0 24px rgba(244,63,94,0.12);
-  --row-hover:rgba(244,63,94,0.04);
-  --row-alt:rgba(59,130,246,0.03);
+[data-theme="aurora"] {
+  --bg:#160f1c;--bg2:#1e1428;--bg3:#271a34;
+  --border:#33224a;--border2:#432c60;
+  --text:#f5eaff;--muted:#9c8ec2;
+  --green:#5eead4;--green-dim:rgba(94,234,212,0.14);
+  --amber:#ffc857;--amber-dim:rgba(255,200,87,0.14);
+  --red:#ff6b81;--blue-dim:rgba(255,107,129,0.14);
+  --accent:#ff6b81;--accent-dim:rgba(255,107,129,0.14);
+  --accent2:#ffc857;--accent2-dim:rgba(255,200,87,0.14);
+  --casa:#b18aff;--casa-dim:rgba(177,138,255,0.16);--emp:#9c8ec2;--emp-dim:rgba(156,142,194,0.16);--fora:#ffc857;--fora-dim:rgba(255,200,87,0.16);
+  --pct:#ff8fa0;--pct-dim:rgba(255,143,160,0.18);
+  --shadow:0 1px 2px rgba(0,0,0,0.35),0 14px 36px rgba(120,20,90,0.22);
+  --shadow-sm:0 1px 3px rgba(0,0,0,0.3);
+  --glow:0 0 0 1px rgba(255,107,129,0.3),0 0 26px rgba(255,107,129,0.16);
+  --row-hover:rgba(255,107,129,0.05);
+  --row-alt:rgba(177,138,255,0.035);
   --tab-active-border:var(--accent);
-  --grid-line:rgba(244,63,94,0.04);
-  --icon-stroke:var(--accent);
-  --glass-bg:rgba(15,23,42,0.78);
-  --glass-border:rgba(244,63,94,0.08);
+  --grid-line:rgba(177,138,255,0.06);
 }
 
-/* ---------- Candy Pop (roxo · divertido · vibrante) ---------- */
-[data-theme="candy"] {
-  --bg:#fdf4ff; --bg2:#ffffff; --bg3:#fae8ff;
-  --border:#e9d5ff; --border2:#d8b4fe;
-  --text:#4c1d95; --muted:#7c3aed;
-  --accent:#9333ea; --accent-dim:rgba(147,51,234,0.10);
-  --accent2:#f97316; --accent2-dim:rgba(249,115,22,0.10);
-  --green:#10b981; --green-dim:rgba(16,185,129,0.10);
-  --amber:#f97316; --amber-dim:rgba(249,115,22,0.10);
-  --red:#ef4444;
-  --odd-casa:#3b82f6; --odd-emp:#7c3aed; --odd-fora:#f97316;
-  --odd-casa-bg:rgba(59,130,246,0.08); --odd-emp-bg:rgba(124,58,237,0.06); --odd-fora-bg:rgba(249,115,22,0.08);
-  --shadow:0 1px 2px rgba(76,29,149,0.06),0 10px 28px rgba(76,29,149,0.10);
-  --shadow-sm:0 1px 3px rgba(76,29,149,0.08);
-  --glow:0 0 0 1px rgba(147,51,234,0.15),0 4px 16px rgba(147,51,234,0.08);
-  --row-hover:rgba(147,51,234,0.04);
-  --row-alt:rgba(249,115,22,0.03);
+[data-theme="arcade"] {
+  --bg:#0a0b16;--bg2:#111433;--bg3:#171b44;
+  --border:#1f2a4a;--border2:#2b3a63;
+  --text:#e6f7ff;--muted:#7c8ab5;
+  --green:#5cf98a;--green-dim:rgba(92,249,138,0.14);
+  --amber:#ffcf4d;--amber-dim:rgba(255,207,77,0.14);
+  --red:#ff4d8d;--blue-dim:rgba(0,229,255,0.14);
+  --accent:#00e5ff;--accent-dim:rgba(0,229,255,0.14);
+  --accent2:#c026ff;--accent2-dim:rgba(192,38,255,0.16);
+  --casa:#00e5ff;--casa-dim:rgba(0,229,255,0.14);--emp:#7c8ab5;--emp-dim:rgba(124,138,181,0.14);--fora:#ffcf4d;--fora-dim:rgba(255,207,77,0.14);
+  --pct:#d97aff;--pct-dim:rgba(217,122,255,0.18);
+  --shadow:0 0 1px rgba(0,229,255,0.35),0 0 44px rgba(192,38,255,0.18);
+  --shadow-sm:0 0 16px rgba(0,229,255,0.1);
+  --glow:0 0 0 1px rgba(0,229,255,0.32),0 0 26px rgba(192,38,255,0.2);
+  --row-hover:rgba(0,229,255,0.05);
+  --row-alt:rgba(192,38,255,0.035);
   --tab-active-border:var(--accent);
-  --grid-line:rgba(147,51,234,0.04);
-  --icon-stroke:var(--accent);
-  --glass-bg:rgba(253,244,255,0.82);
-  --glass-border:rgba(147,51,234,0.10);
+  --grid-line:rgba(192,38,255,0.06);
 }
 
 /* ===============================================
-   SELETOR DE TEMA — Preview visual
+   SELETOR DE TEMA
 =============================================== */
-.theme-switcher{display:flex;align-items:center;gap:10px;}
+.theme-switcher{display:flex;align-items:center;gap:7px;}
+.theme-btn{
+  width:24px;height:24px;border-radius:50%;border:2px solid transparent;
+  cursor:pointer;transition:transform .2s cubic-bezier(.34,1.56,.64,1),box-shadow .2s;position:relative;outline:none;
+}
+.theme-btn:hover{transform:scale(1.18);}
+.theme-btn.active{border-color:var(--text);box-shadow:0 0 0 3px var(--bg2),0 0 0 4px var(--border2);}
+.theme-btn[data-t="dark"]{background:radial-gradient(circle at 30% 30%,#2a2f3a,#090b0f);}
+.theme-btn[data-t="light"]{background:radial-gradient(circle at 30% 30%,#ffffff,#d1d5db);}
+.theme-btn[data-t="neon"]{background:radial-gradient(circle at 30% 30%,#00ffb388,#050208);border-color:#00ffb344;}
+.theme-btn[data-t="premium"]{background:radial-gradient(circle at 30% 30%,#d4af6a,#171310);border-color:#d4af6a44;}
+.theme-btn[data-t="aurora"]{background:radial-gradient(circle at 30% 30%,#ff6b81,#1e1428);border-color:#ff6b8144;}
+.theme-btn[data-t="arcade"]{background:radial-gradient(circle at 30% 30%,#00e5ff,#c026ff 130%);border-color:#00e5ff44;}
 .theme-label{font-size:10px;font-family:var(--mono);color:var(--muted);text-transform:uppercase;letter-spacing:.08em;margin-right:2px;}
-.theme-picker{display:flex;gap:6px;align-items:center;}
-.theme-chip{
-  display:flex;align-items:center;gap:6px;
-  padding:5px 10px 5px 6px;
-  border-radius:20px;border:1.5px solid transparent;
-  background:var(--bg3);cursor:pointer;
-  transition:all 0.3s cubic-bezier(.2,.8,.2,1);
-  position:relative;
-}
-.theme-chip:hover{transform:translateY(-1px);border-color:var(--border2);}
-.theme-chip.active{border-color:var(--accent);background:var(--accent-dim);box-shadow:var(--glow);}
-.theme-chip .chip-dot{
-  width:14px;height:14px;border-radius:50%;border:1.5px solid rgba(255,255,255,0.15);
-  flex-shrink:0;
-}
-.theme-chip .chip-name{
-  font-size:10px;font-weight:600;font-family:var(--sans);
-  color:var(--muted);letter-spacing:0.02em;
-  transition:color 0.3s;
-}
-.theme-chip.active .chip-name{color:var(--accent);}
-
-/* Cores dos chips */
-.theme-chip[data-t="dark"] .chip-dot{background:radial-gradient(circle at 30% 30%,#2a2f3a,#090b0f);}
-.theme-chip[data-t="light"] .chip-dot{background:radial-gradient(circle at 30% 30%,#ffffff,#d1d5db);}
-.theme-chip[data-t="neon"] .chip-dot{background:radial-gradient(circle at 30% 30%,#00ffb388,#050208);}
-.theme-chip[data-t="luxe"] .chip-dot{background:radial-gradient(circle at 30% 30%,#fbbf24,#0c0a09);}
-.theme-chip[data-t="game"] .chip-dot{background:radial-gradient(circle at 30% 30%,#f43f5e,#0f172a);}
-.theme-chip[data-t="candy"] .chip-dot{background:radial-gradient(circle at 30% 30%,#9333ea,#fdf4ff);}
-
 *{box-sizing:border-box;margin:0;padding:0;}
 *:focus-visible{outline:2px solid var(--accent);outline-offset:2px;}
 ::selection{background:var(--accent);color:var(--bg);}
@@ -292,6 +246,7 @@ main{padding:28px 0;}
 .metric-value{font-size:27px;font-weight:600;line-height:1;font-family:var(--mono);letter-spacing:-0.01em;}
 .metric-value.green{color:var(--green);}
 .metric-value.amber{color:var(--amber);}
+.metric-value.pct{color:var(--pct);}
 .metric-sub{font-size:11px;color:var(--muted);margin-top:6px;}
 
 .section-header{display:flex;align-items:baseline;gap:10px;margin-bottom:14px;}
@@ -312,20 +267,20 @@ main{padding:28px 0;}
 .top-rank{font-size:18px;margin-bottom:6px;}
 .top-jogo{font-family:var(--display);font-size:18px;font-weight:600;margin-bottom:12px;line-height:1.3;letter-spacing:-0.005em;}
 .top-odds{display:flex;gap:6px;margin-bottom:12px;flex-wrap:wrap;}
-.odd-tag{font-family:var(--mono);font-size:12px;padding:3px 9px;border-radius:5px;}
-.odd-casa{background:var(--blue-dim);color:#93c5fd;border:1px solid rgba(59,130,246,0.2);}
-.odd-emp{background:rgba(107,114,128,0.12);color:#9ca3af;border:1px solid rgba(107,114,128,0.2);}
-.odd-fora{background:var(--amber-dim);color:#fcd34d;border:1px solid rgba(245,158,11,0.2);}
-.odd-input{font-family:var(--mono);font-size:14px;padding:6px 10px;border-radius:6px;background:var(--bg3);border:1.5px solid;outline:none;transition:all 0.2s;color:inherit;width:70px;min-width:70px;text-align:center;}
-.odd-input.odd-casa{border-color:rgba(59,130,246,0.5);color:#93c5fd;}
-.odd-input.odd-casa:focus{border-color:#3b82f6;background:rgba(59,130,246,0.2);box-shadow:0 0 8px rgba(59,130,246,0.3);}
-.odd-input.odd-emp{border-color:rgba(107,114,128,0.4);color:#9ca3af;}
-.odd-input.odd-emp:focus{border-color:#6b7280;background:rgba(107,114,128,0.15);box-shadow:0 0 8px rgba(107,114,128,0.2);}
-.odd-input.odd-fora{border-color:rgba(245,158,11,0.5);color:#fcd34d;}
-.odd-input.odd-fora:focus{border-color:#f59e0b;background:rgba(245,158,11,0.2);box-shadow:0 0 8px rgba(245,158,11,0.3);}
+.odd-tag{font-family:var(--mono);font-size:12px;font-weight:600;padding:4px 10px;border-radius:6px;letter-spacing:0.01em;}
+.odd-casa{background:var(--casa-dim);color:var(--casa);border:1px solid color-mix(in srgb,var(--casa) 35%,transparent);}
+.odd-emp{background:var(--emp-dim);color:var(--emp);border:1px solid color-mix(in srgb,var(--emp) 35%,transparent);}
+.odd-fora{background:var(--fora-dim);color:var(--fora);border:1px solid color-mix(in srgb,var(--fora) 35%,transparent);}
+.odd-input{font-family:var(--mono);font-size:14px;font-weight:600;padding:6px 10px;border-radius:6px;background:var(--bg3);border:1.5px solid;outline:none;transition:all 0.2s;color:inherit;width:70px;min-width:70px;text-align:center;}
+.odd-input.odd-casa{border-color:color-mix(in srgb,var(--casa) 50%,transparent);color:var(--casa);}
+.odd-input.odd-casa:focus{border-color:var(--casa);background:var(--casa-dim);box-shadow:0 0 8px var(--casa-dim);}
+.odd-input.odd-emp{border-color:color-mix(in srgb,var(--emp) 45%,transparent);color:var(--emp);}
+.odd-input.odd-emp:focus{border-color:var(--emp);background:var(--emp-dim);box-shadow:0 0 8px var(--emp-dim);}
+.odd-input.odd-fora{border-color:color-mix(in srgb,var(--fora) 50%,transparent);color:var(--fora);}
+.odd-input.odd-fora:focus{border-color:var(--fora);background:var(--fora-dim);box-shadow:0 0 8px var(--fora-dim);}
 .top-financial{border-top:1px solid var(--border);padding-top:12px;display:flex;justify-content:space-between;align-items:flex-end;}
-.top-lucro-val{font-family:var(--mono);font-size:15px;font-weight:500;color:var(--green);}
-.top-lucro-pct{font-family:var(--mono);font-size:20px;color:var(--green);}
+.top-lucro-val{font-family:var(--mono);font-size:15px;font-weight:600;color:var(--text);}
+.top-lucro-pct{font-family:var(--mono);font-size:20px;font-weight:700;color:var(--pct);background:var(--pct-dim);padding:3px 11px;border-radius:7px;letter-spacing:-0.01em;}
 .top-distrib{font-size:15px;color:var(--muted);text-align:right;line-height:1.7;}
 
 .grid2{display:grid;grid-template-columns:1fr 340px;gap:20px;align-items:start;margin-bottom:28px;}
@@ -348,6 +303,9 @@ main{padding:28px 0;}
 .table-scroll{overflow-x:auto;}
 table{width:100%;border-collapse:collapse;font-size:13px;}
 thead th{background:var(--bg3);padding:12px 14px;text-align:left;font-size:10px;font-family:var(--mono);color:var(--muted);text-transform:uppercase;letter-spacing:0.07em;border-bottom:1px solid var(--border2);white-space:nowrap;}
+thead th[onclick]{cursor:pointer;transition:color .15s;user-select:none;}
+thead th[onclick]:hover{color:var(--accent);}
+thead th[onclick]::after{content:'⇅';margin-left:5px;font-size:9px;opacity:0.45;}
 tbody tr{border-bottom:1px solid var(--border);transition:background 0.15s,transform 0.1s;}
 tbody tr:last-child{border-bottom:none;}
 tbody tr:nth-child(even){background:var(--row-alt);}
@@ -367,9 +325,9 @@ tbody tr:nth-child(10){animation-delay:.20s;}
 td{padding:11px 14px;white-space:nowrap;}
 .td-jogo{font-weight:500;max-width:220px;overflow:hidden;text-overflow:ellipsis;}
 .td-mono{font-family:var(--mono);font-size:12px;}
-.td-odd-casa{font-family:var(--mono);font-size:12px;color:var(--odd-casa) !important;}
-.td-odd-emp{font-family:var(--mono);font-size:12px;color:var(--odd-emp) !important;}
-.td-odd-fora{font-family:var(--mono);font-size:12px;color:var(--odd-fora) !important;}
+.td-odd-casa{font-family:var(--mono);font-size:12px;font-weight:600;color:var(--casa);}
+.td-odd-emp{font-family:var(--mono);font-size:12px;font-weight:600;color:var(--emp);}
+.td-odd-fora{font-family:var(--mono);font-size:12px;font-weight:600;color:var(--fora);}
 /* Tooltip nas odds */
 .td-odd-tip{position:relative;cursor:default;}
 .td-odd-tip::after{
@@ -381,8 +339,8 @@ td{padding:11px 14px;white-space:nowrap;}
   z-index:99;box-shadow:0 4px 12px rgba(0,0,0,0.3);
 }
 .td-odd-tip:hover::after{opacity:1;}
-.td-pct{font-family:var(--mono);font-size:13px;font-weight:500;text-align:right;}
-.td-pct.pos{color:var(--green);}
+.td-pct{font-family:var(--mono);font-size:12.5px;font-weight:700;text-align:right;}
+.td-pct.pos{color:var(--pct);background:var(--pct-dim);padding:3px 9px;border-radius:6px;}
 .td-pct.neg{color:var(--muted);}
 .td-val{font-family:var(--mono);font-size:12px;color:var(--muted);text-align:right;}
 /* Badge campeonato */
@@ -404,6 +362,12 @@ td{padding:11px 14px;white-space:nowrap;}
   display:flex;align-items:center;gap:6px;border-radius:7px 7px 0 0;}
 .tab-btn:hover{color:var(--text);background:var(--row-alt);}
 .tab-btn.active{color:var(--accent);border-bottom-color:var(--tab-active-border);font-weight:600;background:var(--accent-dim);text-shadow:0 0 18px var(--accent-dim);}
+.tab-icon{width:15px;height:15px;flex-shrink:0;opacity:0.85;}
+.btn-icon{width:14px;height:14px;vertical-align:-3px;margin-right:1px;flex-shrink:0;}
+h3 .btn-icon{width:16px;height:16px;vertical-align:-3px;}
+.section-title .btn-icon{width:13px;height:13px;vertical-align:-2px;margin-right:2px;opacity:0.85;}
+th .btn-icon{width:11px;height:11px;vertical-align:-1px;opacity:0.7;margin-left:2px;}
+.tab-btn.active .tab-icon{opacity:1;}
 .tab-panel{display:none;}
 .tab-panel.active{display:block;animation:fadeInRow 0.25s ease both;}
 
@@ -413,8 +377,8 @@ td{padding:11px 14px;white-space:nowrap;}
 .links-card:hover{transform:translateY(-2px);box-shadow:0 8px 32px rgba(0,0,0,0.3);}
 .links-card::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,var(--green),var(--accent));border-radius:var(--radius-lg) var(--radius-lg) 0 0;}
 .links-jogo{font-size:15px;font-weight:500;margin-bottom:12px;line-height:1.3;color:var(--text);}
-.links-lucro{font-family:var(--mono);font-size:13px;font-weight:600;color:var(--green);margin-bottom:16px;}
-.links-lucro-pct{font-family:var(--mono);font-size:25px;color:var(--green);}
+.links-lucro{font-family:var(--mono);font-size:13px;font-weight:600;color:var(--text);margin-bottom:16px;}
+.links-lucro-pct{font-family:var(--mono);font-size:25px;font-weight:700;color:var(--pct);background:var(--pct-dim);padding:4px 13px;border-radius:8px;letter-spacing:-0.01em;}
 .link-row{display:flex;align-items:center;gap:10px;padding:10px;background:var(--bg3);border-radius:6px;margin-bottom:8px;border:1px solid var(--border2);}
 .link-row:last-child{margin-bottom:0;}
 .link-label{font-size:12px;font-family:var(--mono);color:var(--muted);text-transform:uppercase;min-width:60px;}
@@ -443,14 +407,14 @@ td{padding:11px 14px;white-space:nowrap;}
 .lm-jogo{font-size:14px;font-weight:500;margin-bottom:14px;line-height:1.3;}
 .lm-scenarios{display:flex;flex-direction:column;gap:5px;}
 .lm-scen{display:flex;justify-content:space-between;align-items:center;padding:8px 11px;border-radius:6px;}
-.lm-scen.best{background:var(--green-dim);border:1px solid rgba(34,197,94,0.25);}
+.lm-scen.best{background:var(--pct-dim);border:1px solid color-mix(in srgb,var(--pct) 35%,transparent);}
 .lm-scen.normal{background:var(--bg3);border:1px solid var(--border);}
 .lm-scen.neg{background:var(--bg3);border:1px solid var(--border);}
 .lm-scen.inviavel{background:rgba(239,68,68,0.05);border:1px solid rgba(239,68,68,0.12);}
 .lm-scen-label{font-family:var(--mono);font-size:12px;color:var(--muted);}
-.lm-scen.best .lm-scen-label{color:var(--green);font-weight:500;}
-.lm-scen-pct{font-family:var(--mono);font-size:13px;font-weight:500;}
-.lm-scen.best .lm-scen-pct{color:var(--green);}
+.lm-scen.best .lm-scen-label{color:var(--pct);font-weight:600;}
+.lm-scen-pct{font-family:var(--mono);font-size:13px;font-weight:700;}
+.lm-scen.best .lm-scen-pct{color:var(--pct);}
 .lm-scen.normal .lm-scen-pct{color:var(--text);}
 .lm-scen.neg .lm-scen-pct{color:var(--muted);}
 .lm-scen.inviavel .lm-scen-pct{color:var(--muted);font-size:11px;}
@@ -478,9 +442,9 @@ td{padding:11px 14px;white-space:nowrap;}
 .jogos-site-nao .jogos-site-name{color:var(--muted);}
 
 .jogos-odd{font-family:var(--mono);font-size:12px;text-align:center;}
-.jogos-odd.casa{color:var(--odd-casa) !important;}
-.jogos-odd.emp{color:var(--odd-emp) !important;}
-.jogos-odd.fora{color:var(--odd-fora) !important;}
+.jogos-odd.casa{color:#93c5fd;}
+.jogos-odd.emp{color:#9ca3af;}
+.jogos-odd.fora{color:#fcd34d;}
 .jogos-odd.highlight{background:rgba(245,158,11,0.25);color:#000;font-weight:600;border-radius:4px;padding:4px 8px;}
 .jogos-odd.nao{color:var(--muted);}
 
@@ -588,82 +552,6 @@ td{padding:11px 14px;white-space:nowrap;}
 #input-arquivo{display:none;}
 
 /* ===============================================
-   ÍCONES SVG MODERNOS
-=============================================== */
-.tab-icon{
-  width:18px;height:18px;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round;
-  fill:none;flex-shrink:0;transition:stroke 0.3s,filter 0.3s;
-  stroke:var(--muted);
-}
-.tab-btn.active .tab-icon{stroke:var(--accent);filter:drop-shadow(0 0 6px var(--accent-dim));}
-.tab-btn:hover .tab-icon{stroke:var(--text);}
-
-.card-icon{
-  width:20px;height:20px;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round;
-  fill:none;stroke:var(--accent);opacity:0.7;
-}
-
-/* ===============================================
-   MICRO-INTERAÇÕES & GLASSMORPHISM
-=============================================== */
-header{
-  background:var(--glass-bg);
-  backdrop-filter:blur(20px) saturate(1.4);
-  -webkit-backdrop-filter:blur(20px) saturate(1.4);
-  border-bottom:1px solid var(--glass-border);
-}
-
-.metric, .top-card, .links-card, .lm-card, .chart-box, .stats-box{
-  transition:border-color 0.3s,transform 0.25s cubic-bezier(.2,.8,.2,1),box-shadow 0.25s;
-}
-.metric:hover, .top-card:hover, .links-card:hover, .lm-card:hover{
-  transform:translateY(-3px) scale(1.005);
-  box-shadow:var(--shadow);
-}
-
-/* Destaque de valores nos cards */
-.valor-destaque{
-  font-family:var(--mono);font-size:20px;font-weight:600;letter-spacing:-0.02em;
-  line-height:1.1;
-}
-.valor-lucro{color:var(--green);background:var(--green-dim);padding:4px 10px;border-radius:8px;border:1px solid rgba(255,255,255,0.06);display:inline-block;}
-.valor-odd-casa{color:var(--odd-casa);background:var(--odd-casa-bg);padding:4px 10px;border-radius:8px;border:1px solid rgba(255,255,255,0.06);display:inline-block;}
-.valor-odd-emp{color:var(--odd-emp);background:var(--odd-emp-bg);padding:4px 10px;border-radius:8px;border:1px solid rgba(255,255,255,0.06);display:inline-block;}
-.valor-odd-fora{color:var(--odd-fora);background:var(--odd-fora-bg);padding:4px 10px;border-radius:8px;border:1px solid rgba(255,255,255,0.06);display:inline-block;}
-
-/* Badge de lucro ↑ ↓ */
-.lucro-badge{
-  display:inline-flex;align-items:center;gap:3px;
-  font-family:var(--mono);font-size:11px;font-weight:600;
-  padding:2px 8px;border-radius:20px;
-}
-.lucro-badge.pos{background:var(--green-dim);color:var(--green);border:1px solid rgba(255,255,255,0.06);}
-.lucro-badge.neg{background:rgba(239,68,68,0.08);color:var(--red);border:1px solid rgba(239,68,68,0.15);}
-.lucro-badge.neu{background:rgba(245,158,11,0.08);color:var(--amber);border:1px solid rgba(245,158,11,0.15);}
-
-/* Odds coloridas consistentes em todos os temas */
-.td-odd-casa{color:var(--odd-casa) !important;}
-.td-odd-emp{color:var(--odd-emp) !important;}
-.td-odd-fora{color:var(--odd-fora) !important;}
-
-/* Odd inputs com cores do tema */
-.odd-input.odd-casa{border-color:rgba(59,130,246,0.5);color:var(--odd-casa);}
-.odd-input.odd-casa:focus{border-color:#3b82f6;background:rgba(59,130,246,0.15);box-shadow:0 0 10px rgba(59,130,246,0.2);}
-.odd-input.odd-emp{border-color:rgba(107,114,128,0.4);color:var(--odd-emp);}
-.odd-input.odd-emp:focus{border-color:#6b7280;background:rgba(107,114,128,0.12);box-shadow:0 0 8px rgba(107,114,128,0.15);}
-.odd-input.odd-fora{border-color:rgba(245,158,11,0.5);color:var(--odd-fora);}
-.odd-input.odd-fora:focus{border-color:#f59e0b;background:rgba(245,158,11,0.15);box-shadow:0 0 10px rgba(245,158,11,0.2);}
-
-/* Transição suave entre temas */
-*, *::before, *::after{
-  transition:background-color 0.4s ease, color 0.4s ease, border-color 0.4s ease, box-shadow 0.4s ease;
-}
-/* Exceções para não animar transform e outras propriedades de interação */
-.metric, .top-card, .links-card, .lm-card, .theme-chip, .tab-btn{
-  transition:border-color 0.3s,transform 0.25s cubic-bezier(.2,.8,.2,1),box-shadow 0.25s,background-color 0.4s ease,color 0.4s ease;
-}
-
-/* ===============================================
    LOGIN & ADMIN
 =============================================== */
 #loginScreen{
@@ -737,7 +625,7 @@ header{
   <!-- MODO ADMIN: Upload -->
   <div id="dropAdmin" style="display:none">
     <div class="drop-box" id="dropBox" onclick="document.getElementById('fileInput').click()">
-      <div class="drop-icon">📂</div>
+      <div class="drop-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" style="width:48px;height:48px;color:var(--accent)"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg></div>
       <div class="drop-title" id="dropTitle">Carregar XLSX (Admin)</div>
       <div class="drop-sub">Arraste ou clique para selecionar os arquivos gerados pelo Python</div>
     </div>
@@ -779,34 +667,14 @@ header{
       </div>
       <div class="header-actions">
         <div class="theme-switcher">
-  <span class="theme-label">Tema</span>
-  <div class="theme-picker">
-    <div class="theme-chip active" data-t="dark" onclick="setTheme('dark')" title="Dark Pro">
-      <div class="chip-dot"></div>
-      <span class="chip-name">Dark</span>
-    </div>
-    <div class="theme-chip" data-t="light" onclick="setTheme('light')" title="Clean Light">
-      <div class="chip-dot"></div>
-      <span class="chip-name">Light</span>
-    </div>
-    <div class="theme-chip" data-t="neon" onclick="setTheme('neon')" title="Cyber Neon">
-      <div class="chip-dot"></div>
-      <span class="chip-name">Neon</span>
-    </div>
-    <div class="theme-chip" data-t="luxe" onclick="setTheme('luxe')" title="Gold Luxe">
-      <div class="chip-dot"></div>
-      <span class="chip-name">Luxe</span>
-    </div>
-    <div class="theme-chip" data-t="game" onclick="setTheme('game')" title="Game On">
-      <div class="chip-dot"></div>
-      <span class="chip-name">Game</span>
-    </div>
-    <div class="theme-chip" data-t="candy" onclick="setTheme('candy')" title="Candy Pop">
-      <div class="chip-dot"></div>
-      <span class="chip-name">Candy</span>
-    </div>
-  </div>
-</div>
+          <span class="theme-label">Tema</span>
+          <button class="theme-btn active" data-t="dark" onclick="setTheme('dark')" title="Dark"></button>
+          <button class="theme-btn" data-t="light" onclick="setTheme('light')" title="Light"></button>
+          <button class="theme-btn" data-t="neon" onclick="setTheme('neon')" title="Neon"></button>
+          <button class="theme-btn" data-t="premium" onclick="setTheme('premium')" title="Ouro Sofisticado"></button>
+          <button class="theme-btn" data-t="aurora" onclick="setTheme('aurora')" title="Aurora"></button>
+          <button class="theme-btn" data-t="arcade" onclick="setTheme('arcade')" title="Arcade"></button>
+        </div>
         <span class="tag tag-gray" id="tagJogos">sem dados</span>
         <select id="filtroCampeonatoSelect" class="filter-input" style="display:none" onchange="mudarFiltroCampeonato(this.value)">
           <option value="__todos__">Todos os campeonatos</option>
@@ -822,8 +690,8 @@ header{
       
         <span class="user-badge" id="userBadge"></span>
         <span class="admin-badge" id="adminBadge" style="display:none">ADMIN</span>
-        <button class="btn-clear admin-only" id="btnLimpar" style="display:none" onclick="clearDataFromFirebase()">🗑️ Limpar Dados</button>
-        <button class="btn-clear admin-only" id="btnRelatorioUso" style="display:none;background:var(--bg3);color:var(--text);border:1px solid var(--border2)" onclick="abrirRelatorioUso()">📊 Relatório de Uso</button>
+        <button class="btn-clear admin-only" id="btnLimpar" style="display:none" onclick="clearDataFromFirebase()"><svg class="btn-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 01-2 2H8a2 2 0 01-2-2L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4a1 1 0 011-1h4a1 1 0 011 1v2"/></svg> Limpar Dados</button>
+        <button class="btn-clear admin-only" id="btnRelatorioUso" style="display:none;background:var(--bg3);color:var(--text);border:1px solid var(--border2)" onclick="abrirRelatorioUso()"><svg class="btn-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg> Relatório de Uso</button>
         <button class="btn-logout" onclick="doLogout()">Sair</button>
       </div>
     </div>
@@ -849,20 +717,20 @@ header{
 
     <div class="metrics">
       <div class="metric"><div class="metric-label">Melhor lucro</div><div class="metric-value green" id="m-lucro">—</div><div class="metric-sub" id="m-lucro-jogo">carregue o arquivo</div></div>
-      <div class="metric"><div class="metric-label">Maior % ganho</div><div class="metric-value green" id="m-pct">—</div><div class="metric-sub" id="m-pct-jogo"></div></div>
+      <div class="metric"><div class="metric-label">Maior % ganho</div><div class="metric-value pct" id="m-pct">—</div><div class="metric-sub" id="m-pct-jogo"></div></div>
       <div class="metric"><div class="metric-label">Jogos c/ lucro</div><div class="metric-value green" id="m-positivos">—</div><div class="metric-sub" id="m-positivos-sub"></div></div>
       <div class="metric"><div class="metric-label">Margem média</div><div class="metric-value amber" id="m-margem">—</div><div class="metric-sub">da bookmaker</div></div>
     </div>
 
     <div class="tabs-nav">
-  <button class="tab-btn active" id="btn-comparativo" onclick="switchTab('comparativo')"><svg class="tab-icon" viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18"/><path d="M9 21V9"/></svg>Comparativo</button>
-  <button class="tab-btn" id="btn-toplinks" onclick="switchTab('toplinks')"><svg class="tab-icon" viewBox="0 0 24 24"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>Top Apostas</button>
-  <button class="tab-btn" id="btn-lucromax" onclick="switchTab('lucromax')"><svg class="tab-icon" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M16 8h-6a2 2 0 0 0-2 2v4a2 2 0 0 0 2 2h6"/><path d="M12 12h.01"/></svg>Lucro Máximo</button>
-  <button class="tab-btn" id="btn-jogos" onclick="switchTab('jogos')"><svg class="tab-icon" viewBox="0 0 24 24"><path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6"/><path d="M18 9h1.5a2.5 2.5 0 0 0 0-5H18"/><path d="M4 22h16"/><path d="M10 14.66V17c0 .55-.47.98-.97 1.21C7.85 18.75 7 20.24 7 22"/><path d="M14 14.66V17c0 .55.47.98.97 1.21C16.15 18.75 17 20.24 17 22"/><path d="M18 2H6v7a6 6 0 0 0 12 0V2Z"/></svg>Jogos</button>
-  <button class="tab-btn" id="btn-estatisticas" onclick="switchTab('estatisticas')"><svg class="tab-icon" viewBox="0 0 24 24"><path d="M3 3v18h18"/><path d="m19 9-5 5-4-4-3 3"/></svg>Estatísticas</button>
-  <button class="tab-btn" id="btn-historico" onclick="switchTab('historico')"><svg class="tab-icon" viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6"/><path d="M16 13H8"/><path d="M16 17H8"/><path d="M10 9H8"/></svg>Histórico</button>
-  <button class="tab-btn" id="btnGerenciarAbas" onclick="abrirGerenciadorAbas()" style="display:none;margin-left:auto"><svg class="tab-icon" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06A1.65 1.65 0 0 0 4.67 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06A1.65 1.65 0 0 0 9 4.67a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>Gerenciar</button>
-</div>
+      <button class="tab-btn active" id="btn-comparativo" onclick="switchTab('comparativo')"><svg class="tab-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="12" width="4" height="9"/><rect x="10" y="6" width="4" height="15"/><rect x="17" y="9" width="4" height="12"/></svg> Comparativo</button>
+      <button class="tab-btn" id="btn-toplinks" onclick="switchTab('toplinks')"><svg class="tab-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 007.07 0l2.83-2.83a5 5 0 00-7.07-7.07l-1.42 1.42"/><path d="M14 11a5 5 0 00-7.07 0L4.1 13.83a5 5 0 007.07 7.07l1.42-1.42"/></svg> Top Apostas c/ Links</button>
+      <button class="tab-btn" id="btn-lucromax" onclick="switchTab('lucromax')"><svg class="tab-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 17 9 11 13 15 21 7"/><polyline points="15 7 21 7 21 13"/></svg> Lucro Máximo</button>
+      <button class="tab-btn" id="btn-jogos" onclick="switchTab('jogos')"><svg class="tab-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="7" width="20" height="10" rx="5"/><line x1="5.5" y1="10.5" x2="5.5" y2="13.5"/><line x1="4" y1="12" x2="7" y2="12"/><circle cx="16" cy="10.5" r="1"/><circle cx="18.2" cy="13" r="1"/></svg> Jogos</button>
+      <button class="tab-btn" id="btn-estatisticas" onclick="switchTab('estatisticas')"><svg class="tab-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg> Estatísticas</button>
+      <button class="tab-btn" id="btn-historico" onclick="switchTab('historico')"><svg class="tab-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><polyline points="12 7 12 12 15 14.5"/></svg> Histórico</button>
+      <button class="tab-btn" id="btnGerenciarAbas" onclick="abrirGerenciadorAbas()" style="display:none;margin-left:auto;color:var(--muted)"><svg class="tab-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><line x1="4" y1="6" x2="20" y2="6"/><circle cx="9" cy="6" r="2"/><line x1="4" y1="12" x2="20" y2="12"/><circle cx="15" cy="12" r="2"/><line x1="4" y1="18" x2="20" y2="18"/><circle cx="7" cy="18" r="2"/></svg> Gerenciar Abas</button>
+    </div>
 
     <div class="tab-panel active" id="tab-comparativo">
 
@@ -931,7 +799,7 @@ header{
     </div><!-- /tab-comparativo -->
 
     <div class="tab-panel" id="tab-toplinks">
-      <div class="section-header"><span class="section-title">🎯 melhores apostas com links diretos</span></div>
+      <div class="section-header"><span class="section-title"><svg class="btn-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="5"/><circle cx="12" cy="12" r="1"/></svg> melhores apostas com links diretos</span></div>
       <div class="links-grid" id="toplinks-cards">
         <div style="color:var(--muted);font-size:12px;text-align:center;padding:40px 0">Carregue um arquivo XLSX para ver as apostas.</div>
       </div>
@@ -949,7 +817,7 @@ header{
     </div><!-- /tab-lucromax -->
 
     <div class="tab-panel" id="tab-jogos">
-      <div class="section-header"><span class="section-title">📋 Todos os Jogos</span></div>
+      <div class="section-header"><span class="section-title"><svg class="btn-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/></svg> Todos os Jogos</span></div>
       <div class="jogos-container">
         <table class="jogos-table">
           <thead>
@@ -975,14 +843,14 @@ header{
     <!-- ABA ESTATÍSTICAS -->
     <!-- =============================================================== -->
     <div class="tab-panel" id="tab-estatisticas">
-      <div class="section-header"><span class="section-title">📈 Estatísticas por Casa</span></div>
+      <div class="section-header"><span class="section-title"><svg class="btn-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg> Estatísticas por Casa</span></div>
       <div class="jogos-container">
         <table class="jogos-table" id="estat-table">
           <thead>
             <tr>
               <th style="width:30px">#</th>
               <th>Casa Bet</th>
-              <th style="width:110px;text-align:center">🏆 Odds Ganhadoras</th>
+              <th style="width:110px;text-align:center"><svg class="btn-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M8 21h8M12 17v4M7 4h10v3a5 5 0 01-10 0V4z"/><path d="M7 5H4.5A1.5 1.5 0 003 6.5v0A3.5 3.5 0 006.5 10H7"/><path d="M17 5h2.5A1.5 1.5 0 0121 6.5v0A3.5 3.5 0 0117.5 10H17"/></svg> Odds Ganhadoras</th>
               <th style="width:110px;text-align:center">Total Casa</th>
               <th style="width:110px;text-align:center">Total Empate</th>
               <th style="width:110px;text-align:center">Total Fora</th>
@@ -999,11 +867,11 @@ header{
     <!-- ABA HISTÓRICO -->
     <!-- =============================================================== -->
     <div class="tab-panel" id="tab-historico">
-      <div class="section-header"><span class="section-title">📊 Histórico de Apostas</span></div>
+      <div class="section-header"><span class="section-title"><svg class="btn-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><polyline points="12 7 12 12 15 14.5"/></svg> Histórico de Apostas</span></div>
 
       <!-- INDICADOR DE SALVAMENTO -->
       <div class="banner-salvamento">
-        💾 <span id="timestamp-salvamento">Inicializando...</span>
+        <svg class="btn-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21H5a2 2 0 01-2-2V5a2 2 0 012-2h11l5 5v11a2 2 0 01-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg> <span id="timestamp-salvamento">Inicializando...</span>
       </div>
 
       <!-- CARDS DOS JOGADORES -->
@@ -1036,13 +904,13 @@ header{
           <span class="filtro-label">Evento:</span>
           <input type="text" id="filtro-evento" placeholder="Buscar evento..." style="width:200px;">
         </div>
-        <button class="btn-gerenciar" onclick="abrirGerenciadorJogadores()">⚙️ Gerenciar Jogadores</button>
+        <button class="btn-gerenciar" onclick="abrirGerenciadorJogadores()"><svg class="btn-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87"/><path d="M16 3.13a4 4 0 010 7.75"/></svg> Gerenciar Jogadores</button>
       </div>
 
       <div class="modal-overlay" id="modal-jogadores" style="display: none;">
         <div class="modal-content">
           <div class="modal-header">
-            <h3>⚙️ Gerenciar Jogadores</h3>
+            <h3><svg class="btn-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87"/><path d="M16 3.13a4 4 0 010 7.75"/></svg> Gerenciar Jogadores</h3>
             <button class="btn-fechar" onclick="fecharGerenciadorJogadores()">✕</button>
           </div>
 
@@ -1052,7 +920,7 @@ header{
             <div class="form-grid-modal">
               <input type="text" id="novo-jogador-nome" placeholder="Nome do jogador" maxlength="50">
               <input type="number" id="novo-jogador-limite" placeholder="Limite (R$)" min="100" value="5000">
-              <button class="btn-adicionar" onclick="adicionarJogador()">✅ Adicionar</button>
+              <button class="btn-adicionar" onclick="adicionarJogador()"><svg class="btn-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg> Adicionar</button>
             </div>
           </div>
 
@@ -1072,9 +940,9 @@ header{
 
       <!-- BOTÕES AÇÕES -->
       <div style="margin-bottom: 16px; display: flex; gap: 8px; flex-wrap: wrap;">
-        <button class="btn-exportar-backup" onclick="exportarBackup()">💾 Exportar backup</button>
-        <button class="btn-importar-backup" onclick="document.getElementById('input-arquivo').click()">📥 Importar backup</button>
-        <button class="btn-nova-aposta" onclick="toggleFormularioAposta()">➕ Nova Aposta</button>
+        <button class="btn-exportar-backup" onclick="exportarBackup()"><svg class="btn-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21H5a2 2 0 01-2-2V5a2 2 0 012-2h11l5 5v11a2 2 0 01-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg> Exportar backup</button>
+        <button class="btn-importar-backup" onclick="document.getElementById('input-arquivo').click()"><svg class="btn-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg> Importar backup</button>
+        <button class="btn-nova-aposta" onclick="toggleFormularioAposta()"><svg class="btn-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg> Nova Aposta</button>
       </div>
 
       <!-- INPUT DE ARQUIVO (OCULTO) -->
@@ -1082,7 +950,7 @@ header{
 
       <!-- FORMULÁRIO DE NOVA APOSTA -->
       <div class="historico-form" id="formulario-aposta" style="display: none;">
-        <h3 id="form-titulo">➕ Nova Aposta</h3>
+        <h3 id="form-titulo"><svg class="btn-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg> Nova Aposta</h3>
         <div class="form-grid">
           <div class="form-group">
             <label>Jogador</label>
@@ -1171,9 +1039,9 @@ header{
         </div>
 
         <div class="form-buttons">
-          <button class="btn-salvar" id="btn-salvar-aposta" onclick="salvarAposta()">💾 Salvar</button>
-          <button class="btn-duplicar" onclick="duplicarAposta()">📋 Duplicar</button>
-          <button class="btn-cancelar" onclick="cancelarEdicao()">❌ Cancelar</button>
+          <button class="btn-salvar" id="btn-salvar-aposta" onclick="salvarAposta()"><svg class="btn-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21H5a2 2 0 01-2-2V5a2 2 0 012-2h11l5 5v11a2 2 0 01-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg> Salvar</button>
+          <button class="btn-duplicar" onclick="duplicarAposta()"><svg class="btn-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg> Duplicar</button>
+          <button class="btn-cancelar" onclick="cancelarEdicao()"><svg class="btn-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg> Cancelar</button>
         </div>
       </div>
 
@@ -1182,18 +1050,18 @@ header{
         <table class="tabela-apostas">
           <thead>
             <tr>
-              <th onclick="ordenarTabela('data')">Data 📅</th>
-              <th onclick="ordenarTabela('evento')">Evento ⚽</th>
-              <th onclick="ordenarTabela('casa')">Casa 🏠</th>
-              <th onclick="ordenarTabela('odd')">Odd 📊</th>
-              <th onclick="ordenarTabela('valor')">Valor 💵</th>
-              <th onclick="ordenarTabela('bonus')">Bônus 🎁</th>
-              <th onclick="ordenarTabela('retorno')">Retorno 💰</th>
+              <th onclick="ordenarTabela('data')">Data</th>
+              <th onclick="ordenarTabela('evento')">Evento</th>
+              <th onclick="ordenarTabela('casa')">Casa</th>
+              <th onclick="ordenarTabela('odd')">Odd</th>
+              <th onclick="ordenarTabela('valor')">Valor</th>
+              <th onclick="ordenarTabela('bonus')">Bônus</th>
+              <th onclick="ordenarTabela('retorno')">Retorno</th>
               <th onclick="ordenarTabela('resultado')">Resultado</th>
-              <th onclick="ordenarTabela('lucro')">Lucro 📈</th>
+              <th onclick="ordenarTabela('lucro')">Lucro</th>
               <th onclick="ordenarTabela('percentual')">%</th>
-              <th onclick="ordenarTabela('jogador')">Jogador 👤</th>
-              <th onclick="ordenarTabela('status')">Status ✅</th>
+              <th onclick="ordenarTabela('jogador')">Jogador</th>
+              <th onclick="ordenarTabela('status')">Status</th>
               <th>Ações</th>
             </tr>
           </thead>
@@ -1216,7 +1084,7 @@ header{
       </div>
 
       <!-- BOTÃO EXPORTAR -->
-      <button class="btn-exportar" onclick="exportarHistoricoExcel()">📥 Exportar Excel</button>
+      <button class="btn-exportar" onclick="exportarHistoricoExcel()"><svg class="btn-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg> Exportar Excel</button>
 
     </div><!-- /tab-historico -->
 
@@ -1227,7 +1095,7 @@ header{
 <div class="modal-overlay" id="modal-relatorio-uso" style="display: none;">
   <div class="modal-content" style="max-width:640px;max-height:80vh;overflow-y:auto">
     <div class="modal-header">
-      <h3>📊 Relatório de Tempo de Uso</h3>
+      <h3><svg class="btn-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg> Relatório de Tempo de Uso</h3>
       <button class="btn-fechar" onclick="fecharRelatorioUso()">✕</button>
     </div>
     <div class="modal-section">
@@ -1243,7 +1111,7 @@ header{
 <div class="modal-overlay" id="modal-gerenciar-abas" style="display: none;">
   <div class="modal-content">
     <div class="modal-header">
-      <h3>⚙️ Gerenciar Abas Visíveis</h3>
+      <h3><svg class="btn-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><line x1="4" y1="6" x2="20" y2="6"/><circle cx="9" cy="6" r="2"/><line x1="4" y1="12" x2="20" y2="12"/><circle cx="15" cy="12" r="2"/><line x1="4" y1="18" x2="20" y2="18"/><circle cx="7" cy="18" r="2"/></svg> Gerenciar Abas Visíveis</h3>
       <button class="btn-fechar" onclick="fecharGerenciadorAbas()">✕</button>
     </div>
     <div class="modal-section">
@@ -1252,7 +1120,7 @@ header{
       <div style="margin-top:10px;font-size:12px;color:var(--muted)">Você (admin) sempre vê todas as abas, independente dessa configuração.</div>
     </div>
     <div class="modal-footer">
-      <button class="btn-adicionar" onclick="salvarVisibilidadeAbas()">💾 Salvar</button>
+      <button class="btn-adicionar" onclick="salvarVisibilidadeAbas()"><svg class="btn-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21H5a2 2 0 01-2-2V5a2 2 0 012-2h11l5 5v11a2 2 0 01-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg> Salvar</button>
       <button class="btn-fechar-modal" onclick="fecharGerenciadorAbas()">Cancelar</button>
     </div>
   </div>
@@ -1283,13 +1151,14 @@ let registerMode = false;
 let dataListener = null;
 let hiddenTabs = {}; // { comparativo:false, toplinks:true, ... } - true = oculta para usuarios comuns
 let atualizacoesCampeonatos = {}; // { "Serie A": 1690000000000, "Libertadores": 1689000000000 }
+const TAB_ICON_SVG = (path) => `<svg class="btn-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">${path}</svg>`;
 const TAB_LIST = [
-  { key: 'comparativo',   label: '📊 Comparativo' },
-  { key: 'toplinks',      label: '🔗 Top Apostas c/ Links' },
-  { key: 'lucromax',      label: '💰 Lucro Máximo' },
-  { key: 'jogos',         label: '🎮 Jogos' },
-  { key: 'estatisticas',  label: '📈 Estatísticas' },
-  { key: 'historico',     label: '📋 Histórico' }
+  { key: 'comparativo',   label: TAB_ICON_SVG('<rect x="3" y="12" width="4" height="9"/><rect x="10" y="6" width="4" height="15"/><rect x="17" y="9" width="4" height="12"/>') + ' Comparativo' },
+  { key: 'toplinks',      label: TAB_ICON_SVG('<path d="M10 13a5 5 0 007.07 0l2.83-2.83a5 5 0 00-7.07-7.07l-1.42 1.42"/><path d="M14 11a5 5 0 00-7.07 0L4.1 13.83a5 5 0 007.07 7.07l1.42-1.42"/>') + ' Top Apostas c/ Links' },
+  { key: 'lucromax',      label: TAB_ICON_SVG('<polyline points="3 17 9 11 13 15 21 7"/><polyline points="15 7 21 7 21 13"/>') + ' Lucro Máximo' },
+  { key: 'jogos',         label: TAB_ICON_SVG('<rect x="2" y="7" width="20" height="10" rx="5"/><line x1="5.5" y1="10.5" x2="5.5" y2="13.5"/><line x1="4" y1="12" x2="7" y2="12"/><circle cx="16" cy="10.5" r="1"/><circle cx="18.2" cy="13" r="1"/>') + ' Jogos' },
+  { key: 'estatisticas',  label: TAB_ICON_SVG('<polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/>') + ' Estatísticas' },
+  { key: 'historico',     label: TAB_ICON_SVG('<circle cx="12" cy="12" r="9"/><polyline points="12 7 12 12 15 14.5"/>') + ' Histórico' }
 ];
 
 /* REGRAS FIREBASE RECOMENDADAS:
@@ -1879,7 +1748,7 @@ const fmtDec = n => 'R$ '+n.toLocaleString('pt-BR',{minimumFractionDigits:2,maxi
 
 function setTheme(t){
   document.documentElement.setAttribute('data-theme',t);
-  document.querySelectorAll('.theme-chip').forEach(b=>{
+  document.querySelectorAll('.theme-btn').forEach(b=>{
     b.classList.toggle('active', b.dataset.t===t);
   });
   try{localStorage.setItem('odds-theme',t);}catch(e){}
@@ -2080,7 +1949,6 @@ function renderMetrics(){
   if(best){
     const lucro=best.retorno-a;
     document.getElementById('m-lucro').textContent=(lucro>=0?'+':'')+fmtDec(lucro);
-    document.getElementById('m-lucro').className='metric-value green valor-destaque';
     document.getElementById('m-lucro-jogo').textContent=best.jogo;
     document.getElementById('m-pct').textContent=(best.lucro_pct>=0?'+':'')+best.lucro_pct.toFixed(2)+'%';
     document.getElementById('m-pct-jogo').textContent=best.jogo;
@@ -2272,8 +2140,8 @@ function renderTop3(){
       </div>
       <div class="top-financial">
         <div>
-          <div class="top-lucro-val valor-destaque valor-lucro" id="lucro-val-${i}">${lucro>=0?'+':''}${fmtDec(lucro)}</div>
-          <div class="top-lucro-pct valor-destaque valor-lucro" id="lucro-pct-${i}">${r.lucro_pct>=0?'+':''}${r.lucro_pct.toFixed(2)}%</div>
+          <div class="top-lucro-val" id="lucro-val-${i}">${lucro>=0?'+':''}${fmtDec(lucro)}</div>
+          <div class="top-lucro-pct" id="lucro-pct-${i}">${r.lucro_pct>=0?'+':''}${r.lucro_pct.toFixed(2)}%</div>
         </div>
         <div class="top-distrib">
           <div style="display:flex;align-items:center;gap:6px;margin-bottom:4px">
@@ -2569,9 +2437,9 @@ function renderEstatisticas(){
           <span style="font-family:var(--mono);font-size:10px;color:var(--muted)">${pct}%</span>
         </div>
       </td>
-      <td style="text-align:center;font-family:var(--mono);color:var(--odd-casa)">${s.ganhCasa}</td>
-      <td style="text-align:center;font-family:var(--mono);color:var(--odd-emp)">${s.ganhEmp}</td>
-      <td style="text-align:center;font-family:var(--mono);color:var(--odd-fora)">${s.ganhFora}</td>
+      <td style="text-align:center;font-family:var(--mono);color:#93c5fd">${s.ganhCasa}</td>
+      <td style="text-align:center;font-family:var(--mono);color:#9ca3af">${s.ganhEmp}</td>
+      <td style="text-align:center;font-family:var(--mono);color:#fcd34d">${s.ganhFora}</td>
     </tr>`;
   }).join('');
 }
@@ -2897,8 +2765,8 @@ function renderTopApostasComLinks(){
 
     return `<div class="links-card">
       <div class="links-jogo">${r.jogo}</div>
-      <div class="links-lucro valor-destaque valor-lucro">${lucro>=0?'+':''}${fmtDec(lucro)}</div>
-      <div class="links-lucro-pct valor-destaque valor-lucro">${r.lucro_pct>=0?'+':''}${r.lucro_pct.toFixed(2)}%</div>
+      <div class="links-lucro">${lucro>=0?'+':''}${fmtDec(lucro)}</div>
+      <div class="links-lucro-pct">${r.lucro_pct>=0?'+':''}${r.lucro_pct.toFixed(2)}%</div>
       <div class="link-row">
         <span class="link-label">Casa</span>
         <span class="link-url">${r.casa.toFixed(2)}</span>
@@ -2967,7 +2835,7 @@ function renderTable(data){
     <td class="td-val">${fmt(r.v_casa)}</td>
     <td class="td-val">${fmt(r.v_emp)}</td>
     <td class="td-val">${fmt(r.v_fora)}</td>
-    <td class="td-pct ${r.lucro_pct>0?'pos':'neg'}"><span class="lucro-badge ${r.lucro_pct>0?'pos':r.lucro_pct<0?'neg':'neu'}">${r.lucro_pct>0?'↑':r.lucro_pct<0?'↓':'→'} ${(r.lucro_pct>0?'+':'')+r.lucro_pct.toFixed(2)+'%'}</span></td>
+    <td class="td-pct ${r.lucro_pct>0?'pos':'neg'}">${(r.lucro_pct>0?'+':'')+r.lucro_pct.toFixed(2)+'%'}</td>
   </tr>`;
   }).join('');
 }
