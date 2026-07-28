@@ -588,6 +588,22 @@ td{padding:11px 14px;white-space:nowrap;}
 #input-arquivo{display:none;}
 
 /* ===============================================
+   ÍCONES SVG MODERNOS
+=============================================== */
+.tab-icon{
+  width:18px;height:18px;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round;
+  fill:none;flex-shrink:0;transition:stroke 0.3s,filter 0.3s;
+  stroke:var(--muted);
+}
+.tab-btn.active .tab-icon{stroke:var(--accent);filter:drop-shadow(0 0 6px var(--accent-dim));}
+.tab-btn:hover .tab-icon{stroke:var(--text);}
+
+.card-icon{
+  width:20px;height:20px;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round;
+  fill:none;stroke:var(--accent);opacity:0.7;
+}
+
+/* ===============================================
    MICRO-INTERAÇÕES & GLASSMORPHISM
 =============================================== */
 header{
