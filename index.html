@@ -1030,6 +1030,7 @@ th .btn-icon{width:11px;height:11px;vertical-align:-1px;opacity:0.7;margin-left:
               <option value="Betao">Betao</option>
               <option value="Lottu">Lottu</option>
               <option value="Vera.bet">Vera.bet</option>
+              <option value="7K">7K</option>
             </select>
           </div>
           <div class="form-group">
@@ -2307,7 +2308,7 @@ function renderJogos(){
   jogos.sort((a,b)=>b.lucro_pct-a.lucro_pct);
 
   // Extrair dinamicamente sites que tem dados + manter lista padrao de TODOS os sites
-  const SITES_PADRAO=['Betano','EstrelaBet','KTO','Superbet','Bet365','Betfair','F12','Betesporte','Novibet','Ona.bet','Sportingbet','Betboo','Galera.bet','Rivalo','Brazino777','BetWarrior','Pix.bet','Stake','BetMGM','1xbet','Cassino.bet','Betao','Lottu','Vera.bet'];
+  const SITES_PADRAO=['Betano','EstrelaBet','KTO','Superbet','Bet365','Betfair','F12','Betesporte','Novibet','Ona.bet','Sportingbet','Betboo','Galera.bet','Rivalo','Brazino777','BetWarrior','Pix.bet','Stake','BetMGM','1xbet','Cassino.bet','Betao','Lottu','Vera.bet','7K'];
   const sitesComDados=new Set();
   allSitesData.forEach(r=>{
     if(r.site) sitesComDados.add(r.site);
