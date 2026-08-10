@@ -375,7 +375,7 @@ td{padding:11px 14px;white-space:nowrap;}
 .empty strong{color:var(--text);}
 .table-footer{padding:10px 16px;border-top:1px solid var(--border);display:flex;justify-content:space-between;font-size:11px;font-family:var(--mono);color:var(--muted);}
 
-.toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(80px);opacity:0;background:var(--bg2);border:1px solid var(--border2);border-radius:var(--radius-lg);padding:12px 20px;font-size:13px;font-family:var(--mono);transition:transform 0.35s cubic-bezier(.2,.8,.2,1),opacity 0.3s;z-index:400;white-space:nowrap;box-shadow:var(--shadow);}
+.toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(80px);opacity:0;background:var(--bg2);border:1px solid var(--border2);border-radius:var(--radius-lg);padding:12px 20px;font-size:13px;font-family:var(--mono);transition:transform 0.35s cubic-bezier(.2,.8,.2,1),opacity 0.3s;z-index:10000;white-space:nowrap;box-shadow:var(--shadow);}
 .toast.visible{transform:translateX(-50%) translateY(0);opacity:1;}
 .toast.success{border-color:color-mix(in srgb,var(--accent) 45%,transparent);color:var(--green);}
 .toast.error{border-color:rgba(239,68,68,0.4);color:var(--red);}
@@ -1720,10 +1720,6 @@ function salvarVisibilidadeCasas() {
   }
   const checkboxes = Array.from(document.querySelectorAll('#lista-gerenciar-casas input[type="checkbox"]'));
   const ativas = checkboxes.filter(cb => cb.checked).length;
-  if (!ativas) {
-    toast('Selecione pelo menos uma casa.', 'error');
-    return;
-  }
   const novoHiddenBets = checkboxes
     .filter(cb => !cb.checked)
     .map(cb => cb.getAttribute('data-bet-name'));
@@ -1872,6 +1868,22 @@ function resetUINoData() {
   if (chartInstance) { chartInstance.destroy(); chartInstance = null; }
   document.getElementById('statsRows').innerHTML = '<div style="color:var(--muted);font-size:12px;padding:12px 0">Sem dados</div>';
   document.getElementById('jogosCapturados').textContent = '0';
+}
+
+function resetUISemCasasAtivas() {
+  resetUINoData();
+  const quantidadeAtivas = listarCasasGerenciaveis().filter(casaEstaAtiva).length;
+  const mensagem = quantidadeAtivas
+    ? 'Nenhuma casa ativa possui dados neste campeonato.'
+    : 'Todas as casas estão ocultas pelo administrador.';
+  document.getElementById('tagJogos').textContent = '0 jogos';
+  document.getElementById('logoSub').textContent = quantidadeAtivas ? 'sem dados nas casas ativas' : 'nenhuma casa ativa';
+  document.getElementById('m-lucro-jogo').textContent = quantidadeAtivas ? 'sem jogos disponíveis' : 'ative uma casa no gerenciador';
+  document.getElementById('tableBody').innerHTML = `<tr><td colspan="12" class="empty"><strong>${mensagem}</strong><br>Os dados originais continuam preservados.</td></tr>`;
+  document.getElementById('toplinks-cards').innerHTML = `<div style="color:var(--muted);font-size:12px;text-align:center;padding:40px 0">${mensagem}</div>`;
+  document.getElementById('lucromax-cards').innerHTML = `<div style="color:var(--muted);font-size:12px;text-align:center;padding:40px 0">${mensagem}</div>`;
+  document.getElementById('jogos-tbody').innerHTML = `<tr><td colspan="7" style="text-align:center;color:var(--muted);padding:20px">${mensagem}</td></tr>`;
+  document.getElementById('estat-tbody').innerHTML = `<tr><td colspan="6" style="text-align:center;color:var(--muted);padding:20px">${mensagem}</td></tr>`;
 }
 
 // Inicializa Firebase ao carregar
@@ -2060,6 +2072,12 @@ document.addEventListener('drop',e=>{
 
 function renderDados(dados){
   const aposta=parseFloat(document.getElementById('apostaInput').value)||5000;
+
+  if(!dados.length){
+    allData=[];
+    resetUISemCasasAtivas();
+    return;
+  }
 
   // Recalcula dutching para dados consolidados
   allData=dados.map(r=>{
