@@ -755,7 +755,8 @@ th .btn-icon{width:11px;height:11px;vertical-align:-1px;opacity:0.7;margin-left:
       <button class="tab-btn" id="btn-jogos" onclick="switchTab('jogos')"><svg class="tab-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="7" width="20" height="10" rx="5"/><line x1="5.5" y1="10.5" x2="5.5" y2="13.5"/><line x1="4" y1="12" x2="7" y2="12"/><circle cx="16" cy="10.5" r="1"/><circle cx="18.2" cy="13" r="1"/></svg> Jogos</button>
       <button class="tab-btn" id="btn-estatisticas" onclick="switchTab('estatisticas')"><svg class="tab-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg> Estatísticas</button>
       <button class="tab-btn" id="btn-historico" onclick="switchTab('historico')"><svg class="tab-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><polyline points="12 7 12 12 15 14.5"/></svg> Histórico</button>
-      <button class="tab-btn" id="btnGerenciarAbas" onclick="abrirGerenciadorAbas()" style="display:none;margin-left:auto;color:var(--muted)"><svg class="tab-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><line x1="4" y1="6" x2="20" y2="6"/><circle cx="9" cy="6" r="2"/><line x1="4" y1="12" x2="20" y2="12"/><circle cx="15" cy="12" r="2"/><line x1="4" y1="18" x2="20" y2="18"/><circle cx="7" cy="18" r="2"/></svg> Gerenciar Abas</button>
+      <button class="tab-btn" id="btnGerenciarCasas" onclick="abrirGerenciadorCasas()" style="display:none;margin-left:auto;color:var(--amber)">Gerenciar Casas</button>
+      <button class="tab-btn" id="btnGerenciarAbas" onclick="abrirGerenciadorAbas()" style="display:none;color:var(--muted)"><svg class="tab-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><line x1="4" y1="6" x2="20" y2="6"/><circle cx="9" cy="6" r="2"/><line x1="4" y1="12" x2="20" y2="12"/><circle cx="15" cy="12" r="2"/><line x1="4" y1="18" x2="20" y2="18"/><circle cx="7" cy="18" r="2"/></svg> Gerenciar Abas</button>
     </div>
 
     <div class="tab-panel active" id="tab-comparativo">
@@ -1157,6 +1158,29 @@ th .btn-icon{width:11px;height:11px;vertical-align:-1px;opacity:0.7;margin-left:
   </div>
 </div>
 
+<!-- MODAL GERENCIAR CASAS -->
+<div class="modal-overlay" id="modal-gerenciar-casas" style="display:none">
+  <div class="modal-content" style="max-width:620px;max-height:85vh;overflow-y:auto">
+    <div class="modal-header">
+      <h3>Gerenciar Casas Visíveis</h3>
+      <button class="btn-fechar" onclick="fecharGerenciadorCasas()">×</button>
+    </div>
+    <div class="modal-section">
+      <p style="font-size:13px;color:var(--muted);margin-bottom:12px">Somente as casas marcadas participarão das tabelas, melhores odds, links, estatísticas e cálculos de lucro para todos, inclusive o administrador. Os dados originais serão preservados.</p>
+      <div style="display:flex;gap:8px;align-items:center;margin-bottom:10px;flex-wrap:wrap">
+        <button class="btn-fechar-modal" onclick="marcarTodasCasas(true)">Selecionar todas</button>
+        <button class="btn-fechar-modal" onclick="marcarTodasCasas(false)">Desmarcar todas</button>
+        <span id="contador-casas-ativas" style="margin-left:auto;font-family:var(--mono);font-size:12px;color:var(--green)"></span>
+      </div>
+      <div id="lista-gerenciar-casas"></div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn-adicionar" onclick="salvarVisibilidadeCasas()">Salvar</button>
+      <button class="btn-fechar-modal" onclick="fecharGerenciadorCasas()">Cancelar</button>
+    </div>
+  </div>
+</div>
+
 <div class="toast" id="toast"></div>
 
 <script>
@@ -1180,8 +1204,11 @@ let isAdmin = false;
 let currentUser = null;
 let registerMode = false;
 let dataListener = null;
+let casasConfigListener = null;
 let hiddenTabs = {}; // { comparativo:false, toplinks:true, ... } - true = oculta para usuarios comuns
+let hiddenBets = []; // nomes excluidos de toda visualizacao e calculo
 let atualizacoesCampeonatos = {}; // { "Serie A": 1690000000000, "Libertadores": 1689000000000 }
+const BET_LIST = ['Betano','EstrelaBet','KTO','Superbet','Bet365','Betfair','F12','Betesporte','Novibet','Ona.bet','Sportingbet','Betboo','Galera.bet','Rivalo','Brazino777','BetWarrior','Pix.bet','Stake','BetMGM','1xbet','Cassino.bet','Betao','Lottu','Vera.bet','7K'];
 const TAB_ICON_SVG = (path) => `<svg class="btn-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">${path}</svg>`;
 const TAB_LIST = [
   { key: 'comparativo',   label: TAB_ICON_SVG('<rect x="3" y="12" width="4" height="9"/><rect x="10" y="6" width="4" height="15"/><rect x="17" y="9" width="4" height="12"/>') + ' Comparativo' },
@@ -1203,12 +1230,12 @@ const TAB_LIST = [
     },
     "config": {
       ".read": "auth != null",
-      ".write": "auth != null && !root.child('config').child('adminEmail').exists()"
+      ".write": "auth != null && (!data.child('adminEmail').exists() || data.child('adminEmail').val() == auth.token.email)"
     }
   }
 }
-A regra .write de config permite que o PRIMEIRO usuario a logar defina o admin.
-Depois que adminEmail existe, so o admin pode alterar.
+A regra .write de config permite que o primeiro usuario defina o admin e,
+depois disso, somente esse admin altere hiddenTabs e hiddenBets.
 */
 
 function initFirebase() {
@@ -1337,6 +1364,7 @@ function checkAdmin(user) {
 
       const adminEmail = configVal ? configVal.adminEmail : null;
       hiddenTabs = (configVal && configVal.hiddenTabs) ? configVal.hiddenTabs : {};
+      hiddenBets = (configVal && Array.isArray(configVal.hiddenBets)) ? configVal.hiddenBets : [];
       console.log('[DEBUG] adminEmail extraído:', adminEmail);
       console.log('[DEBUG] hiddenTabs extraído:', hiddenTabs);
       console.log('[DEBUG] user.email:', user.email);
@@ -1357,6 +1385,7 @@ function checkAdmin(user) {
       applyTabVisibility();
       showApp();
       listenToData();
+      listenToBetVisibility();
       iniciarRastreioDeUso();
     })
     .catch((err) => {
@@ -1366,6 +1395,7 @@ function checkAdmin(user) {
       applyTabVisibility();
       showApp();
       listenToData();
+      listenToBetVisibility();
       iniciarRastreioDeUso();
     });
 }
@@ -1379,6 +1409,7 @@ function setupUIForRole() {
   const dropUser = document.getElementById('dropUser');
   const btnLoad = document.querySelector('.btn-load[onclick*="fileInput"]');
   const btnRelatorioUso = document.getElementById('btnRelatorioUso');
+  const btnGerenciarCasas = document.getElementById('btnGerenciarCasas');
 
   if (isAdmin) {
     console.log('[DEBUG] Configurando UI como ADMIN');
@@ -1388,6 +1419,7 @@ function setupUIForRole() {
     if (dropAdmin) dropAdmin.style.display = 'block';
     if (dropUser) dropUser.style.display = 'none';
     if (btnRelatorioUso) btnRelatorioUso.style.display = 'inline-flex';
+    if (btnGerenciarCasas) btnGerenciarCasas.style.display = 'inline-flex';
     // Esconde o botao "Carregar XLSX" principal do header (admin usa o overlay ou + Adicionar)
     if (btnLoad) btnLoad.style.display = 'none';
   } else {
@@ -1398,6 +1430,7 @@ function setupUIForRole() {
     if (dropAdmin) dropAdmin.style.display = 'none';
     if (dropUser) dropUser.style.display = 'block';
     if (btnRelatorioUso) btnRelatorioUso.style.display = 'none';
+    if (btnGerenciarCasas) btnGerenciarCasas.style.display = 'none';
     if (btnLoad) btnLoad.style.display = 'none'; // usuario comum nao carrega arquivo
   }
 }
@@ -1634,6 +1667,90 @@ function salvarVisibilidadeAbas() {
       console.error('[DEBUG] Erro ao salvar hiddenTabs:', err);
       toast('Erro ao salvar: ' + err.message, 'error', 6000);
     });
+}
+
+function casaEstaAtiva(nome) {
+  return nome && !hiddenBets.includes(nome);
+}
+
+function listarCasasGerenciaveis() {
+  const nomes = new Set(BET_LIST);
+  (allSitesDataMaster || []).forEach(r => {
+    const nome = String(r['SITE'] || '').trim();
+    if (nome) nomes.add(nome);
+  });
+  return Array.from(nomes);
+}
+
+function atualizarContadorCasas() {
+  const checkboxes = Array.from(document.querySelectorAll('#lista-gerenciar-casas input[type="checkbox"]'));
+  const ativas = checkboxes.filter(cb => cb.checked).length;
+  const contador = document.getElementById('contador-casas-ativas');
+  if (contador) contador.textContent = `${ativas} de ${checkboxes.length} ativas`;
+}
+
+function abrirGerenciadorCasas() {
+  if (!isAdmin) return;
+  const lista = document.getElementById('lista-gerenciar-casas');
+  lista.innerHTML = listarCasasGerenciaveis().map(nome => `
+    <label style="display:flex;align-items:center;gap:10px;padding:9px 4px;border-bottom:1px solid var(--border2);cursor:pointer">
+      <input type="checkbox" data-bet-name="${nome}" ${casaEstaAtiva(nome) ? 'checked' : ''} onchange="atualizarContadorCasas()" style="width:16px;height:16px;cursor:pointer">
+      <span>${nome}</span>
+    </label>
+  `).join('');
+  atualizarContadorCasas();
+  document.getElementById('modal-gerenciar-casas').style.display = 'flex';
+}
+
+function fecharGerenciadorCasas() {
+  document.getElementById('modal-gerenciar-casas').style.display = 'none';
+}
+
+function marcarTodasCasas(marcar) {
+  document.querySelectorAll('#lista-gerenciar-casas input[type="checkbox"]').forEach(cb => {
+    cb.checked = marcar;
+  });
+  atualizarContadorCasas();
+}
+
+function salvarVisibilidadeCasas() {
+  if (!isAdmin || !db) {
+    toast('Apenas o administrador pode alterar isso.', 'error');
+    return;
+  }
+  const checkboxes = Array.from(document.querySelectorAll('#lista-gerenciar-casas input[type="checkbox"]'));
+  const ativas = checkboxes.filter(cb => cb.checked).length;
+  if (!ativas) {
+    toast('Selecione pelo menos uma casa.', 'error');
+    return;
+  }
+  const novoHiddenBets = checkboxes
+    .filter(cb => !cb.checked)
+    .map(cb => cb.getAttribute('data-bet-name'));
+  const ocultas = checkboxes.length - ativas;
+  if (!confirm(`Salvar ${ativas} casa(s) ativa(s) e ocultar ${ocultas}? Os dados originais serão preservados.`)) return;
+
+  db.ref('config/hiddenBets').set(novoHiddenBets)
+    .then(() => {
+      toast('Casas ativas atualizadas para todos os usuários!', 'success', 4000);
+      fecharGerenciadorCasas();
+    })
+    .catch(err => {
+      console.error('[DEBUG] Erro ao salvar hiddenBets:', err);
+      toast('Erro ao salvar: ' + err.message, 'error', 6000);
+    });
+}
+
+function listenToBetVisibility() {
+  if (!db) return;
+  const ref = db.ref('config/hiddenBets');
+  if (casasConfigListener) ref.off('value', casasConfigListener);
+  casasConfigListener = ref.on('value', snap => {
+    hiddenBets = Array.isArray(snap.val()) ? snap.val() : [];
+    if (allSitesDataMaster && allSitesDataMaster.length) {
+      aplicarFiltroCampeonato(filtroCampeonatoAtual);
+    }
+  }, err => console.warn('[DEBUG] Não foi possível ler hiddenBets:', err.message));
 }
 
 /* ===============================================================
@@ -1896,8 +2013,11 @@ function mudarFiltroCampeonato(valor){
 }
 
 function aplicarFiltroCampeonato(valor){
-  const rawFiltrado=valor==='__todos__'?allDataRawMaster:allDataRawMaster.filter(r=>r.__campeonato===valor);
-  const sitesFiltrado=valor==='__todos__'?allSitesDataMaster:allSitesDataMaster.filter(r=>r.__campeonato===valor);
+  // A terceira aba contém uma linha por casa e é a única fonte usada nos
+  // cálculos. A primeira aba permanece preservada, mas já chega consolidada e
+  // poderia manter silenciosamente uma odd de uma casa desativada.
+  const sitesDoCampeonato=valor==='__todos__'?allSitesDataMaster:allSitesDataMaster.filter(r=>r.__campeonato===valor);
+  const sitesFiltrado=sitesDoCampeonato.filter(r=>casaEstaAtiva(String(r['SITE']||'').trim()));
 
   allSitesData=sitesFiltrado.map(r=>{
     const parseOdd=v=>parseFloat(String(v||'').replace(',','.'));
@@ -1909,19 +2029,11 @@ function aplicarFiltroCampeonato(valor){
       casa_link:r['CASA_LINK']||'#',empate_link:r['EMPATE_LINK']||'#',fora_link:r['FORA_LINK']||'#'};
   }).filter(r=>r.jogo&&!isNaN(r.casa));
 
-  const aposta=parseFloat(document.getElementById('apostaInput').value)||5000;
-  const dados=rawFiltrado.map(r=>{
-    const parseOdd=v=>parseFloat(String(v||'').replace(',','.'));
-    const casa=parseOdd(r['CASA']),emp=parseOdd(r['EMPATE']),fora=parseOdd(r['FORA']);
-    const inv=1/casa+1/emp+1/fora;
-    const hora=String(r['DATA']||'').split(' ')[1]||'';
-    return{site:r['SITE']||'',data:String(r['DATA']||''),hora,jogo:r['JOGO']||'',jogo_limpo:r['JOGO_LIMPO']||'',campeonato:r.__campeonato||'',
-      casa,empate:emp,fora,
-      v_casa:aposta/(inv*casa),v_emp:aposta/(inv*emp),v_fora:aposta/(inv*fora),
-      retorno:aposta/inv,lucro_pct:(aposta/inv-aposta)/aposta*100,
-      casa_origem:r['CASA_ORIGEM']||'',empate_origem:r['EMPATE_ORIGEM']||'',fora_origem:r['FORA_ORIGEM']||'',
-      casa_link:r['CASA_LINK']||'#',empate_link:r['EMPATE_LINK']||'#',fora_link:r['FORA_LINK']||'#'};
-  }).filter(r=>r.jogo&&!isNaN(r.casa));
+  const dados=allSitesData.map(r=>({
+    ...r,
+    casa_origem:r.site,empate_origem:r.site,fora_origem:r.site,
+    v_casa:0,v_emp:0,v_fora:0,retorno:0,lucro_pct:0
+  }));
 
   const dadosConsolidados=consolidarOdds(dados);
   renderDados(dadosConsolidados);
@@ -2308,7 +2420,7 @@ function renderJogos(){
   jogos.sort((a,b)=>b.lucro_pct-a.lucro_pct);
 
   // Extrair dinamicamente sites que tem dados + manter lista padrao de TODOS os sites
-  const SITES_PADRAO=['Betano','EstrelaBet','KTO','Superbet','Bet365','Betfair','F12','Betesporte','Novibet','Ona.bet','Sportingbet','Betboo','Galera.bet','Rivalo','Brazino777','BetWarrior','Pix.bet','Stake','BetMGM','1xbet','Cassino.bet','Betao','Lottu','Vera.bet','7K'];
+  const SITES_PADRAO=BET_LIST.filter(casaEstaAtiva);
   const sitesComDados=new Set();
   allSitesData.forEach(r=>{
     if(r.site) sitesComDados.add(r.site);
