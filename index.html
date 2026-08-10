@@ -2018,6 +2018,10 @@ function aplicarFiltroCampeonato(valor){
   // poderia manter silenciosamente uma odd de uma casa desativada.
   const sitesDoCampeonato=valor==='__todos__'?allSitesDataMaster:allSitesDataMaster.filter(r=>r.__campeonato===valor);
   const sitesFiltrado=sitesDoCampeonato.filter(r=>casaEstaAtiva(String(r['SITE']||'').trim()));
+  const rawMetadados=valor==='__todos__'?allDataRawMaster:allDataRawMaster.filter(r=>r.__campeonato===valor);
+  const metadadosPorJogo=new Map(rawMetadados.map(r=>[
+    (r['JOGO_LIMPO']||normalizeJogo(r['JOGO']||'')).trim(), r
+  ]));
 
   allSitesData=sitesFiltrado.map(r=>{
     const parseOdd=v=>parseFloat(String(v||'').replace(',','.'));
@@ -2035,7 +2039,7 @@ function aplicarFiltroCampeonato(valor){
     v_casa:0,v_emp:0,v_fora:0,retorno:0,lucro_pct:0
   }));
 
-  const dadosConsolidados=consolidarOdds(dados);
+  const dadosConsolidados=consolidarOdds(dados,metadadosPorJogo);
   renderDados(dadosConsolidados);
 }
 
@@ -2777,19 +2781,22 @@ function copiarLink(url, btn){
   });
 }
 
-function consolidarOdds(rawData){
+function consolidarOdds(rawData,metadadosPorJogo=new Map()){
   // Agrupa por (campeonato + JOGO) - ignora hora, que pode variar entre sites
   const grupos={};
 
   rawData.forEach(r=>{
-    const chave=(r.campeonato||'')+'|'+(r.jogo||'?');
+    const jogoLimpo=(r.jogo_limpo||normalizeJogo(r.jogo||'')).trim();
+    const chave=(r.campeonato||'')+'|'+jogoLimpo;
     if(!grupos[chave]){
+      const meta=metadadosPorJogo.get(jogoLimpo)||{};
+      const dataCompleta=String(meta['DATA']||'');
       grupos[chave]={
-        jogo:r.jogo||'',
-        data:r.data||'',
-        hora:r.hora||'',
+        jogo:meta['JOGO']||r.jogo||'',
+        data:dataCompleta.split(' ')[0]||r.data||'',
+        hora:dataCompleta.split(' ')[1]||r.hora||'',
         campeonato:r.campeonato||'',
-        jogo_limpo:r.jogo_limpo||'',
+        jogo_limpo:jogoLimpo,
         linhas:[]
       };
     }
