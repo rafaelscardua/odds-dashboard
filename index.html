@@ -771,13 +771,15 @@ th .btn-icon{width:11px;height:11px;vertical-align:-1px;opacity:0.7;margin-left:
       <div class="header-actions">
         <div class="theme-switcher">
           <span class="theme-label">Tema</span>
-          <button class="theme-btn active" data-t="dark" data-label="Dark" onclick="setTheme('dark')" title="Dark" aria-label="Tema Dark"></button>
+          <!-- TEMAS ARQUIVADOS: para reativar, descomente estes seis botoes e siga a instrucao em setTheme().
+          <button class="theme-btn" data-t="dark" data-label="Dark" onclick="setTheme('dark')" title="Dark" aria-label="Tema Dark"></button>
           <button class="theme-btn" data-t="light" data-label="Light" onclick="setTheme('light')" title="Light" aria-label="Tema Light"></button>
           <button class="theme-btn" data-t="neon" data-label="Neon" onclick="setTheme('neon')" title="Neon" aria-label="Tema Neon"></button>
           <button class="theme-btn" data-t="premium" data-label="Ouro" onclick="setTheme('premium')" title="Ouro Sofisticado" aria-label="Tema Ouro Sofisticado"></button>
           <button class="theme-btn" data-t="aurora" data-label="Aurora" onclick="setTheme('aurora')" title="Aurora" aria-label="Tema Aurora"></button>
           <button class="theme-btn" data-t="arcade" data-label="Arcade" onclick="setTheme('arcade')" title="Arcade" aria-label="Tema Arcade"></button>
-          <button class="theme-btn" data-t="atelier" data-label="Atelier" onclick="setTheme('atelier')" title="Atelier · tema Codex" aria-label="Tema Atelier"></button>
+          -->
+          <button class="theme-btn active" data-t="atelier" data-label="Atelier" onclick="setTheme('atelier')" title="Atelier · tema Codex" aria-label="Tema Atelier"></button>
         </div>
         <span class="tag tag-gray" id="tagJogos">sem dados</span>
         <select id="filtroCampeonatoSelect" class="filter-input" style="display:none" onchange="mudarFiltroCampeonato(this.value)">
@@ -2008,8 +2010,10 @@ const fmt    = n => 'R$ '+n.toLocaleString('pt-BR',{minimumFractionDigits:2,maxi
 const fmtDec = n => 'R$ '+n.toLocaleString('pt-BR',{minimumFractionDigits:2,maximumFractionDigits:2});
 
 function setTheme(t){
-  const temas=['dark','light','neon','premium','aurora','arcade','atelier'];
-  if(!temas.includes(t)) t='dark';
+  // Para reativar os temas arquivados, troque a linha abaixo pela linha comentada seguinte.
+  const temas=['atelier'];
+  // const temas=['dark','light','neon','premium','aurora','arcade','atelier'];
+  if(!temas.includes(t)) t='atelier';
   document.documentElement.setAttribute('data-theme',t);
   document.querySelectorAll('.theme-btn').forEach(b=>{
     b.classList.toggle('active', b.dataset.t===t);
@@ -2020,9 +2024,9 @@ function setTheme(t){
 // Restaurar tema salvo
 (function(){
   try{
-    const t=localStorage.getItem('odds-theme')||'dark';
+    const t=localStorage.getItem('odds-theme')||'atelier';
     setTheme(t);
-  }catch(e){setTheme('dark');}
+  }catch(e){setTheme('atelier');}
 })();
 
 function toggleAdminMenu(event){
