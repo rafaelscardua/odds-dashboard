@@ -167,6 +167,8 @@
   cursor:pointer;transition:transform .2s cubic-bezier(.34,1.56,.64,1),box-shadow .2s;position:relative;outline:none;
 }
 .theme-btn:hover{transform:scale(1.18);}
+.theme-btn::after{content:attr(data-label);position:absolute;top:calc(100% + 10px);left:50%;transform:translate(-50%,-4px);opacity:0;pointer-events:none;white-space:nowrap;padding:5px 8px;border-radius:7px;background:var(--bg3);border:1px solid var(--border2);color:var(--text);font:10px var(--mono);letter-spacing:.03em;box-shadow:var(--shadow-sm);transition:opacity .16s,transform .16s;z-index:300;}
+.theme-btn:hover::after,.theme-btn:focus-visible::after{opacity:1;transform:translate(-50%,0);}
 .theme-btn.active{border-color:var(--text);box-shadow:0 0 0 3px var(--bg2),0 0 0 4px var(--border2);}
 .theme-btn[data-t="dark"]{background:radial-gradient(circle at 30% 30%,#2a2f3a,#090b0f);}
 .theme-btn[data-t="light"]{background:radial-gradient(circle at 30% 30%,#ffffff,#d1d5db);}
@@ -231,6 +233,14 @@ header{border-bottom:1px solid var(--border);padding:16px 0;position:sticky;top:
 .logo-text{font-family:var(--display);font-size:17px;font-weight:700;letter-spacing:-0.01em;background:linear-gradient(120deg,var(--text),var(--text) 60%,var(--accent));-webkit-background-clip:text;background-clip:text;color:transparent;}
 .logo-sub{font-size:11px;color:var(--muted);font-family:var(--mono);letter-spacing:.02em;}
 .header-actions{display:flex;align-items:center;gap:10px;flex-wrap:wrap;}
+.admin-menu{position:relative;display:none;}
+.admin-menu.open .admin-popover{display:grid;}
+.admin-trigger{display:flex;align-items:center;gap:7px;padding:8px 11px;border:1px solid var(--border2);border-radius:var(--radius);background:var(--bg3);color:var(--text);font:600 12px var(--sans);cursor:pointer;}
+.admin-trigger:hover{border-color:var(--accent);background:var(--accent-dim);}
+.admin-popover{display:none;position:absolute;right:0;top:calc(100% + 9px);min-width:235px;padding:8px;border:1px solid var(--border2);border-radius:14px;background:var(--bg2);box-shadow:var(--shadow);z-index:500;gap:4px;}
+.admin-popover-title{padding:7px 9px 5px;color:var(--muted);font:10px var(--mono);text-transform:uppercase;letter-spacing:.08em;}
+.admin-action{width:100%;display:flex!important;align-items:center;gap:8px;padding:9px 10px!important;margin:0!important;border:0!important;border-radius:8px!important;background:transparent!important;color:var(--text)!important;font:500 12px var(--sans)!important;box-shadow:none!important;cursor:pointer;text-align:left;}
+.admin-action:hover{background:var(--row-hover)!important;color:var(--accent)!important;transform:none!important;}
 .tag{font-size:11px;font-family:var(--mono);padding:4px 10px;border-radius:20px;border:1px solid;letter-spacing:.02em;}
 .tag-green{border-color:rgba(46,230,166,0.35);color:var(--green);background:var(--green-dim);}
 .tag-gray{border-color:var(--border2);color:var(--muted);}
@@ -307,6 +317,16 @@ main{padding:28px 0;}
 #apostaInput:focus{border-color:var(--accent);box-shadow:0 0 0 3px var(--accent-dim);}
 .aposta-hint{font-size:12px;color:var(--muted);}
 
+.ops-strip{display:grid;grid-template-columns:repeat(4,minmax(150px,1fr));gap:8px;margin:-12px 0 20px;}
+.ops-item{display:flex;align-items:center;gap:9px;min-width:0;padding:10px 12px;border:1px solid var(--border);border-radius:11px;background:color-mix(in srgb,var(--bg2) 82%,transparent);}
+.ops-icon{width:28px;height:28px;display:grid;place-items:center;flex:0 0 auto;border-radius:9px;background:var(--accent-dim);color:var(--accent);}
+.ops-icon svg{width:14px;height:14px;}
+.ops-copy{min-width:0;}.ops-label{font:9px var(--mono);letter-spacing:.07em;text-transform:uppercase;color:var(--muted);}.ops-value{font-size:12px;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-top:1px;}
+.opportunity{display:none;grid-template-columns:minmax(0,1.5fr) auto;gap:20px;align-items:center;margin-bottom:22px;padding:20px 22px;border:1px solid color-mix(in srgb,var(--green) 34%,var(--border));border-radius:var(--radius-lg);background:linear-gradient(125deg,var(--green-dim),var(--bg2) 48%,var(--accent-dim));box-shadow:var(--shadow-sm);position:relative;overflow:hidden;}
+.opportunity.visible{display:grid;}.opportunity::after{content:"";position:absolute;width:180px;height:180px;border-radius:50%;right:-75px;top:-105px;background:radial-gradient(circle,var(--accent-dim),transparent 68%);pointer-events:none;}
+.opportunity-kicker{display:flex;align-items:center;gap:7px;color:var(--green);font:600 10px var(--mono);text-transform:uppercase;letter-spacing:.08em;margin-bottom:7px;}.opportunity-title{font:700 20px var(--display);line-height:1.25;}.opportunity-meta{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px;color:var(--muted);font:11px var(--mono);}
+.opportunity-results{display:flex;align-items:center;gap:8px;position:relative;z-index:1;}.opportunity-result{min-width:86px;padding:9px 10px;border:1px solid var(--border2);border-radius:10px;background:var(--bg3);text-align:center;color:var(--text);text-decoration:none;transition:transform .18s,border-color .18s;}.opportunity-result:hover{transform:translateY(-2px);border-color:var(--green);}.opportunity-result span{display:block;font:9px var(--mono);text-transform:uppercase;color:var(--muted);margin-bottom:3px;}.opportunity-result strong{font:700 15px var(--mono);}.opportunity-gain{text-align:right;margin-left:5px;min-width:105px;}.opportunity-gain strong{display:block;color:var(--pct);font:700 23px var(--mono);}.opportunity-gain span{font-size:11px;color:var(--muted);}
+
 .metrics{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:12px;margin-bottom:28px;}
 .metric{background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius-lg);padding:18px 20px;position:relative;overflow:hidden;transition:border-color .2s,transform .2s;}
 .metric::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,var(--accent),transparent 75%);opacity:.55;}
@@ -354,6 +374,7 @@ main{padding:28px 0;}
 
 .grid2{display:grid;grid-template-columns:1fr 340px;gap:20px;align-items:start;margin-bottom:28px;}
 @media(max-width:900px){.grid2{grid-template-columns:1fr;}}
+@media(max-width:760px){.ops-strip{grid-template-columns:1fr 1fr}.opportunity{grid-template-columns:1fr}.opportunity-results{flex-wrap:wrap}.opportunity-gain{text-align:left;margin-left:0}.comparison-detail-grid{grid-template-columns:1fr;margin-left:0}}
 .chart-box,.stats-box{background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius-lg);padding:20px;transition:border-color .2s;}
 .chart-box:hover,.stats-box:hover{border-color:var(--border2);}
 .chart-box canvas{max-height:220px;}
@@ -392,6 +413,16 @@ tbody tr:nth-child(8){animation-delay:.16s;}
 tbody tr:nth-child(9){animation-delay:.18s;}
 tbody tr:nth-child(10){animation-delay:.20s;}
 td{padding:11px 14px;white-space:nowrap;}
+.table-scroll thead th:first-child{position:sticky;left:0;z-index:4;background:var(--bg3);box-shadow:1px 0 0 var(--border2);}
+.table-scroll tbody tr:not(.comparison-detail) td:first-child{position:sticky;left:0;z-index:2;background:var(--bg2);box-shadow:1px 0 0 var(--border);}
+.table-scroll tbody tr:nth-child(even):not(.comparison-detail) td:first-child{background:color-mix(in srgb,var(--bg2) 97%,var(--text));}
+.table-scroll tbody tr:hover:not(.comparison-detail) td:first-child{background:color-mix(in srgb,var(--bg2) 92%,var(--accent));}
+.best-odd{display:inline-flex;padding:3px 8px;border-radius:7px;background:var(--green-dim);box-shadow:inset 0 0 0 1px color-mix(in srgb,var(--green) 30%,transparent);}
+.row-expand{width:22px;height:22px;display:inline-grid;place-items:center;margin-right:7px;border:1px solid var(--border2);border-radius:6px;background:var(--bg3);color:var(--muted);cursor:pointer;vertical-align:middle;transition:transform .18s,color .18s;}.row-expand:hover{color:var(--green);border-color:var(--green);}.row-expand.expanded{transform:rotate(90deg);color:var(--green);}
+.comparison-detail{display:none;background:var(--bg3)!important;}.comparison-detail.open{display:table-row;}.comparison-detail td{padding:12px 18px!important;white-space:normal;}.comparison-detail-grid{display:grid;grid-template-columns:repeat(3,minmax(150px,1fr));gap:8px;margin-left:28px;}.comparison-detail-item{padding:9px 11px;border:1px solid var(--border);border-radius:9px;background:var(--bg2);font-size:11px;color:var(--muted);}.comparison-detail-item strong{display:block;color:var(--text);margin-top:3px;font-family:var(--mono);}
+.view-toggle{display:inline-flex;align-items:center;gap:7px;}
+.view-toggle.active{color:var(--green);border-color:var(--green);background:var(--green-dim);}
+body.compact main{padding-top:18px;}body.compact .metrics{gap:8px;margin-bottom:18px;}body.compact .metric{padding:12px 15px;}body.compact .metric-value{font-size:22px;}body.compact .top-card{padding:13px 15px;}body.compact td{padding:7px 10px;}body.compact thead th{padding:9px 10px;}body.compact .aposta-row{margin-bottom:18px;}
 .td-jogo{font-weight:500;max-width:220px;overflow:hidden;text-overflow:ellipsis;}
 .td-mono{font-family:var(--mono);font-size:12px;}
 .td-odd-casa{font-family:var(--mono);font-size:12px;font-weight:600;color:var(--casa);}
@@ -740,22 +771,19 @@ th .btn-icon{width:11px;height:11px;vertical-align:-1px;opacity:0.7;margin-left:
       <div class="header-actions">
         <div class="theme-switcher">
           <span class="theme-label">Tema</span>
-          <button class="theme-btn active" data-t="dark" onclick="setTheme('dark')" title="Dark"></button>
-          <button class="theme-btn" data-t="light" onclick="setTheme('light')" title="Light"></button>
-          <button class="theme-btn" data-t="neon" onclick="setTheme('neon')" title="Neon"></button>
-          <button class="theme-btn" data-t="premium" onclick="setTheme('premium')" title="Ouro Sofisticado"></button>
-          <button class="theme-btn" data-t="aurora" onclick="setTheme('aurora')" title="Aurora"></button>
-          <button class="theme-btn" data-t="arcade" onclick="setTheme('arcade')" title="Arcade"></button>
-          <button class="theme-btn" data-t="atelier" onclick="setTheme('atelier')" title="Atelier · tema Codex" aria-label="Tema Atelier"></button>
+          <button class="theme-btn active" data-t="dark" data-label="Dark" onclick="setTheme('dark')" title="Dark" aria-label="Tema Dark"></button>
+          <button class="theme-btn" data-t="light" data-label="Light" onclick="setTheme('light')" title="Light" aria-label="Tema Light"></button>
+          <button class="theme-btn" data-t="neon" data-label="Neon" onclick="setTheme('neon')" title="Neon" aria-label="Tema Neon"></button>
+          <button class="theme-btn" data-t="premium" data-label="Ouro" onclick="setTheme('premium')" title="Ouro Sofisticado" aria-label="Tema Ouro Sofisticado"></button>
+          <button class="theme-btn" data-t="aurora" data-label="Aurora" onclick="setTheme('aurora')" title="Aurora" aria-label="Tema Aurora"></button>
+          <button class="theme-btn" data-t="arcade" data-label="Arcade" onclick="setTheme('arcade')" title="Arcade" aria-label="Tema Arcade"></button>
+          <button class="theme-btn" data-t="atelier" data-label="Atelier" onclick="setTheme('atelier')" title="Atelier · tema Codex" aria-label="Tema Atelier"></button>
         </div>
         <span class="tag tag-gray" id="tagJogos">sem dados</span>
         <select id="filtroCampeonatoSelect" class="filter-input" style="display:none" onchange="mudarFiltroCampeonato(this.value)">
           <option value="__todos__">Todos os campeonatos</option>
         </select>
         <input type="file" id="fileInputAdicionar" accept=".xlsx" multiple style="display:none" onchange="handleFile(this)">
-        <button class="btn-load" id="btnAdicionar" style="display:none;background:var(--bg3);color:var(--text);box-shadow:none;border:1px solid var(--border2)" onclick="document.getElementById('fileInputAdicionar').click()">
-          + Adicionar XLSX
-        </button>
         <button class="btn-load" onclick="document.getElementById('fileInput').click()">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
           Carregar XLSX
@@ -763,8 +791,17 @@ th .btn-icon{width:11px;height:11px;vertical-align:-1px;opacity:0.7;margin-left:
       
         <span class="user-badge" id="userBadge"></span>
         <span class="admin-badge" id="adminBadge" style="display:none">ADMIN</span>
-        <button class="btn-clear admin-only" id="btnLimpar" style="display:none" onclick="clearDataFromFirebase()"><svg class="btn-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 01-2 2H8a2 2 0 01-2-2L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4a1 1 0 011-1h4a1 1 0 011 1v2"/></svg> Limpar Dados</button>
-        <button class="btn-clear admin-only" id="btnRelatorioUso" style="display:none;background:var(--bg3);color:var(--text);border:1px solid var(--border2)" onclick="abrirRelatorioUso()"><svg class="btn-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg> Relatório de Uso</button>
+        <div class="admin-menu" id="adminMenu">
+          <button class="admin-trigger" type="button" onclick="toggleAdminMenu(event)" aria-haspopup="true" aria-expanded="false"><svg class="btn-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 00.34 1.88l.06.06-2.12 2.12-.06-.06a1.7 1.7 0 00-1.88-.34 1.7 1.7 0 00-1.04 1.55V20h-3v-.09a1.7 1.7 0 00-1.04-1.55 1.7 1.7 0 00-1.88.34l-.06.06-2.12-2.12.06-.06A1.7 1.7 0 007 14.7a1.7 1.7 0 00-1.55-1.04H5v-3h.45A1.7 1.7 0 007 9.62a1.7 1.7 0 00-.34-1.88l-.06-.06 2.12-2.12.06.06a1.7 1.7 0 001.88.34A1.7 1.7 0 0011.7 4.4V4h3v.4a1.7 1.7 0 001.04 1.56 1.7 1.7 0 001.88-.34l.06-.06 2.12 2.12-.06.06a1.7 1.7 0 00-.34 1.88 1.7 1.7 0 001.55 1.04H21v3h-.05A1.7 1.7 0 0019.4 15z"/></svg> Administração</button>
+          <div class="admin-popover">
+            <div class="admin-popover-title">Ferramentas do administrador</div>
+            <button class="admin-action" id="btnAdicionar" style="display:none" onclick="document.getElementById('fileInputAdicionar').click()"><svg class="btn-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M12 5v14M5 12h14"/></svg> Adicionar XLSX</button>
+            <button class="admin-action" id="btnGerenciarCasas" style="display:none" onclick="abrirGerenciadorCasas()"><svg class="btn-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M4 20v-9l8-6 8 6v9"/><path d="M9 20v-6h6v6"/></svg> Gerenciar casas</button>
+            <button class="admin-action" id="btnGerenciarAbas" style="display:none" onclick="abrirGerenciadorAbas()"><svg class="btn-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M4 7h16M4 12h16M4 17h16"/><circle cx="9" cy="7" r="2"/><circle cx="15" cy="12" r="2"/><circle cx="7" cy="17" r="2"/></svg> Gerenciar abas</button>
+            <button class="admin-action" id="btnRelatorioUso" style="display:none" onclick="abrirRelatorioUso()"><svg class="btn-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg> Relatório de uso</button>
+            <button class="admin-action" id="btnLimpar" style="display:none;color:var(--red)!important" onclick="clearDataFromFirebase()"><svg class="btn-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14H6L5 6M9 6V4h6v2"/></svg> Limpar dados</button>
+          </div>
+        </div>
         <button class="btn-logout" onclick="doLogout()">Sair</button>
       </div>
     </div>
@@ -788,6 +825,15 @@ th .btn-icon{width:11px;height:11px;vertical-align:-1px;opacity:0.7;margin-left:
 
     <div id="appUpdatesStatus" style="font-family:var(--mono);font-size:11px;color:var(--muted);line-height:1.8;margin:-4px 0 16px 0"></div>
 
+    <div class="ops-strip" aria-label="Resumo operacional">
+      <div class="ops-item"><div class="ops-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg></div><div class="ops-copy"><div class="ops-label">Atualização</div><div class="ops-value" id="opsAtualizacao">Aguardando dados</div></div></div>
+      <div class="ops-item"><div class="ops-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 19h16M6 16V8l6-4 6 4v8"/><path d="M9 16v-5h6v5"/></svg></div><div class="ops-copy"><div class="ops-label">Campeonato</div><div class="ops-value" id="opsCampeonato">Todos</div></div></div>
+      <div class="ops-item"><div class="ops-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="4" y="5" width="16" height="14" rx="2"/><path d="M8 10h8M8 14h5"/></svg></div><div class="ops-copy"><div class="ops-label">Casas ativas</div><div class="ops-value" id="opsCasas">0 ativas</div></div></div>
+      <div class="ops-item"><div class="ops-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 3 2.5 20h19L12 3z"/><path d="M12 9v5M12 17h.01"/></svg></div><div class="ops-copy"><div class="ops-label">Sem dados</div><div class="ops-value" id="opsSemDados">Aguardando captura</div></div></div>
+    </div>
+
+    <section class="opportunity" id="bestOpportunity" aria-live="polite"></section>
+
     <div class="metrics">
       <div class="metric"><div class="metric-label">Melhor lucro</div><div class="metric-value green" id="m-lucro">—</div><div class="metric-sub" id="m-lucro-jogo">carregue o arquivo</div></div>
       <div class="metric"><div class="metric-label">Maior % ganho</div><div class="metric-value pct" id="m-pct">—</div><div class="metric-sub" id="m-pct-jogo"></div></div>
@@ -802,13 +848,11 @@ th .btn-icon{width:11px;height:11px;vertical-align:-1px;opacity:0.7;margin-left:
       <button class="tab-btn" id="btn-jogos" onclick="switchTab('jogos')"><svg class="tab-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="7" width="20" height="10" rx="5"/><line x1="5.5" y1="10.5" x2="5.5" y2="13.5"/><line x1="4" y1="12" x2="7" y2="12"/><circle cx="16" cy="10.5" r="1"/><circle cx="18.2" cy="13" r="1"/></svg> Jogos</button>
       <button class="tab-btn" id="btn-estatisticas" onclick="switchTab('estatisticas')"><svg class="tab-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg> Estatísticas</button>
       <button class="tab-btn" id="btn-historico" onclick="switchTab('historico')"><svg class="tab-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><polyline points="12 7 12 12 15 14.5"/></svg> Histórico</button>
-      <button class="tab-btn" id="btnGerenciarCasas" onclick="abrirGerenciadorCasas()" style="display:none;margin-left:auto;color:var(--amber)">Gerenciar Casas</button>
-      <button class="tab-btn" id="btnGerenciarAbas" onclick="abrirGerenciadorAbas()" style="display:none;color:var(--muted)"><svg class="tab-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><line x1="4" y1="6" x2="20" y2="6"/><circle cx="9" cy="6" r="2"/><line x1="4" y1="12" x2="20" y2="12"/><circle cx="15" cy="12" r="2"/><line x1="4" y1="18" x2="20" y2="18"/><circle cx="7" cy="18" r="2"/></svg> Gerenciar Abas</button>
     </div>
 
     <div class="tab-panel active" id="tab-comparativo">
 
-    <div class="section-header"><span class="section-title">&#127942; top 3 apostas</span></div>
+    <div class="section-header"><span class="section-title"><svg class="btn-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M8 4h8v5a4 4 0 01-8 0V4z"/><path d="M6 6H4v2a4 4 0 004 4M18 6h2v2a4 4 0 01-4 4M12 13v4M8 20h8M9 17h6"/></svg> top 3 apostas</span></div>
     <div class="top3" id="top3">
       <div class="top-card rank1"><div style="color:var(--muted);font-size:12px;text-align:center;padding:20px 0">—</div></div>
       <div class="top-card rank2"><div style="color:var(--muted);font-size:12px;text-align:center;padding:20px 0">—</div></div>
@@ -844,6 +888,7 @@ th .btn-icon{width:11px;height:11px;vertical-align:-1px;opacity:0.7;margin-left:
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" width="16" height="16"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8l-6-6z"/><path d="M14 2v6h6"/><path d="M12 18v-4"/><path d="M8 18v-2"/><path d="M16 18v-6"/></svg>
         PDF
       </button>
+      <button class="filter-input view-toggle" id="btnCompacto" type="button" onclick="toggleCompact()" aria-pressed="false"><svg class="btn-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 7h16M4 12h16M4 17h16"/></svg> Compacto</button>
     </div>
     <div class="table-wrap" id="tableWrap">
       <div class="table-scroll">
@@ -1457,6 +1502,7 @@ function setupUIForRole() {
   const btnLoad = document.querySelector('.btn-load[onclick*="fileInput"]');
   const btnRelatorioUso = document.getElementById('btnRelatorioUso');
   const btnGerenciarCasas = document.getElementById('btnGerenciarCasas');
+  const adminMenu = document.getElementById('adminMenu');
 
   if (isAdmin) {
     console.log('[DEBUG] Configurando UI como ADMIN');
@@ -1467,6 +1513,7 @@ function setupUIForRole() {
     if (dropUser) dropUser.style.display = 'none';
     if (btnRelatorioUso) btnRelatorioUso.style.display = 'inline-flex';
     if (btnGerenciarCasas) btnGerenciarCasas.style.display = 'inline-flex';
+    if (adminMenu) adminMenu.style.display = 'block';
     // Esconde o botao "Carregar XLSX" principal do header (admin usa o overlay ou + Adicionar)
     if (btnLoad) btnLoad.style.display = 'none';
   } else {
@@ -1478,6 +1525,7 @@ function setupUIForRole() {
     if (dropUser) dropUser.style.display = 'block';
     if (btnRelatorioUso) btnRelatorioUso.style.display = 'none';
     if (btnGerenciarCasas) btnGerenciarCasas.style.display = 'none';
+    if (adminMenu) { adminMenu.style.display = 'none'; adminMenu.classList.remove('open'); }
     if (btnLoad) btnLoad.style.display = 'none'; // usuario comum nao carrega arquivo
   }
 }
@@ -1640,6 +1688,7 @@ function carregarStatusPublico() {
     atualizacoesCampeonatos = snap.val() || {};
     renderizarStatusAtualizacoes('loginUpdatesStatus');
     renderizarStatusAtualizacoes('appUpdatesStatus');
+    atualizarResumoOperacional();
   }, err => {
     console.warn('[DEBUG] Nao foi possivel ler publicStatus:', err.message);
   });
@@ -1792,6 +1841,8 @@ function listenToBetVisibility() {
     hiddenBets = Array.isArray(snap.val()) ? snap.val() : [];
     if (allSitesDataMaster && allSitesDataMaster.length) {
       aplicarFiltroCampeonato(filtroCampeonatoAtual);
+    } else {
+      atualizarResumoOperacional();
     }
   }, err => console.warn('[DEBUG] Não foi possível ler hiddenBets:', err.message));
 }
@@ -1915,6 +1966,9 @@ function resetUINoData() {
   if (chartInstance) { chartInstance.destroy(); chartInstance = null; }
   document.getElementById('statsRows').innerHTML = '<div style="color:var(--muted);font-size:12px;padding:12px 0">Sem dados</div>';
   document.getElementById('jogosCapturados').textContent = '0';
+  const oportunidade = document.getElementById('bestOpportunity');
+  if (oportunidade) { oportunidade.classList.remove('visible'); oportunidade.innerHTML = ''; }
+  atualizarResumoOperacional();
 }
 
 function resetUISemCasasAtivas() {
@@ -1970,6 +2024,32 @@ function setTheme(t){
     setTheme(t);
   }catch(e){setTheme('dark');}
 })();
+
+function toggleAdminMenu(event){
+  event?.stopPropagation();
+  const menu=document.getElementById('adminMenu');
+  if(!menu) return;
+  const aberto=menu.classList.toggle('open');
+  menu.querySelector('.admin-trigger')?.setAttribute('aria-expanded',aberto?'true':'false');
+}
+document.addEventListener('click',event=>{
+  const menu=document.getElementById('adminMenu');
+  if(menu&&!menu.contains(event.target)){
+    menu.classList.remove('open');
+    menu.querySelector('.admin-trigger')?.setAttribute('aria-expanded','false');
+  }
+});
+
+function aplicarModoCompacto(ativo){
+  document.body.classList.toggle('compact',ativo);
+  const btn=document.getElementById('btnCompacto');
+  if(btn){btn.classList.toggle('active',ativo);btn.setAttribute('aria-pressed',ativo?'true':'false');btn.lastChild.textContent=ativo?' Confortável':' Compacto';}
+  try{localStorage.setItem('odds-compact',ativo?'1':'0');}catch(e){}
+}
+function toggleCompact(){aplicarModoCompacto(!document.body.classList.contains('compact'));}
+document.addEventListener('DOMContentLoaded',()=>{
+  try{aplicarModoCompacto(localStorage.getItem('odds-compact')==='1');}catch(e){aplicarModoCompacto(false);}
+});
 
 function toast(msg,tipo='info',dur=3000){
   const el=document.getElementById('toast');
@@ -2120,6 +2200,36 @@ document.addEventListener('drop',e=>{
   }
 });
 
+function atualizarResumoOperacional(){
+  const timestamps=Object.values(atualizacoesCampeonatos||{}).map(Number).filter(Number.isFinite);
+  const ultima=timestamps.length?Math.max(...timestamps):null;
+  const seletor=document.getElementById('filtroCampeonatoSelect');
+  const campeonato=seletor&&seletor.value!=='__todos__'?(seletor.options[seletor.selectedIndex]?.text||seletor.value):((campeonatosCarregados||[]).length===1?campeonatosCarregados[0]:'Todos os campeonatos');
+  const ativas=BET_LIST.filter(nome=>!hiddenBets.includes(nome));
+  const presentes=new Set((allSitesData||[]).map(r=>String(r.site||'').trim()).filter(Boolean));
+  const ausentes=ativas.filter(nome=>!presentes.has(nome));
+  const set=(id,text,title='')=>{const el=document.getElementById(id);if(el){el.textContent=text;el.title=title||text;}};
+  set('opsAtualizacao',ultima?formatarDataAtualizacao(ultima):'Aguardando dados');
+  set('opsCampeonato',campeonato);
+  set('opsCasas',`${ativas.length} ativas · ${presentes.size} com odds`);
+  set('opsSemDados',allSitesData.length?`${ausentes.length} casa(s) sem retorno`:'Aguardando captura',ausentes.join(', '));
+}
+
+function renderMelhorOportunidade(){
+  const el=document.getElementById('bestOpportunity');
+  if(!el) return;
+  const r=allData[0];
+  if(!r){el.classList.remove('visible');el.innerHTML='';return;}
+  const capital=parseFloat(document.getElementById('apostaInput').value)||5000;
+  const lucro=r.retorno-capital;
+  const link=(url)=>url&&url!=='#'?url:'#';
+  const result=(rotulo,odd,casa,url)=>`<a class="opportunity-result" href="${link(url)}" target="_blank" rel="noopener" title="Abrir ${casa||rotulo}"><span>${rotulo} · ${casa||'sem link'}</span><strong>${(+odd).toFixed(2)}</strong></a>`;
+  el.innerHTML=`
+    <div><div class="opportunity-kicker"><svg class="btn-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 17l6-6 4 4 8-9"/><path d="M15 6h6v6"/></svg> Melhor oportunidade agora</div><div class="opportunity-title">${r.jogo}</div><div class="opportunity-meta"><span>${r.campeonato||'Campeonato'}</span><span>${r.data||''} ${r.hora||''}</span><span>${r.totalCasas||String(r.site||'').split('&').length} casas comparadas</span></div></div>
+    <div class="opportunity-results">${result('Casa',r.casa,r.casa_origem,r.casa_link)}${result('Empate',r.empate,r.empate_origem,r.empate_link)}${result('Fora',r.fora,r.fora_origem,r.fora_link)}<div class="opportunity-gain"><strong>${r.lucro_pct>=0?'+':''}${r.lucro_pct.toFixed(2)}%</strong><span>${lucro>=0?'+':''}${fmtDec(lucro)}</span></div></div>`;
+  el.classList.add('visible');
+}
+
 function renderDados(dados){
   const aposta=parseFloat(document.getElementById('apostaInput').value)||5000;
 
@@ -2142,7 +2252,7 @@ function renderDados(dados){
   document.getElementById('tagJogos').textContent=allData.length+' jogos';
   document.getElementById('tagJogos').className='tag tag-green';
   document.getElementById('logoSub').textContent=`atualizado ${dataRef}`;
-  populateHoraFilter();renderMetrics();renderTop3();renderChart();renderStats();applyFilters();renderLucroMaximo();renderTopApostasComLinks();renderJogos();renderEstatisticas();
+  populateHoraFilter();renderMetrics();renderMelhorOportunidade();atualizarResumoOperacional();renderTop3();renderChart();renderStats();applyFilters();renderLucroMaximo();renderTopApostasComLinks();renderJogos();renderEstatisticas();
 }
 
 function recalc(){
@@ -2153,7 +2263,7 @@ function recalc(){
     return{...r,v_casa:a/(inv*r.casa),v_emp:a/(inv*r.empate),v_fora:a/(inv*r.fora),
       retorno:a/inv,lucro_pct:(a/inv-a)/a*100};
   }).sort((a,b)=>b.lucro_pct-a.lucro_pct);
-  renderMetrics();renderTop3();renderStats();applyFilters();renderLucroMaximo();renderTopApostasComLinks();
+  renderMetrics();renderMelhorOportunidade();renderTop3();renderStats();applyFilters();renderLucroMaximo();renderTopApostasComLinks();
 }
 
 function renderMetrics(){
@@ -2988,20 +3098,20 @@ function renderTopApostasComLinks(){
       <div class="link-row">
         <span class="link-label">Casa</span>
         <span class="link-url">${r.casa.toFixed(2)}</span>
-        <a href="${casaSites[0]?.link||'#'}" target="_blank" class="link-open" title="Abrir"></a>
-        <button class="link-copy" onclick="copiarLink('${casaSites[0]?.link||'#'}', this)">Copiar</button>
+        <a href="${casaSites[0]?.link||'#'}" target="_blank" class="link-open" title="Abrir" aria-label="Abrir odd da casa"><svg class="btn-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 3h7v7M10 14 21 3"/><path d="M21 14v5a2 2 0 01-2 2H5a2 2 0 01-2-2V5a2 2 0 012-2h5"/></svg></a>
+        <button class="link-copy" onclick="copiarLink('${casaSites[0]?.link||'#'}', this)"><svg class="btn-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="8" y="8" width="11" height="11" rx="2"/><path d="M16 8V5a2 2 0 00-2-2H5a2 2 0 00-2 2v9a2 2 0 002 2h3"/></svg> Copiar</button>
       </div>
       <div class="link-row">
         <span class="link-label">Empate</span>
         <span class="link-url">${r.empate.toFixed(2)}</span>
-        <a href="${empateSites[0]?.link||'#'}" target="_blank" class="link-open" title="Abrir"></a>
-        <button class="link-copy" onclick="copiarLink('${empateSites[0]?.link||'#'}', this)">Copiar</button>
+        <a href="${empateSites[0]?.link||'#'}" target="_blank" class="link-open" title="Abrir" aria-label="Abrir odd do empate"><svg class="btn-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 3h7v7M10 14 21 3"/><path d="M21 14v5a2 2 0 01-2 2H5a2 2 0 01-2-2V5a2 2 0 012-2h5"/></svg></a>
+        <button class="link-copy" onclick="copiarLink('${empateSites[0]?.link||'#'}', this)"><svg class="btn-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="8" y="8" width="11" height="11" rx="2"/><path d="M16 8V5a2 2 0 00-2-2H5a2 2 0 00-2 2v9a2 2 0 002 2h3"/></svg> Copiar</button>
       </div>
       <div class="link-row">
         <span class="link-label">Fora</span>
         <span class="link-url">${r.fora.toFixed(2)}</span>
-        <a href="${foraSites[0]?.link||'#'}" target="_blank" class="link-open" title="Abrir"></a>
-        <button class="link-copy" onclick="copiarLink('${foraSites[0]?.link||'#'}', this)">Copiar</button>
+        <a href="${foraSites[0]?.link||'#'}" target="_blank" class="link-open" title="Abrir" aria-label="Abrir odd de fora"><svg class="btn-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 3h7v7M10 14 21 3"/><path d="M21 14v5a2 2 0 01-2 2H5a2 2 0 01-2-2V5a2 2 0 012-2h5"/></svg></a>
+        <button class="link-copy" onclick="copiarLink('${foraSites[0]?.link||'#'}', this)"><svg class="btn-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="8" y="8" width="11" height="11" rx="2"/><path d="M16 8V5a2 2 0 00-2-2H5a2 2 0 00-2 2v9a2 2 0 002 2h3"/></svg> Copiar</button>
       </div>
       ${urlsHtml}
       <div style="margin-top:14px;padding-top:12px;border-top:1px solid var(--border)">
@@ -3033,7 +3143,7 @@ function renderTopApostasComLinks(){
 function renderTable(data){
   const tbody=document.getElementById('tableBody');
   if(!data.length){tbody.innerHTML='<tr><td colspan="12" class="empty">Nenhum jogo encontrado.</td></tr>';return;}
-  tbody.innerHTML=data.map(r=>{
+  tbody.innerHTML=data.map((r,rowIdx)=>{
     const numCasas=r.totalCasas||(r.site||'').split('&').length;
     const camp=r.campeonato||'';
     const data_jogo=(r.data||'').split(' ')[0]||'';
@@ -3042,20 +3152,29 @@ function renderTable(data){
     const campColor=campLower.includes('libertadores')?'#10b981':campLower.includes('sul americana')||campLower.includes('sulamericana')||campLower.includes('sul-americana')?'#ec4899':campLower.includes('serie a')||campLower.includes('serie a')?'#3b82f6':campLower.includes('serie b')||campLower.includes('serie b')?'#f59e0b':campLower.includes('copa')?'#a855f7':'#6b7280';
     const campBadge=camp?`<span class="camp-badge" style="color:${campColor};border-color:${campColor}55;background:${campColor}18">${camp}</span>`:'';
     return `<tr>
-    <td class="td-jogo" title="${r.jogo}">${r.jogo}</td>
+    <td class="td-jogo" title="${r.jogo}"><button class="row-expand" id="comparison-expand-${rowIdx}" onclick="toggleComparisonDetail(${rowIdx})" aria-label="Exibir detalhes de ${r.jogo}" aria-expanded="false">›</button>${r.jogo}</td>
     <td>${campBadge}</td>
     <td class="td-mono" style="white-space:nowrap">${data_jogo}</td>
     <td class="td-mono">${r.hora}</td>
     <td class="td-casas" style="text-align:center;font-weight:500;color:var(--green)">${numCasas}</td>
-    <td class="td-odd-casa td-odd-tip" data-tip="${r.casa_origem||r.site||''}">${toFixed2(r.casa)}</td>
-    <td class="td-odd-emp td-odd-tip" data-tip="${r.empate_origem||r.site||''}">${toFixed2(r.empate)}</td>
-    <td class="td-odd-fora td-odd-tip" data-tip="${r.fora_origem||r.site||''}">${toFixed2(r.fora)}</td>
+    <td class="td-odd-casa td-odd-tip" data-tip="${r.casa_origem||r.site||''}"><span class="best-odd">${toFixed2(r.casa)}</span></td>
+    <td class="td-odd-emp td-odd-tip" data-tip="${r.empate_origem||r.site||''}"><span class="best-odd">${toFixed2(r.empate)}</span></td>
+    <td class="td-odd-fora td-odd-tip" data-tip="${r.fora_origem||r.site||''}"><span class="best-odd">${toFixed2(r.fora)}</span></td>
     <td class="td-val">${fmt(r.v_casa)}</td>
     <td class="td-val">${fmt(r.v_emp)}</td>
     <td class="td-val">${fmt(r.v_fora)}</td>
     <td class="td-pct ${r.lucro_pct>0?'pos':'neg'}">${(r.lucro_pct>0?'+':'')+r.lucro_pct.toFixed(2)+'%'}</td>
-  </tr>`;
+  </tr><tr class="comparison-detail" id="comparison-detail-${rowIdx}"><td colspan="12"><div class="comparison-detail-grid"><div class="comparison-detail-item">Melhor odd casa · ${r.casa_origem||'-'}<strong>${toFixed2(r.casa)} · ${fmt(r.v_casa)}</strong></div><div class="comparison-detail-item">Melhor empate · ${r.empate_origem||'-'}<strong>${toFixed2(r.empate)} · ${fmt(r.v_emp)}</strong></div><div class="comparison-detail-item">Melhor odd fora · ${r.fora_origem||'-'}<strong>${toFixed2(r.fora)} · ${fmt(r.v_fora)}</strong></div></div></td></tr>`;
   }).join('');
+}
+
+function toggleComparisonDetail(rowIdx){
+  const detalhe=document.getElementById(`comparison-detail-${rowIdx}`);
+  const botao=document.getElementById(`comparison-expand-${rowIdx}`);
+  if(!detalhe||!botao) return;
+  const aberto=detalhe.classList.toggle('open');
+  botao.classList.toggle('expanded',aberto);
+  botao.setAttribute('aria-expanded',aberto?'true':'false');
 }
 
 // ===================================================================
