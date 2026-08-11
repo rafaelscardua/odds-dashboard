@@ -138,6 +138,26 @@
   --grid-line:rgba(192,38,255,0.06);
 }
 
+/* Tema autoral Codex: Atelier */
+[data-theme="atelier"] {
+  --bg:#08111f;--bg2:#111d30;--bg3:#192940;
+  --border:#263a57;--border2:#3b5575;
+  --text:#f7f2e8;--muted:#91a4bd;
+  --green:#5eead4;--green-dim:rgba(94,234,212,0.13);
+  --amber:#fbbf66;--amber-dim:rgba(251,191,102,0.13);
+  --red:#fb7185;--blue-dim:rgba(125,211,252,0.13);
+  --accent:#fb7185;--accent-dim:rgba(251,113,133,0.13);
+  --accent2:#5eead4;--accent2-dim:rgba(94,234,212,0.12);
+  --casa:#7dd3fc;--casa-dim:rgba(125,211,252,0.14);--emp:#a7b6ca;--emp-dim:rgba(167,182,202,0.14);--fora:#fbbf66;--fora-dim:rgba(251,191,102,0.14);
+  --pct:#5eead4;--pct-dim:rgba(94,234,212,0.17);
+  --shadow:0 2px 3px rgba(2,8,23,.32),0 24px 64px rgba(2,8,23,.42);
+  --shadow-sm:0 8px 24px rgba(2,8,23,.3);
+  --glow:0 0 0 1px rgba(94,234,212,.22),0 0 30px rgba(251,113,133,.12);
+  --row-hover:rgba(94,234,212,.055);--row-alt:rgba(255,255,255,.018);
+  --tab-active-border:#fb7185;--grid-line:rgba(143,161,185,.055);
+  --radius:12px;--radius-lg:18px;
+}
+
 /* ===============================================
    SELETOR DE TEMA
 =============================================== */
@@ -154,6 +174,7 @@
 .theme-btn[data-t="premium"]{background:radial-gradient(circle at 30% 30%,#d4af6a,#171310);border-color:#d4af6a44;}
 .theme-btn[data-t="aurora"]{background:radial-gradient(circle at 30% 30%,#ff6b81,#1e1428);border-color:#ff6b8144;}
 .theme-btn[data-t="arcade"]{background:radial-gradient(circle at 30% 30%,#00e5ff,#c026ff 130%);border-color:#00e5ff44;}
+.theme-btn[data-t="atelier"]{background:conic-gradient(from 215deg,#5eead4,#172942 38%,#fb7185 70%,#fbbf66);border-color:#ffffff44;}
 .theme-label{font-size:10px;font-family:var(--mono);color:var(--muted);text-transform:uppercase;letter-spacing:.08em;margin-right:2px;}
 *{box-sizing:border-box;margin:0;padding:0;}
 *:focus-visible{outline:2px solid var(--accent);outline-offset:2px;}
@@ -204,6 +225,8 @@ header{border-bottom:1px solid var(--border);padding:16px 0;position:sticky;top:
 .header-inner{display:flex;justify-content:space-between;align-items:center;gap:16px;flex-wrap:wrap;}
 .logo{display:flex;align-items:center;gap:11px;}
 .logo-dot{width:9px;height:9px;border-radius:50%;background:var(--green);box-shadow:0 0 10px var(--green),0 0 2px var(--green);animation:pulse 2.2s ease-in-out infinite;flex-shrink:0;}
+.logo-mark{display:none;width:36px;height:36px;place-items:center;color:#07111f;border-radius:12px;background:linear-gradient(135deg,#5eead4,#7dd3fc 52%,#fb7185);box-shadow:0 10px 28px rgba(94,234,212,.2);}
+.logo-mark svg{width:22px;height:22px;}
 @keyframes pulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:0.45;transform:scale(0.82)}}
 .logo-text{font-family:var(--display);font-size:17px;font-weight:700;letter-spacing:-0.01em;background:linear-gradient(120deg,var(--text),var(--text) 60%,var(--accent));-webkit-background-clip:text;background-clip:text;color:transparent;}
 .logo-sub{font-size:11px;color:var(--muted);font-family:var(--mono);letter-spacing:.02em;}
@@ -211,6 +234,26 @@ header{border-bottom:1px solid var(--border);padding:16px 0;position:sticky;top:
 .tag{font-size:11px;font-family:var(--mono);padding:4px 10px;border-radius:20px;border:1px solid;letter-spacing:.02em;}
 .tag-green{border-color:rgba(46,230,166,0.35);color:var(--green);background:var(--green-dim);}
 .tag-gray{border-color:var(--border2);color:var(--muted);}
+
+/* Identidade visual exclusiva do Atelier */
+[data-theme="atelier"] body{background:radial-gradient(circle at 8% 0%,rgba(94,234,212,.13),transparent 31rem),radial-gradient(circle at 96% 10%,rgba(251,113,133,.13),transparent 32rem),repeating-linear-gradient(0deg,var(--grid-line) 0,var(--grid-line) 1px,transparent 1px,transparent 48px),repeating-linear-gradient(90deg,var(--grid-line) 0,var(--grid-line) 1px,transparent 1px,transparent 48px),linear-gradient(180deg,#08111f,#091525 55%,#07101d);}
+[data-theme="atelier"] header{background:rgba(8,17,31,.78);border-bottom-color:rgba(94,234,212,.17);backdrop-filter:blur(18px) saturate(140%);box-shadow:0 14px 38px rgba(2,8,23,.25);}
+[data-theme="atelier"] .shell{max-width:1360px;}
+[data-theme="atelier"] .logo-dot{display:none;}
+[data-theme="atelier"] .logo-mark{display:grid;}
+[data-theme="atelier"] .theme-switcher{padding:6px 8px;border:1px solid var(--border);border-radius:999px;background:rgba(17,29,48,.72);}
+[data-theme="atelier"] .theme-btn.active{border-color:#f7f2e8;box-shadow:0 0 0 3px #111d30,0 0 0 4px rgba(94,234,212,.48);}
+[data-theme="atelier"] .btn-load{background:linear-gradient(135deg,#5eead4,#7dd3fc);color:#07111f;box-shadow:0 10px 28px rgba(94,234,212,.2);}
+[data-theme="atelier"] .aposta-row{padding:15px 17px;border:1px solid var(--border);border-radius:16px;background:rgba(17,29,48,.62);box-shadow:0 16px 42px rgba(2,8,23,.2);}
+[data-theme="atelier"] .metric{position:relative;overflow:hidden;background:linear-gradient(145deg,rgba(25,41,64,.96),rgba(17,29,48,.9));border-color:rgba(94,234,212,.14);box-shadow:0 18px 48px rgba(2,8,23,.24);}
+[data-theme="atelier"] .metric::after{content:"";position:absolute;width:88px;height:88px;border-radius:50%;right:-38px;top:-46px;background:radial-gradient(circle,rgba(251,113,133,.19),transparent 68%);}
+[data-theme="atelier"] .tabs-nav{padding:6px;gap:5px;border:1px solid var(--border);border-radius:16px;background:rgba(17,29,48,.72);box-shadow:0 14px 40px rgba(2,8,23,.2);}
+[data-theme="atelier"] .tab-btn{margin:0;border:0;border-radius:11px;}
+[data-theme="atelier"] .tab-btn.active{color:#07111f;background:linear-gradient(135deg,#fb7185,#fbbf66);border:0;box-shadow:0 8px 22px rgba(251,113,133,.2);}
+[data-theme="atelier"] .top-card,[data-theme="atelier"] .chart-box,[data-theme="atelier"] .stats-box,[data-theme="atelier"] .links-card,[data-theme="atelier"] .jogos-container{background:linear-gradient(155deg,rgba(25,41,64,.94),rgba(17,29,48,.91));border-color:rgba(145,164,189,.2);}
+[data-theme="atelier"] .table-wrap{border-color:rgba(94,234,212,.17);box-shadow:0 26px 72px rgba(2,8,23,.35);}
+[data-theme="atelier"] thead th{background:#16263b;color:#b1bfd1;border-bottom-color:#334c69;}
+[data-theme="atelier"] tbody tr:hover{box-shadow:inset 3px 0 #5eead4;}
 
 /* Botão principal de carregar */
 .btn-load{
@@ -686,6 +729,9 @@ th .btn-icon{width:11px;height:11px;vertical-align:-1px;opacity:0.7;margin-left:
     <div class="header-inner">
       <div class="logo">
         <div class="logo-dot"></div>
+        <div class="logo-mark" aria-hidden="true">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 16.5 10 12l3 2.5L19 7"/><path d="M17 7h2v2"/><path d="M5 6v12h14"/></svg>
+        </div>
         <div>
           <div class="logo-text">odds.dashboard</div>
           <div class="logo-sub" id="logoSub">aposta holandesa · cobertura total</div>
@@ -700,6 +746,7 @@ th .btn-icon{width:11px;height:11px;vertical-align:-1px;opacity:0.7;margin-left:
           <button class="theme-btn" data-t="premium" onclick="setTheme('premium')" title="Ouro Sofisticado"></button>
           <button class="theme-btn" data-t="aurora" onclick="setTheme('aurora')" title="Aurora"></button>
           <button class="theme-btn" data-t="arcade" onclick="setTheme('arcade')" title="Arcade"></button>
+          <button class="theme-btn" data-t="atelier" onclick="setTheme('atelier')" title="Atelier · tema Codex" aria-label="Tema Atelier"></button>
         </div>
         <span class="tag tag-gray" id="tagJogos">sem dados</span>
         <select id="filtroCampeonatoSelect" class="filter-input" style="display:none" onchange="mudarFiltroCampeonato(this.value)">
@@ -1907,9 +1954,12 @@ const fmt    = n => 'R$ '+n.toLocaleString('pt-BR',{minimumFractionDigits:2,maxi
 const fmtDec = n => 'R$ '+n.toLocaleString('pt-BR',{minimumFractionDigits:2,maximumFractionDigits:2});
 
 function setTheme(t){
+  const temas=['dark','light','neon','premium','aurora','arcade','atelier'];
+  if(!temas.includes(t)) t='dark';
   document.documentElement.setAttribute('data-theme',t);
   document.querySelectorAll('.theme-btn').forEach(b=>{
     b.classList.toggle('active', b.dataset.t===t);
+    b.setAttribute('aria-pressed',b.dataset.t===t?'true':'false');
   });
   try{localStorage.setItem('odds-theme',t);}catch(e){}
 }
