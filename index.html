@@ -2983,6 +2983,17 @@ function copiarLink(url, btn){
   });
 }
 
+function deduplicarSitesOdds(linhas,campoLink){
+  const unicos=new Map();
+  (linhas||[]).forEach(linha=>{
+    const site=String(linha.site||'?').trim();
+    const link=String(linha[campoLink]||'#').trim();
+    const chave=`${site.toLowerCase()}|${link.toLowerCase()}`;
+    if(!unicos.has(chave)) unicos.set(chave,linha);
+  });
+  return Array.from(unicos.values());
+}
+
 function consolidarOdds(rawData,metadadosPorJogo=new Map()){
   // Agrupa por campeonato + confronto + data. A hora pode variar entre casas,
   // mas a data impede unir reencontros reais do mesmo campeonato.
@@ -3023,9 +3034,18 @@ function consolidarOdds(rawData,metadadosPorJogo=new Map()){
         && (s.campeonato||'')===(grupo.campeonato||'')
         && (s.data||'')===(grupo.data||'');
     };
-    const casaSites=(allSitesData||[]).filter(s=>mesmoJogo(s)&&Math.abs(s.casa-maxCasa)<0.01);
-    const empateSites=(allSitesData||[]).filter(s=>mesmoJogo(s)&&Math.abs(s.empate-maxEmpate)<0.01);
-    const foraSites=(allSitesData||[]).filter(s=>mesmoJogo(s)&&Math.abs(s.fora-maxFora)<0.01);
+    const casaSites=deduplicarSitesOdds(
+      (allSitesData||[]).filter(s=>mesmoJogo(s)&&Math.abs(s.casa-maxCasa)<0.01),
+      'casa_link'
+    );
+    const empateSites=deduplicarSitesOdds(
+      (allSitesData||[]).filter(s=>mesmoJogo(s)&&Math.abs(s.empate-maxEmpate)<0.01),
+      'empate_link'
+    );
+    const foraSites=deduplicarSitesOdds(
+      (allSitesData||[]).filter(s=>mesmoJogo(s)&&Math.abs(s.fora-maxFora)<0.01),
+      'fora_link'
+    );
 
     // Contar TODAS as casas que oferecem este jogo
     // A coluna SITE pode ter multiplos sites separados por " & "
