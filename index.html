@@ -1114,6 +1114,7 @@ th .btn-icon{width:11px;height:11px;vertical-align:-1px;opacity:0.7;margin-left:
               <option value="Betnacional">Betnacional</option>
               <option value="Bet da Sorte">Bet da Sorte</option>
               <option value="Seguro.bet">Seguro.bet</option>
+              <option value="BetFury">BetFury</option>
               <option value="Multi.bet">Multi.bet</option>
               <option value="Jogo de Ouro">Jogo de Ouro</option>
               <option value="EstrelaBet">EstrelaBet</option>
@@ -1309,7 +1310,7 @@ let casasConfigListener = null;
 let hiddenTabs = {}; // { comparativo:false, toplinks:true, ... } - true = oculta para usuarios comuns
 let hiddenBets = []; // nomes excluidos de toda visualizacao e calculo
 let atualizacoesCampeonatos = {}; // { "Serie A": 1690000000000, "Libertadores": 1689000000000 }
-const BET_LIST = ['Betano','Betnacional','Bet da Sorte','Seguro.bet','EstrelaBet','KTO','Superbet','Bet365','Betfair','F12','Luva.bet','Multi.bet','Jogo de Ouro','Betesporte','Novibet','Ona.bet','Sportingbet','Betboo','Galera.bet','Rivalo','R7.bet','Brazino777','BetWarrior','Pix.bet','Stake','Startbet','BetMGM','1xbet','BR4','Cassino.bet','Betao','Lottu','Vera.bet','7K','Pitaco.bet'];
+const BET_LIST = ['Betano','Betnacional','Bet da Sorte','Seguro.bet','BetFury','EstrelaBet','KTO','Superbet','Bet365','Betfair','F12','Luva.bet','Multi.bet','Jogo de Ouro','Betesporte','Novibet','Ona.bet','Sportingbet','Betboo','Galera.bet','Rivalo','R7.bet','Brazino777','BetWarrior','Pix.bet','Stake','Startbet','BetMGM','1xbet','BR4','Cassino.bet','Betao','Lottu','Vera.bet','7K','Pitaco.bet'];
 const TAB_ICON_SVG = (path) => `<svg class="btn-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">${path}</svg>`;
 const TAB_LIST = [
   { key: 'comparativo',   label: TAB_ICON_SVG('<rect x="3" y="12" width="4" height="9"/><rect x="10" y="6" width="4" height="15"/><rect x="17" y="9" width="4" height="12"/>') + ' Comparativo' },
