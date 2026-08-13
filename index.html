@@ -3215,7 +3215,7 @@ function renderTable(data){
     const data_jogo=(r.data||'').split(' ')[0]||'';
     const toFixed2=v=>isNaN(v)?'-':(+v).toFixed(2);
     const campLower=camp.toLowerCase();
-    const campColor=campLower.includes('libertadores')?'#10b981':campLower.includes('sul americana')||campLower.includes('sulamericana')||campLower.includes('sul-americana')?'#ec4899':campLower.includes('serie a')||campLower.includes('serie a')?'#3b82f6':campLower.includes('serie b')||campLower.includes('serie b')?'#f59e0b':campLower.includes('copa')?'#a855f7':'#6b7280';
+    const campColor=campLower.includes('libertadores')?'#10b981':campLower.includes('sul americana')||campLower.includes('sulamericana')||campLower.includes('sul-americana')?'#ec4899':campLower.includes('serie a')||campLower.includes('serie a')?'#3b82f6':campLower.includes('serie b')||campLower.includes('serie b')?'#f59e0b':campLower.includes('premier')?'#c084fc':campLower.includes('copa')?'#a855f7':'#6b7280';
     const campBadge=camp?`<span class="camp-badge" style="color:${campColor};border-color:${campColor}55;background:${campColor}18">${camp}</span>`:'';
     return `<tr>
     <td class="td-jogo" title="${r.jogo}"><button class="row-expand" id="comparison-expand-${rowIdx}" onclick="toggleComparisonDetail(${rowIdx})" aria-label="Exibir detalhes de ${r.jogo}" aria-expanded="false">›</button>${r.jogo}</td>
@@ -3493,6 +3493,7 @@ function gerarPDFDireto(tipo) {
     else if (cl.includes('sul americana') || cl.includes('sulamericana')) campColor = '#ec4899';
     else if (cl.includes('serie a') || cl.includes('serie a')) campColor = '#3b82f6';
     else if (cl.includes('serie b') || cl.includes('serie b')) campColor = '#f59e0b';
+    else if (cl.includes('premier')) campColor = '#c084fc';
     else if (cl.includes('copa')) campColor = '#a855f7';
 
     const valores = [
