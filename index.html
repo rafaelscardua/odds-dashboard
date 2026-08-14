@@ -354,7 +354,20 @@ main{padding:28px 0;}
 .top-card.rank3::before{background:linear-gradient(90deg,#92400e,#b45309);}
 .top-card.rank3::after{background:linear-gradient(180deg,rgba(146,64,14,0.15),transparent);}
 .top-rank{font-size:18px;margin-bottom:6px;}
-.top-jogo{font-family:var(--display);font-size:18px;font-weight:600;margin-bottom:12px;line-height:1.3;letter-spacing:-0.005em;}
+.top-card-title-row{display:flex;align-items:flex-start;justify-content:space-between;gap:12px;margin-bottom:12px;}
+.top-jogo{font-family:var(--display);font-size:18px;font-weight:600;line-height:1.3;letter-spacing:-0.005em;min-width:0;}
+.top-data-hora{font-family:var(--mono);font-size:11px;line-height:1.35;color:var(--muted);white-space:nowrap;padding-top:4px;text-align:right;}
+@media(max-width:520px){.top-card-title-row{display:block}.top-data-hora{text-align:left;padding-top:5px}.top-jogo{font-size:17px}}
+.top-winners{display:grid;gap:6px;margin-top:11px;padding-top:10px;border-top:1px solid var(--border);font-size:11px;}
+.top-winner-row{display:flex;align-items:baseline;gap:8px;min-width:0;}
+.top-winner-label{flex:0 0 46px;font-family:var(--mono);color:var(--muted);}
+.top-winner-links{display:flex;flex-wrap:wrap;gap:3px 9px;min-width:0;}
+.top-winner-link{font-family:var(--mono);text-decoration:none;border-bottom:1px solid transparent;transition:border-color .15s,filter .15s;}
+.top-winner-link:hover{border-bottom-color:currentColor;filter:brightness(1.18);}
+.top-winner-link.casa{color:var(--casa);}
+.top-winner-link.empate{color:var(--emp);}
+.top-winner-link.fora{color:var(--fora);}
+.top-winner-empty{color:var(--muted);}
 .top-odds{display:flex;gap:6px;margin-bottom:12px;flex-wrap:wrap;}
 .odd-tag{font-family:var(--mono);font-size:12px;font-weight:600;padding:4px 10px;border-radius:6px;letter-spacing:0.01em;}
 .odd-casa{background:var(--casa-dim);color:var(--casa);border:1px solid color-mix(in srgb,var(--casa) 35%,transparent);}
@@ -2476,14 +2489,33 @@ function recalcLucroMaxHedge(cardIdx, scenIdx, tipo){
 
 
 
+function renderTopWinnerLinks(sites,tipo){
+  const vencedoras=deduplicarSitesOdds(sites||[],`${tipo}_link`);
+  if(!vencedoras.length) return '<span class="top-winner-empty">não informado</span>';
+  return vencedoras.map(s=>{
+    const nome=String(s.site||'?');
+    const link=String(s[`${tipo}_link`]||'#');
+    if(!/^https?:\/\//i.test(link)) return `<span class="top-winner-link ${tipo}">${nome}</span>`;
+    return `<a class="top-winner-link ${tipo}" href="${link}" target="_blank" rel="noopener noreferrer" title="Abrir ${nome}">${nome}</a>`;
+  }).join('');
+}
+
 function renderTop3(){
   const a=parseFloat(document.getElementById('apostaInput').value)||5000;
   const ranks=['rank1','rank2','rank3'],ords=['','',''];
   document.getElementById('top3').innerHTML=allData.slice(0,3).map((r,i)=>{
     const lucro=r.retorno-a;
+    const dataTexto=String(r.data||'').trim();
+    const partesData=dataTexto.split(/\s+/);
+    const dataJogo=partesData[0]||'';
+    const horaJogo=r.hora||partesData[1]||'';
+    const dataHora=[dataJogo,horaJogo].filter(Boolean).join(' · ');
     return`<div class="top-card ${ranks[i]}">
       <div class="top-rank">${ords[i]}</div>
-      <div class="top-jogo">${r.jogo}</div>
+      <div class="top-card-title-row">
+        <div class="top-jogo">${r.jogo}</div>
+        <div class="top-data-hora" title="Data e horário do jogo">${dataHora}</div>
+      </div>
       <div class="top-odds">
         <input type="number" id="odd-casa-${i}" class="odd-input odd-casa" step="0.01" min="1.0" value="${r.casa.toFixed(2)}" onchange="recalculateCard(${i})" oninput="recalculateCard(${i})">
         <input type="number" id="odd-emp-${i}" class="odd-input odd-emp" step="0.01" min="1.0" value="${r.empate.toFixed(2)}" onchange="recalculateCard(${i})" oninput="recalculateCard(${i})">
@@ -2509,7 +2541,11 @@ function renderTop3(){
           </div>
         </div>
       </div>
-      <div style="font-size:11px;color:var(--muted);margin-top:10px;">${r.data}   ${r.site}</div>
+      <div class="top-winners" aria-label="Casas com as melhores odds">
+        <div class="top-winner-row"><span class="top-winner-label">Casa:</span><span class="top-winner-links">${renderTopWinnerLinks(r.casa_sites,'casa')}</span></div>
+        <div class="top-winner-row"><span class="top-winner-label">Empate:</span><span class="top-winner-links">${renderTopWinnerLinks(r.empate_sites,'empate')}</span></div>
+        <div class="top-winner-row"><span class="top-winner-label">Fora:</span><span class="top-winner-links">${renderTopWinnerLinks(r.fora_sites,'fora')}</span></div>
+      </div>
     </div>`;
   }).join('');
 }
