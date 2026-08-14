@@ -728,7 +728,7 @@ th .btn-icon{width:11px;height:11px;vertical-align:-1px;opacity:0.7;margin-left:
 <div id="loginScreen">
   <div class="login-box">
     <div class="login-title"><span class="logo-dot" style="display:inline-block;margin-right:9px;vertical-align:middle"></span>odds.dashboard</div>
-    <div class="login-sub">Login obrigatório · Aposta holandesa</div>
+    <div class="login-sub">Login obrigatório · Arbitragem esportiva</div>
     <input type="email" id="loginEmail" class="login-input" placeholder="Email">
     <input type="password" id="loginPassword" class="login-input" placeholder="Senha">
     <button class="login-btn" onclick="doLogin()">Entrar</button>
@@ -786,7 +786,7 @@ th .btn-icon{width:11px;height:11px;vertical-align:-1px;opacity:0.7;margin-left:
         </div>
         <div>
           <div class="logo-text">odds.dashboard</div>
-          <div class="logo-sub" id="logoSub">aposta holandesa · cobertura total</div>
+          <div class="logo-sub" id="logoSub">arbitragem · cobertura total</div>
         </div>
       </div>
       <div class="header-actions">
@@ -840,7 +840,7 @@ th .btn-icon{width:11px;height:11px;vertical-align:-1px;opacity:0.7;margin-left:
         <span class="aposta-prefix">R$</span>
         <input type="number" id="apostaInput" value="5000" min="1" onchange="recalc()">
       </div>
-      <span class="aposta-hint">distribuição automática por dutching nas 3 odds</span>
+      <span class="aposta-hint">distribuição automática da arbitragem nas 3 odds</span>
 
       <span class="aposta-label" style="margin-left: 40px;">Jogos capturados</span>
       <span class="aposta-hint" id="jogosCapturados" style="font-weight: 500; color: var(--green);">0</span>
@@ -935,7 +935,7 @@ th .btn-icon{width:11px;height:11px;vertical-align:-1px;opacity:0.7;margin-left:
       </div>
       <div class="table-footer">
         <span id="tableFooterLeft">—</span>
-        <span>aposta holandesa · cobertura total 3 resultados</span>
+        <span>arbitragem · cobertura total de 3 resultados</span>
       </div>
     </div>
     </div><!-- /tab-comparativo -->
@@ -1114,7 +1114,25 @@ th .btn-icon{width:11px;height:11px;vertical-align:-1px;opacity:0.7;margin-left:
       <!-- FORMULÁRIO DE NOVA APOSTA -->
       <div class="historico-form" id="formulario-aposta" style="display: none;">
         <h3 id="form-titulo"><svg class="btn-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg> Nova Aposta</h3>
-        <div class="form-grid">
+        <div class="form-grid" id="form-grid-v2">
+          <div class="form-group"><label>Tipo de aposta</label><select id="form-tipo" onchange="alternarTipoHistorico()"><option value="Arbitragem">Arbitragem</option><option value="Individual">Individual</option><option value="Bônus">Bônus</option></select></div>
+          <div class="form-group"><label>Jogador</label><select id="form-jogador-v2"><option>Rafael</option><option>Thomaz</option><option>Rodrigo</option></select></div>
+          <div class="form-group"><label>Data</label><input type="date" id="form-data-v2" required></div>
+          <div class="form-group"><label>Esporte</label><input value="Futebol" readonly></div>
+          <div class="form-group"><label>Liga</label><select id="form-liga-v2"><option>Brasileirão Série A</option><option>Brasileirão Série B</option><option>Copa do Brasil</option><option>Copa Libertadores</option><option>Copa Sul-Americana</option><option>Premier League</option></select></div>
+          <div class="form-group"><label>Evento</label><input type="text" id="form-evento-v2" placeholder="Time A x Time B" required></div>
+          <div class="form-group"><label>Status</label><select id="form-status-v2"><option>Pendente</option><option>Ganhou</option><option>Perdeu</option></select></div>
+        </div>
+        <div id="campos-arbitragem"><div class="form-grid">
+          <div class="form-group"><label>Casa — bookmaker</label><input id="arb-casa-site" type="text"></div><div class="form-group"><label>Odd Casa</label><input id="arb-casa-odd" type="number" min="1" step="0.01"></div><div class="form-group"><label>Valor Casa (R$)</label><input id="arb-casa-valor" type="number" min="0" step="0.01"></div>
+          <div class="form-group"><label>Empate — bookmaker</label><input id="arb-empate-site" type="text"></div><div class="form-group"><label>Odd Empate</label><input id="arb-empate-odd" type="number" min="1" step="0.01"></div><div class="form-group"><label>Valor Empate (R$)</label><input id="arb-empate-valor" type="number" min="0" step="0.01"></div>
+          <div class="form-group"><label>Fora — bookmaker</label><input id="arb-fora-site" type="text"></div><div class="form-group"><label>Odd Fora</label><input id="arb-fora-odd" type="number" min="1" step="0.01"></div><div class="form-group"><label>Valor Fora (R$)</label><input id="arb-fora-valor" type="number" min="0" step="0.01"></div>
+          <div class="form-group"><label>Resultado ocorrido</label><select id="arb-resultado"><option>Casa</option><option>Empate</option><option>Fora</option></select></div>
+        </div></div>
+        <div id="campos-individual" style="display:none"><div class="form-grid">
+          <div class="form-group"><label>Casa de aposta</label><input id="ind-site" type="text"></div><div class="form-group"><label>Seleção apostada</label><select id="ind-selecao"><option>Casa</option><option>Empate</option><option>Fora</option><option>Outra</option></select></div><div class="form-group"><label>Odd</label><input id="ind-odd" type="number" min="1" step="0.01"></div><div class="form-group"><label id="label-valor-individual">Valor apostado (R$)</label><input id="ind-valor" type="number" min="0" step="0.01"></div>
+        </div></div>
+        <div class="form-grid" style="display:none">
           <div class="form-group">
             <label>Jogador</label>
             <select id="form-jogador" required></select>
@@ -2011,7 +2029,7 @@ Isso vai apagar TODOS os dados do dashboard para TODOS os usuarios. Esta acao na
 function resetUINoData() {
   document.getElementById('tagJogos').textContent = 'sem dados';
   document.getElementById('tagJogos').className = 'tag tag-gray';
-  document.getElementById('logoSub').textContent = 'aposta holandesa   cobertura total';
+  document.getElementById('logoSub').textContent = 'arbitragem · cobertura total';
   document.getElementById('top3').innerHTML = '<div class="top-card rank1"><div style="color:var(--muted);font-size:12px;text-align:center;padding:20px 0">-</div></div><div class="top-card rank2"><div style="color:var(--muted);font-size:12px;text-align:center;padding:20px 0">-</div></div><div class="top-card rank3"><div style="color:var(--muted);font-size:12px;text-align:center;padding:20px 0">-</div></div>';
   document.getElementById('m-lucro').textContent = '-';
   document.getElementById('m-lucro-jogo').textContent = 'carregue o arquivo';
@@ -2537,13 +2555,12 @@ function renderTop3(){
     const dataTexto=String(r.data||'').trim();
     const partesData=dataTexto.split(/\s+/);
     const dataJogo=partesData[0]||'';
-    const horaJogo=r.hora||partesData[1]||'';
-    const dataHora=[dataJogo,horaJogo].filter(Boolean).join(' · ');
+    const dataHora=dataJogo;
     return`<div class="top-card ${ranks[i]}">
       <div class="top-rank">${ords[i]}</div>
       <div class="top-card-title-row">
         <div class="top-jogo">${r.jogo}</div>
-        <div class="top-data-hora" title="Data e horário do jogo">${dataHora}</div>
+        <div class="top-data-hora" title="Data do jogo">${dataHora}</div>
       </div>
       <div class="top-odds">
         <input type="number" id="odd-casa-${i}" class="odd-input odd-casa" step="0.01" min="1.0" value="${r.casa.toFixed(2)}" onchange="recalculateCard(${i})" oninput="recalculateCard(${i})">
@@ -4684,6 +4701,135 @@ function carregarHistoricoInicial() {
       historicoData = { jogadores: [], apostas: [] };
       document.getElementById('timestamp-salvamento').textContent = 'Nenhum dado carregado. Clique em "Importar backup" para carregar um arquivo.';
     });
+}
+
+// Histórico v2: Arbitragem, Individual e Bônus em uma linha por operação.
+const JOGADORES_PADRAO_HISTORICO=['Rafael','Thomaz','Rodrigo'];
+function migrarHistoricoV2(){
+  historicoData=historicoData||{jogadores:[],apostas:[]};
+  historicoData.jogadores=Array.isArray(historicoData.jogadores)?historicoData.jogadores:[];
+  historicoData.apostas=Array.isArray(historicoData.apostas)?historicoData.apostas:[];
+  let id=Math.max(...historicoData.jogadores.map(j=>Number(j.id)||0),0)+1;
+  JOGADORES_PADRAO_HISTORICO.forEach(nome=>{if(!historicoData.jogadores.some(j=>String(j.nome).toLowerCase()===nome.toLowerCase()))historicoData.jogadores.push({id:id++,nome,limite:5000,ativo:true});});
+  historicoData.apostas=historicoData.apostas.map(a=>{
+    const tipo=a.tipo||'Individual';
+    const data=String(a.data||'').split('T')[0].split(' ')[0];
+    if(tipo==='Arbitragem') return {...a,tipo,data,valor:Number(a.valor??((a.valor_casa||0)+(a.valor_empate||0)+(a.valor_fora||0)))};
+    if(tipo==='Bônus') return {...a,tipo,data,valor:0,valor_bonus:Number(a.valor_bonus??a.bonus??0)};
+    return {...a,tipo:'Individual',data,valor:Number(a.valor||0),valor_bonus:0};
+  });
+}
+function alternarTipoHistorico(){
+  const tipo=document.getElementById('form-tipo')?.value||'Arbitragem';
+  document.getElementById('campos-arbitragem').style.display=tipo==='Arbitragem'?'block':'none';
+  document.getElementById('campos-individual').style.display=tipo==='Arbitragem'?'none':'block';
+  document.getElementById('label-valor-individual').textContent=tipo==='Bônus'?'Valor do bônus (R$)':'Valor apostado (R$)';
+}
+function preencherSelectJogadores(){
+  migrarHistoricoV2();
+  const selects=[document.getElementById('form-jogador-v2'),document.getElementById('filtro-jogador')];
+  if(selects[0])selects[0].innerHTML=historicoData.jogadores.filter(j=>j.ativo!==false).map(j=>`<option value="${j.id}">${j.nome}</option>`).join('');
+  if(selects[1])selects[1].innerHTML='<option value="">Todos os jogadores</option>'+historicoData.jogadores.map(j=>`<option value="${j.id}">${j.nome}</option>`).join('');
+}
+function toggleFormularioAposta(){
+  const form=document.getElementById('formulario-aposta');
+  form.style.display=form.style.display==='none'?'block':'none';
+  if(form.style.display==='block'){
+    apostaSendoEditada=null;document.getElementById('form-titulo').textContent='Nova Aposta';
+    document.getElementById('form-data-v2').value=new Date().toISOString().slice(0,10);
+    document.getElementById('form-tipo').value='Arbitragem';alternarTipoHistorico();
+  }
+}
+function numeroCampo(id){return Number(document.getElementById(id)?.value||0);}
+function salvarAposta(){
+  migrarHistoricoV2();
+  const tipo=document.getElementById('form-tipo').value,data=document.getElementById('form-data-v2').value;
+  const base={id:apostaSendoEditada||Date.now(),jogador_id:Number(document.getElementById('form-jogador-v2').value),data,esporte:'Futebol',liga:document.getElementById('form-liga-v2').value,evento:document.getElementById('form-evento-v2').value.trim(),mercado:'Resultado Final',tipo,status:document.getElementById('form-status-v2').value};
+  if(!base.data||!base.evento){alert('Preencha a data e o evento.');return;}
+  let aposta;
+  if(tipo==='Arbitragem'){
+    const oc=document.getElementById('arb-casa-odd').value,oe=document.getElementById('arb-empate-odd').value,of=document.getElementById('arb-fora-odd').value;
+    const vc=numeroCampo('arb-casa-valor'),ve=numeroCampo('arb-empate-valor'),vf=numeroCampo('arb-fora-valor');
+    if(!(oc>=1&&oe>=1&&of>=1&&vc>0&&ve>0&&vf>0)){alert('Preencha as três odds e os três valores da Arbitragem.');return;}
+    const resultado=document.getElementById('arb-resultado').value,valor=vc+ve+vf;
+    const retornoPot=resultado==='Casa'?oc*vc:resultado==='Empate'?oe*ve:of*vf;
+    const retorno=base.status==='Pendente'?0:base.status==='Perdeu'?0:retornoPot;
+    aposta={...base,casa_casa:document.getElementById('arb-casa-site').value.trim(),odd_casa:Number(oc),valor_casa:vc,casa_empate:document.getElementById('arb-empate-site').value.trim(),odd_empate:Number(oe),valor_empate:ve,casa_fora:document.getElementById('arb-fora-site').value.trim(),odd_fora:Number(of),valor_fora:vf,resultado,valor,retorno,lucro:base.status==='Pendente'?0:retorno-valor,bonus:0};
+  }else{
+    const odd=numeroCampo('ind-odd'),digitado=numeroCampo('ind-valor'),casa=document.getElementById('ind-site').value.trim(),resultado=document.getElementById('ind-selecao').value;
+    if(!casa||odd<1||digitado<=0){alert(`Preencha casa, odd e ${tipo==='Bônus'?'valor do bônus':'valor apostado'}.`);return;}
+    const bonus=tipo==='Bônus'?digitado:0,valor=tipo==='Bônus'?0:digitado;
+    const retorno=base.status!=='Ganhou'?0:(tipo==='Bônus'?bonus*(odd-1):valor*odd);
+    aposta={...base,casa,odd,resultado,valor,valor_bonus:bonus,bonus,retorno,lucro:base.status==='Pendente'?0:base.status==='Perdeu'?-valor:retorno-valor};
+  }
+  const idx=historicoData.apostas.findIndex(a=>a.id===aposta.id);if(idx>=0)historicoData.apostas[idx]=aposta;else historicoData.apostas.push(aposta);
+  salvarHistoricoLocalStorage();renderizarJogadores();renderizarTabela();cancelarEdicao();mostrarMensagem('Aposta salva com sucesso!','success');
+}
+function resumoApostaHistorico(a){
+  if(a.tipo==='Arbitragem')return {casas:`C: ${a.casa_casa||'?'} · E: ${a.casa_empate||'?'} · F: ${a.casa_fora||'?'}`,odds:`${Number(a.odd_casa).toFixed(2)} / ${Number(a.odd_empate).toFixed(2)} / ${Number(a.odd_fora).toFixed(2)}`};
+  return {casas:`${a.casa||'?'} · ${a.resultado||''}`,odds:Number(a.odd||0).toFixed(2)};
+}
+function formatarDataHistorico(data){const p=String(data||'').split('T')[0].split('-');return p.length===3?`${p[2]}/${p[1]}/${p[0]}`:String(data||'');}
+function renderizarTabela(){
+  migrarHistoricoV2();const tbody=document.getElementById('historico-tbody');if(!tbody)return;
+  const tabela=tbody.closest('table');
+  tabela.querySelector('thead tr').innerHTML='<th>Data</th><th>Evento</th><th>Tipo</th><th>Casas / seleção</th><th>Odds</th><th>Investimento</th><th>Retorno</th><th>Lucro</th><th>%</th><th>Jogador</th><th>Status</th><th>Ações</th>';
+  tabela.querySelector('tfoot tr').innerHTML='<td colspan="5"><strong>TOTAIS</strong></td><td id="total-investido">R$ 0,00</td><td id="total-retorno">R$ 0,00</td><td id="total-lucro">R$ 0,00</td><td id="total-percentual">—</td><td colspan="3"></td>';
+  const fj=document.getElementById('filtro-jogador')?.value||'',fs=document.getElementById('filtro-status')?.value||'',fd=document.getElementById('filtro-data')?.value||'',fe=(document.getElementById('filtro-evento')?.value||'').toLowerCase();
+  let apostas=historicoData.apostas.filter(a=>(!fj||a.jogador_id==fj)&&(!fs||a.status===fs)&&(!fd||a.data===fd)&&(!fe||String(a.evento).toLowerCase().includes(fe)));
+  apostas.sort((a,b)=>String(b.data).localeCompare(String(a.data)));
+  tbody.innerHTML=apostas.length?apostas.map(a=>{const j=historicoData.jogadores.find(x=>x.id==a.jogador_id),r=resumoApostaHistorico(a),pct=a.valor>0?a.lucro/a.valor*100:0;return `<tr><td>${formatarDataHistorico(a.data)}</td><td>${a.evento}</td><td>${a.tipo}</td><td>${r.casas}</td><td>${r.odds}</td><td>R$ ${Number(a.valor||0).toLocaleString('pt-BR',{minimumFractionDigits:2})}</td><td>R$ ${Number(a.retorno||0).toLocaleString('pt-BR',{minimumFractionDigits:2})}</td><td style="color:${a.lucro>=0?'#10b981':'#ef4444'}">R$ ${Number(a.lucro||0).toLocaleString('pt-BR',{minimumFractionDigits:2})}</td><td>${a.tipo==='Bônus'?'—':pct.toFixed(2)+'%'}</td><td>${j?.nome||'?'}</td><td>${a.status}</td><td><button class="btn-editar" onclick="abrirEdicaoAposta(${a.id})"></button><button class="btn-excluir" onclick="excluirAposta(${a.id})"></button></td></tr>`;}).join(''):'<tr><td colspan="12" style="text-align:center;padding:20px">Nenhuma aposta registrada</td></tr>';
+  const fin=apostas.filter(a=>a.status!=='Pendente'),inv=fin.reduce((s,a)=>s+Number(a.valor||0),0),ret=fin.reduce((s,a)=>s+Number(a.retorno||0),0),luc=fin.reduce((s,a)=>s+Number(a.lucro||0),0);
+  document.getElementById('total-investido').textContent=`R$ ${inv.toLocaleString('pt-BR',{minimumFractionDigits:2})}`;document.getElementById('total-retorno').textContent=`R$ ${ret.toLocaleString('pt-BR',{minimumFractionDigits:2})}`;document.getElementById('total-lucro').textContent=`R$ ${luc.toLocaleString('pt-BR',{minimumFractionDigits:2})}`;document.getElementById('total-percentual').textContent=inv>0?`${(luc/inv*100).toFixed(2)}%`:'—';
+}
+function abrirEdicaoAposta(id){
+  migrarHistoricoV2();const a=historicoData.apostas.find(x=>x.id===Number(id));if(!a)return;apostaSendoEditada=a.id;document.getElementById('formulario-aposta').style.display='block';document.getElementById('form-tipo').value=a.tipo;document.getElementById('form-jogador-v2').value=a.jogador_id;document.getElementById('form-data-v2').value=a.data;document.getElementById('form-liga-v2').value=a.liga;document.getElementById('form-evento-v2').value=a.evento;document.getElementById('form-status-v2').value=a.status;alternarTipoHistorico();
+  if(a.tipo==='Arbitragem'){[['arb-casa-site','casa_casa'],['arb-casa-odd','odd_casa'],['arb-casa-valor','valor_casa'],['arb-empate-site','casa_empate'],['arb-empate-odd','odd_empate'],['arb-empate-valor','valor_empate'],['arb-fora-site','casa_fora'],['arb-fora-odd','odd_fora'],['arb-fora-valor','valor_fora'],['arb-resultado','resultado']].forEach(([id,k])=>document.getElementById(id).value=a[k]??'');}else{document.getElementById('ind-site').value=a.casa||'';document.getElementById('ind-selecao').value=a.resultado||'Casa';document.getElementById('ind-odd').value=a.odd||'';document.getElementById('ind-valor').value=a.tipo==='Bônus'?a.valor_bonus||a.bonus||'':a.valor||'';}
+}
+function editarAposta(id){abrirEdicaoAposta(id);}
+function cancelarEdicao(){apostaSendoEditada=null;document.getElementById('formulario-aposta').style.display='none';}
+function carregarHistoricoInicial(){
+  try{const salvo=localStorage.getItem('historico_dados');historicoData=salvo?JSON.parse(salvo):{jogadores:[],apostas:[]};}catch(e){historicoData={jogadores:[],apostas:[]};}
+  migrarHistoricoV2();salvarHistoricoLocalStorage();preencherSelectJogadores();renderizarJogadores();renderizarTabela();
+}
+function dataHistoricoDia(valor){return dataHistoricoISO(valor).split('T')[0];}
+function chaveApostaHistorico(a,jogadorNome=''){
+  const jogador=jogadorNome||historicoData.jogadores.find(j=>j.id==a.jogador_id)?.nome||'';
+  const odds=a.tipo==='Arbitragem'?`${a.odd_casa}|${a.odd_empate}|${a.odd_fora}`:`${a.odd}`;
+  return [a.data,a.tipo,a.evento,odds,a.valor,a.valor_bonus||0,jogador].map(v=>String(v??'').trim().toLowerCase()).join('|');
+}
+async function prepararImportacaoHistoricoExcel(event){
+  const file=event.target.files?.[0];if(!file)return;
+  try{
+    const wb=XLSX.read(await file.arrayBuffer(),{type:'array',cellDates:true}),aba=wb.SheetNames.find(n=>normalizarCabecalhoHistorico(n)==='apostas')||wb.SheetNames[0];
+    const linhas=XLSX.utils.sheet_to_json(wb.Sheets[aba],{defval:'',raw:true});if(!linhas.length)throw new Error('A planilha não possui registros.');
+    const ler=(l,...nomes)=>{const e=Object.entries(l).find(([k])=>nomes.includes(normalizarCabecalhoHistorico(k)));return e?e[1]:'';};
+    const statusOk=v=>{const n=normalizarCabecalhoHistorico(v);return n==='ganhou'?'Ganhou':n==='perdeu'?'Perdeu':n==='pendente'?'Pendente':'';};
+    const existentes=new Set(historicoData.apostas.map(a=>chaveApostaHistorico(a))),vistos=new Set(existentes),validas=[],erros=[];let duplicadas=0;
+    linhas.forEach((l,i)=>{
+      const tipoRaw=normalizarCabecalhoHistorico(ler(l,'tipo','tipodeaposta'));const tipo=tipoRaw==='arbitragem'?'Arbitragem':tipoRaw==='bonus'?'Bônus':tipoRaw==='individual'?'Individual':'';
+      const data=dataHistoricoDia(ler(l,'data')),evento=String(ler(l,'evento','jogo')).trim(),jogadorNome=String(ler(l,'jogador')).trim(),status=statusOk(ler(l,'status')),liga=String(ler(l,'liga','campeonato')).trim();
+      const p=[];if(!tipo)p.push('tipo inválido');if(!data)p.push('data inválida');if(!evento)p.push('evento vazio');if(!jogadorNome)p.push('jogador vazio');if(!status)p.push('status inválido');
+      let a={tipo,data,evento,jogadorNome,status,liga,esporte:'Futebol',mercado:'Resultado Final',resultado:String(ler(l,'resultado','resultadoocorrido','selecao')).trim()||'Casa'};
+      if(tipo==='Arbitragem'){
+        a={...a,casa_casa:String(ler(l,'casasite','bookmakercasa')).trim(),odd_casa:numeroHistorico(ler(l,'oddcasa')),valor_casa:numeroHistorico(ler(l,'valorcasa')),casa_empate:String(ler(l,'empatesite','bookmakerempate')).trim(),odd_empate:numeroHistorico(ler(l,'oddempate')),valor_empate:numeroHistorico(ler(l,'valorempate')),casa_fora:String(ler(l,'forasite','bookmakerfora')).trim(),odd_fora:numeroHistorico(ler(l,'oddfora')),valor_fora:numeroHistorico(ler(l,'valorfora'))};
+        if(!a.casa_casa||!a.casa_empate||!a.casa_fora)p.push('bookmakers da arbitragem incompletas');if(!(a.odd_casa>=1&&a.odd_empate>=1&&a.odd_fora>=1))p.push('odds da arbitragem inválidas');if(!(a.valor_casa>0&&a.valor_empate>0&&a.valor_fora>0))p.push('valores da arbitragem inválidos');
+        a.valor=(a.valor_casa||0)+(a.valor_empate||0)+(a.valor_fora||0);const pot=a.resultado==='Empate'?a.odd_empate*a.valor_empate:a.resultado==='Fora'?a.odd_fora*a.valor_fora:a.odd_casa*a.valor_casa;a.retorno=status==='Ganhou'?pot:0;a.lucro=status==='Pendente'?0:a.retorno-a.valor;a.bonus=0;
+      }else if(tipo){
+        a={...a,casa:String(ler(l,'casadeaposta','casa')).trim(),odd:numeroHistorico(ler(l,'odd'))};const v=numeroHistorico(ler(l,tipo==='Bônus'?'valorbonus':'valorapostado',tipo==='Bônus'?'bonus':'valor'));
+        if(!a.casa)p.push('casa vazia');if(!(a.odd>=1))p.push('odd inválida');if(!(v>0))p.push(tipo==='Bônus'?'valor do bônus inválido':'valor apostado inválido');
+        a.valor=tipo==='Bônus'?0:v;a.valor_bonus=tipo==='Bônus'?v:0;a.bonus=a.valor_bonus;a.retorno=status==='Ganhou'?(tipo==='Bônus'?v*(a.odd-1):v*a.odd):0;a.lucro=status==='Pendente'?0:status==='Perdeu'?-a.valor:a.retorno-a.valor;
+      }
+      if(p.length){erros.push(`Linha ${i+2}: ${p.join(', ')}`);return;}const chave=chaveApostaHistorico(a,jogadorNome);if(vistos.has(chave)){duplicadas++;return;}vistos.add(chave);validas.push(a);
+    });
+    const cad=new Set(historicoData.jogadores.map(j=>j.nome.toLowerCase())),novosJogadores=[...new Set(validas.map(a=>a.jogadorNome).filter(n=>!cad.has(n.toLowerCase())))];importacaoHistoricoPendente={validas,duplicadas,erros,novosJogadores,arquivo:file.name};
+    document.getElementById('import-validas').textContent=validas.length;document.getElementById('import-duplicadas').textContent=duplicadas;document.getElementById('import-invalidas').textContent=erros.length;document.getElementById('import-jogadores').textContent=novosJogadores.length;document.getElementById('importar-historico-arquivo').textContent=`${file.name} · aba ${aba} · ${linhas.length} linha(s)`;const ce=document.getElementById('importar-historico-erros');ce.style.display=erros.length?'block':'none';ce.innerHTML=erros.slice(0,20).map(e=>`<div>${e}</div>`).join('');document.getElementById('btn-confirmar-importacao').disabled=!validas.length;document.getElementById('modal-importar-historico').style.display='flex';
+  }catch(e){alert('Não foi possível importar o Excel: '+e.message);event.target.value='';}
+}
+function exportarHistoricoExcel(){
+  if(!historicoData.apostas.length){alert('Nenhuma aposta para exportar');return;}
+  const dados=historicoData.apostas.map(a=>({Data:formatarDataHistorico(a.data),'Tipo de Aposta':a.tipo,Evento:a.evento,Liga:a.liga,Jogador:historicoData.jogadores.find(j=>j.id==a.jogador_id)?.nome||'?',Status:a.status,'Resultado/Seleção':a.resultado||'', 'Casa Site':a.casa_casa||'', 'Odd Casa':a.odd_casa||'', 'Valor Casa':a.valor_casa||'', 'Empate Site':a.casa_empate||'', 'Odd Empate':a.odd_empate||'', 'Valor Empate':a.valor_empate||'', 'Fora Site':a.casa_fora||'', 'Odd Fora':a.odd_fora||'', 'Valor Fora':a.valor_fora||'', 'Casa de Aposta':a.casa||'',Odd:a.odd||'', 'Valor Apostado':a.tipo==='Individual'?a.valor:'', 'Valor Bonus':a.tipo==='Bônus'?a.valor_bonus:'',Retorno:a.retorno,Lucro:a.lucro}));
+  const ws=XLSX.utils.json_to_sheet(dados),wb=XLSX.utils.book_new();XLSX.utils.book_append_sheet(wb,ws,'Apostas');XLSX.writeFile(wb,'historico_apostas.xlsx');mostrarMensagem('Excel exportado!','success');
 }
 </script>
 </div>
