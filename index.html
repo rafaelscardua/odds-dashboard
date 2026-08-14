@@ -661,6 +661,14 @@ th .btn-icon{width:11px;height:11px;vertical-align:-1px;opacity:0.7;margin-left:
 
 .btn-importar-backup{background:#6366f1;color:#fff;padding:10px 16px;border:none;border-radius:4px;cursor:pointer;font-weight:600;font-size:13px;}
 .btn-importar-backup:hover{background:#4f46e5;}
+.btn-importar-excel{background:var(--green);color:#00110d;padding:10px 16px;border:none;border-radius:4px;cursor:pointer;font-weight:700;font-size:13px;}
+.btn-modelo-excel{background:var(--bg3);color:var(--text);padding:10px 16px;border:1px solid var(--border2);border-radius:4px;cursor:pointer;font-weight:600;font-size:13px;text-decoration:none;display:inline-flex;align-items:center;gap:6px;}
+.import-summary{display:grid;grid-template-columns:repeat(4,minmax(100px,1fr));gap:10px;margin:16px 0;}
+.import-summary-card{background:var(--bg3);border:1px solid var(--border);border-radius:8px;padding:12px;}
+.import-summary-card strong{display:block;font-family:var(--mono);font-size:20px;color:var(--text);}
+.import-summary-card span{font-size:11px;color:var(--muted);}
+.import-errors{max-height:180px;overflow:auto;background:var(--bg);border:1px solid var(--border);border-radius:7px;padding:10px;font-family:var(--mono);font-size:11px;color:var(--muted);}
+@media(max-width:620px){.import-summary{grid-template-columns:repeat(2,1fr)}}
 
 #input-arquivo{display:none;}
 
@@ -1076,11 +1084,32 @@ th .btn-icon{width:11px;height:11px;vertical-align:-1px;opacity:0.7;margin-left:
       <div style="margin-bottom: 16px; display: flex; gap: 8px; flex-wrap: wrap;">
         <button class="btn-exportar-backup" onclick="exportarBackup()"><svg class="btn-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21H5a2 2 0 01-2-2V5a2 2 0 012-2h11l5 5v11a2 2 0 01-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg> Exportar backup</button>
         <button class="btn-importar-backup" onclick="document.getElementById('input-arquivo').click()"><svg class="btn-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg> Importar backup</button>
+        <button class="btn-importar-excel" onclick="document.getElementById('input-historico-excel').click()">Importar histórico Excel</button>
+        <a class="btn-modelo-excel" href="modelo_importacao_historico.xlsx" download>Baixar modelo Excel</a>
         <button class="btn-nova-aposta" onclick="toggleFormularioAposta()"><svg class="btn-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg> Nova Aposta</button>
       </div>
 
       <!-- INPUT DE ARQUIVO (OCULTO) -->
       <input type="file" id="input-arquivo" accept=".json" onchange="importarBackup(event)">
+      <input type="file" id="input-historico-excel" accept=".xlsx,.xls" onchange="prepararImportacaoHistoricoExcel(event)" style="display:none">
+
+      <div class="modal-overlay" id="modal-importar-historico" style="display:none">
+        <div class="modal-content" style="max-width:720px">
+          <div class="modal-header"><h3>Prévia da importação</h3><button class="btn-fechar" onclick="cancelarImportacaoHistoricoExcel()">×</button></div>
+          <div id="importar-historico-arquivo" style="font-size:12px;color:var(--muted)"></div>
+          <div class="import-summary">
+            <div class="import-summary-card"><strong id="import-validas">0</strong><span>válidas e novas</span></div>
+            <div class="import-summary-card"><strong id="import-duplicadas">0</strong><span>duplicadas</span></div>
+            <div class="import-summary-card"><strong id="import-invalidas">0</strong><span>inválidas</span></div>
+            <div class="import-summary-card"><strong id="import-jogadores">0</strong><span>novos jogadores</span></div>
+          </div>
+          <div id="importar-historico-erros" class="import-errors" style="display:none"></div>
+          <div class="modal-footer" style="margin-top:16px;display:flex;justify-content:flex-end;gap:8px">
+            <button class="btn-cancelar" onclick="cancelarImportacaoHistoricoExcel()">Cancelar</button>
+            <button class="btn-salvar" id="btn-confirmar-importacao" onclick="confirmarImportacaoHistoricoExcel()">Importar registros válidos</button>
+          </div>
+        </div>
+      </div>
 
       <!-- FORMULÁRIO DE NOVA APOSTA -->
       <div class="historico-form" id="formulario-aposta" style="display: none;">
@@ -4208,6 +4237,146 @@ function excluirAposta(id) {
   }
 }
 
+let importacaoHistoricoPendente = null;
+
+function normalizarCabecalhoHistorico(valor) {
+  return String(valor || '').trim().toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '').replace(/[^a-z0-9]/g, '');
+}
+
+function numeroHistorico(valor) {
+  if (typeof valor === 'number') return Number.isFinite(valor) ? valor : NaN;
+  let texto = String(valor ?? '').trim().replace(/R\$/gi, '').replace(/\s/g, '');
+  if (texto.includes(',') && texto.includes('.')) texto = texto.lastIndexOf(',') > texto.lastIndexOf('.') ? texto.replace(/\./g, '').replace(',', '.') : texto.replace(/,/g, '');
+  else if (texto.includes(',')) texto = texto.replace(',', '.');
+  const numero = Number(texto);
+  return Number.isFinite(numero) ? numero : NaN;
+}
+
+function dataHistoricoISO(valor) {
+  if (valor instanceof Date && !isNaN(valor)) {
+    const local = new Date(valor.getTime() - valor.getTimezoneOffset() * 60000);
+    return local.toISOString().slice(0, 16);
+  }
+  if (typeof valor === 'number' && XLSX?.SSF?.parse_date_code) {
+    const d = XLSX.SSF.parse_date_code(valor);
+    if (d) return `${d.y}-${String(d.m).padStart(2,'0')}-${String(d.d).padStart(2,'0')}T${String(d.H||0).padStart(2,'0')}:${String(d.M||0).padStart(2,'0')}`;
+  }
+  const texto = String(valor || '').trim();
+  const br = texto.match(/^(\d{1,2})\/(\d{1,2})\/(\d{4})(?:[ T](\d{1,2}):(\d{2}))?/);
+  if (br) return `${br[3]}-${br[2].padStart(2,'0')}-${br[1].padStart(2,'0')}T${String(br[4]||0).padStart(2,'0')}:${String(br[5]||0).padStart(2,'0')}`;
+  const iso = texto.match(/^(\d{4})-(\d{2})-(\d{2})(?:[ T](\d{1,2}):(\d{2}))?/);
+  if (iso) return `${iso[1]}-${iso[2]}-${iso[3]}T${String(iso[4]||0).padStart(2,'0')}:${String(iso[5]||0).padStart(2,'0')}`;
+  return '';
+}
+
+function chaveApostaHistorico(aposta, jogadorNome='') {
+  const nome = jogadorNome || historicoData.jogadores.find(j => j.id == aposta.jogador_id)?.nome || '';
+  return [aposta.data, aposta.evento, aposta.casa, Number(aposta.odd).toFixed(2), Number(aposta.valor).toFixed(2), nome]
+    .map(v => String(v || '').trim().toLowerCase()).join('|');
+}
+
+async function prepararImportacaoHistoricoExcel(event) {
+  const file = event.target.files?.[0];
+  if (!file) return;
+  try {
+    const workbook = XLSX.read(await file.arrayBuffer(), { type:'array', cellDates:true });
+    const nomeAba = workbook.SheetNames.find(n => normalizarCabecalhoHistorico(n) === 'apostas') || workbook.SheetNames[0];
+    const linhas = XLSX.utils.sheet_to_json(workbook.Sheets[nomeAba], { defval:'', raw:true });
+    if (!linhas.length) throw new Error('A planilha não possui registros.');
+
+    const alias = {
+      data:['datahora','data'], evento:['evento','jogo'], esporte:['esporte'], liga:['liga','campeonato','ligatorneio'],
+      mercado:['mercado'], casa:['casa','casadeaposta'], odd:['odd'], valor:['valorr','valor','valorapostado'],
+      bonus:['bonusr','bonus'], retorno:['retornor','retorno'], resultado:['resultado','resultadoapostado'],
+      lucro:['lucror','lucro'], status:['status'], jogador:['jogador','apostador']
+    };
+    const ler = (linha,campo) => {
+      const entrada = Object.entries(linha).find(([chave]) => alias[campo].includes(normalizarCabecalhoHistorico(chave)));
+      return entrada ? entrada[1] : '';
+    };
+    const statusValido = valor => {
+      const n = normalizarCabecalhoHistorico(valor);
+      return n === 'ganhou' ? 'Ganhou' : n === 'perdeu' ? 'Perdeu' : n === 'pendente' ? 'Pendente' : '';
+    };
+    const existentes = new Set(historicoData.apostas.map(a => chaveApostaHistorico(a)));
+    const vistos = new Set(existentes);
+    const validas = [], erros = [];
+    let duplicadas = 0;
+
+    linhas.forEach((linha, indice) => {
+      const data = dataHistoricoISO(ler(linha,'data'));
+      const eventoNome = String(ler(linha,'evento')).trim();
+      const casa = String(ler(linha,'casa')).trim();
+      const jogadorNome = String(ler(linha,'jogador')).trim();
+      const odd = numeroHistorico(ler(linha,'odd'));
+      const valor = numeroHistorico(ler(linha,'valor'));
+      const bonusLido = numeroHistorico(ler(linha,'bonus'));
+      const retornoLido = numeroHistorico(ler(linha,'retorno'));
+      const lucroLido = numeroHistorico(ler(linha,'lucro'));
+      const status = statusValido(ler(linha,'status'));
+      const problemas = [];
+      if (!data) problemas.push('data/hora inválida');
+      if (!eventoNome) problemas.push('evento vazio');
+      if (!casa) problemas.push('casa vazia');
+      if (!jogadorNome) problemas.push('jogador vazio');
+      if (!(odd >= 1)) problemas.push('odd inválida');
+      if (!(valor > 0)) problemas.push('valor inválido');
+      if (!status) problemas.push('status inválido');
+      if (problemas.length) { erros.push(`Linha ${indice + 2}: ${problemas.join(', ')}`); return; }
+
+      const bonus = Number.isFinite(bonusLido) ? bonusLido : 0;
+      const retornoCalculado = status === 'Perdeu' ? 0 : status === 'Ganhou' ? odd * valor + bonus : odd * valor + bonus;
+      const retorno = Number.isFinite(retornoLido) ? retornoLido : retornoCalculado;
+      const lucro = Number.isFinite(lucroLido) ? lucroLido : status === 'Perdeu' ? -valor : status === 'Ganhou' ? retorno - valor : 0;
+      const aposta = { data, evento:eventoNome, esporte:String(ler(linha,'esporte')).trim() || 'Futebol', liga:String(ler(linha,'liga')).trim(), mercado:String(ler(linha,'mercado')).trim() || 'Resultado Final', casa, odd, valor, bonus, retorno, resultado:String(ler(linha,'resultado')).trim(), lucro, status, jogadorNome };
+      const chave = chaveApostaHistorico(aposta, jogadorNome);
+      if (vistos.has(chave)) { duplicadas++; return; }
+      vistos.add(chave);
+      validas.push(aposta);
+    });
+
+    const cadastrados = new Set(historicoData.jogadores.map(j => j.nome.trim().toLowerCase()));
+    const novosJogadores = [...new Set(validas.map(a => a.jogadorNome).filter(n => !cadastrados.has(n.toLowerCase())))];
+    importacaoHistoricoPendente = { validas, duplicadas, erros, novosJogadores, arquivo:file.name };
+    document.getElementById('import-validas').textContent = validas.length;
+    document.getElementById('import-duplicadas').textContent = duplicadas;
+    document.getElementById('import-invalidas').textContent = erros.length;
+    document.getElementById('import-jogadores').textContent = novosJogadores.length;
+    document.getElementById('importar-historico-arquivo').textContent = `${file.name} · aba ${nomeAba} · ${linhas.length} linha(s)`;
+    const caixaErros = document.getElementById('importar-historico-erros');
+    caixaErros.style.display = erros.length ? 'block' : 'none';
+    caixaErros.innerHTML = erros.slice(0,20).map(e => `<div>${e}</div>`).join('') + (erros.length > 20 ? `<div>… e mais ${erros.length-20} erro(s)</div>` : '');
+    document.getElementById('btn-confirmar-importacao').disabled = !validas.length;
+    document.getElementById('modal-importar-historico').style.display = 'flex';
+  } catch (erro) {
+    alert('Não foi possível importar o Excel: ' + erro.message);
+    event.target.value = '';
+  }
+}
+
+function cancelarImportacaoHistoricoExcel() {
+  importacaoHistoricoPendente = null;
+  document.getElementById('modal-importar-historico').style.display = 'none';
+  document.getElementById('input-historico-excel').value = '';
+}
+
+function confirmarImportacaoHistoricoExcel() {
+  if (!importacaoHistoricoPendente?.validas?.length) return;
+  let proximoJogadorId = Math.max(...historicoData.jogadores.map(j => Number(j.id)||0), 0) + 1;
+  importacaoHistoricoPendente.novosJogadores.forEach(nome => historicoData.jogadores.push({ id:proximoJogadorId++, nome, limite:5000, ativo:true }));
+  const jogadores = new Map(historicoData.jogadores.map(j => [j.nome.trim().toLowerCase(), j.id]));
+  let proximoId = Date.now();
+  importacaoHistoricoPendente.validas.forEach(a => {
+    const { jogadorNome, ...aposta } = a;
+    historicoData.apostas.push({ id:proximoId++, jogador_id:jogadores.get(jogadorNome.toLowerCase()), ...aposta });
+  });
+  const total = importacaoHistoricoPendente.validas.length;
+  salvarHistoricoLocalStorage();
+  preencherSelectJogadores(); renderizarJogadores(); renderizarTabela();
+  cancelarImportacaoHistoricoExcel();
+  mostrarMensagem(`${total} aposta(s) importada(s) sem apagar o histórico atual.`, 'success');
+}
+
 function exportarHistoricoExcel() {
   if (historicoData.apostas.length === 0) {
     alert('Nenhuma aposta para exportar');
@@ -4215,7 +4384,7 @@ function exportarHistoricoExcel() {
   }
 
   const dados = historicoData.apostas.map(a => ({
-    'Data': new Date(a.data).toLocaleDateString('pt-BR'),
+    'Data/Hora': new Date(a.data).toLocaleString('pt-BR', {day:'2-digit',month:'2-digit',year:'numeric',hour:'2-digit',minute:'2-digit'}).replace(',', ''),
     'Evento': a.evento,
     'Esporte': a.esporte,
     'Liga': a.liga,
