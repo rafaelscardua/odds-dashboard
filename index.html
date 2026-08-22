@@ -243,6 +243,7 @@ header{border-bottom:1px solid var(--border);padding:16px 0;position:sticky;top:
 .admin-action:hover{background:var(--row-hover)!important;color:var(--accent)!important;transform:none!important;}
 .tag{font-size:11px;font-family:var(--mono);padding:4px 10px;border-radius:20px;border:1px solid;letter-spacing:.02em;}
 .tag-green{border-color:rgba(46,230,166,0.35);color:var(--green);background:var(--green-dim);}
+.tag-red{border-color:rgba(248,113,113,0.38);color:#f87171;background:rgba(248,113,113,0.1);}
 .tag-gray{border-color:var(--border2);color:var(--muted);}
 
 /* Identidade visual exclusiva do Atelier */
@@ -821,6 +822,7 @@ th .btn-icon{width:11px;height:11px;vertical-align:-1px;opacity:0.7;margin-left:
             <button class="admin-action" id="btnAdicionar" style="display:none" onclick="document.getElementById('fileInputAdicionar').click()"><svg class="btn-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M12 5v14M5 12h14"/></svg> Adicionar XLSX</button>
             <button class="admin-action" id="btnGerenciarCasas" style="display:none" onclick="abrirGerenciadorCasas()"><svg class="btn-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M4 20v-9l8-6 8 6v9"/><path d="M9 20v-6h6v6"/></svg> Gerenciar casas</button>
             <button class="admin-action" id="btnGerenciarAbas" style="display:none" onclick="abrirGerenciadorAbas()"><svg class="btn-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M4 7h16M4 12h16M4 17h16"/><circle cx="9" cy="7" r="2"/><circle cx="15" cy="12" r="2"/><circle cx="7" cy="17" r="2"/></svg> Gerenciar abas</button>
+            <button class="admin-action" id="btnGerenciarUsuarios" style="display:none" onclick="abrirGerenciadorUsuarios()"><svg class="btn-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M16 21v-2a4 4 0 00-4-4H6a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M19 8v6M16 11h6"/></svg> Gerenciar usuários</button>
             <button class="admin-action" id="btnRelatorioUso" style="display:none" onclick="abrirRelatorioUso()"><svg class="btn-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg> Relatório de uso</button>
             <button class="admin-action" id="btnLimpar" style="display:none;color:var(--red)!important" onclick="clearDataFromFirebase()"><svg class="btn-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14H6L5 6M9 6V4h6v2"/></svg> Limpar dados</button>
           </div>
@@ -1322,6 +1324,24 @@ th .btn-icon{width:11px;height:11px;vertical-align:-1px;opacity:0.7;margin-left:
   </div>
 </div>
 
+<!-- MODAL GERENCIAR USUÁRIOS -->
+<div class="modal-overlay" id="modal-gerenciar-usuarios" style="display:none">
+  <div class="modal-content" style="max-width:720px;max-height:85vh;overflow-y:auto">
+    <div class="modal-header">
+      <h3>Gerenciar Acesso dos Usuários</h3>
+      <button class="btn-fechar" onclick="fecharGerenciadorUsuarios()">×</button>
+    </div>
+    <div class="modal-section">
+      <p style="font-size:13px;color:var(--muted);margin-bottom:12px">Bloquear impede o usuário de entrar e também encerra uma sessão que esteja aberta. A conta não é excluída e poderá ser liberada novamente.</p>
+      <div id="resumo-gerenciar-usuarios" style="font-family:var(--mono);font-size:12px;color:var(--muted);margin-bottom:12px"></div>
+      <div id="lista-gerenciar-usuarios"><div style="padding:20px;text-align:center;color:var(--muted)">Carregando usuários...</div></div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn-fechar-modal" onclick="fecharGerenciadorUsuarios()">Fechar</button>
+    </div>
+  </div>
+</div>
+
 <!-- MODAL GERENCIAR CASAS -->
 <div class="modal-overlay" id="modal-gerenciar-casas" style="display:none">
   <div class="modal-content" style="max-width:620px;max-height:85vh;overflow-y:auto">
@@ -1379,6 +1399,9 @@ let currentUser = null;
 let registerMode = false;
 let dataListener = null;
 let casasConfigListener = null;
+let accessControlListener = null;
+let authFeedback = '';
+let usuariosGerenciadosCache = {};
 let hiddenTabs = {}; // { comparativo:false, toplinks:true, ... } - true = oculta para usuarios comuns
 let hiddenBets = []; // nomes excluidos de toda visualizacao e calculo
 let atualizacoesCampeonatos = {}; // { "Serie A": 1690000000000, "Libertadores": 1689000000000 }
@@ -1399,7 +1422,7 @@ const TAB_LIST = [
     ".read": false,
     ".write": false,
     "oddsData": {
-      ".read": "auth != null",
+      ".read": "auth != null && root.child('config').child('blockedUsers').child(auth.uid).child('blocked').val() != true",
       ".write": "auth != null && root.child('config').child('adminEmail').val() == auth.token.email"
     },
     "config": {
@@ -1451,7 +1474,10 @@ function showLogin() {
   document.getElementById('appContainer').style.display = 'none';
   document.getElementById('loginEmail').value = '';
   document.getElementById('loginPassword').value = '';
-  document.getElementById('loginError').textContent = '';
+  const errEl = document.getElementById('loginError');
+  errEl.style.color = 'var(--red)';
+  errEl.textContent = authFeedback;
+  authFeedback = '';
 }
 
 function showApp() {
@@ -1513,6 +1539,7 @@ function doRegister() {
 function doLogout() {
   tickUso(); // registra o ultimo trecho de tempo antes de sair
   pararRastreioDeUso();
+  pararMonitoramentoDeAcesso();
   firebase.auth().signOut().then(() => {
     console.log('[DEBUG] Logout realizado com sucesso');
     currentUser = null;
@@ -1546,6 +1573,13 @@ function checkAdmin(user) {
       // Comparacao case-insensitive
       isAdmin = user.email.toLowerCase() === (adminEmail || '').toLowerCase();
 
+      const blockedUsers = (configVal && configVal.blockedUsers) ? configVal.blockedUsers : {};
+      const acesso = blockedUsers[user.uid] || {};
+      if (!isAdmin && acesso.blocked === true) {
+        bloquearSessaoAtual('Seu acesso foi bloqueado pelo administrador.');
+        return;
+      }
+
       if (isAdmin) {
         console.log('[DEBUG] USUARIO E ADMIN!');
       } else if (!adminEmail) {
@@ -1560,17 +1594,13 @@ function checkAdmin(user) {
       showApp();
       listenToData();
       listenToBetVisibility();
+      registrarUsuarioNoDiretorio(user);
+      iniciarMonitoramentoDeAcesso();
       iniciarRastreioDeUso();
     })
     .catch((err) => {
       console.error('[DEBUG] ERRO ao ler config:', err.code, err.message);
-      isAdmin = false;
-      setupUIForRole();
-      applyTabVisibility();
-      showApp();
-      listenToData();
-      listenToBetVisibility();
-      iniciarRastreioDeUso();
+      bloquearSessaoAtual('Não foi possível validar sua permissão de acesso. Tente novamente.');
     });
 }
 
@@ -1584,6 +1614,7 @@ function setupUIForRole() {
   const btnLoad = document.querySelector('.btn-load[onclick*="fileInput"]');
   const btnRelatorioUso = document.getElementById('btnRelatorioUso');
   const btnGerenciarCasas = document.getElementById('btnGerenciarCasas');
+  const btnGerenciarUsuarios = document.getElementById('btnGerenciarUsuarios');
   const adminMenu = document.getElementById('adminMenu');
 
   if (isAdmin) {
@@ -1595,6 +1626,7 @@ function setupUIForRole() {
     if (dropUser) dropUser.style.display = 'none';
     if (btnRelatorioUso) btnRelatorioUso.style.display = 'inline-flex';
     if (btnGerenciarCasas) btnGerenciarCasas.style.display = 'inline-flex';
+    if (btnGerenciarUsuarios) btnGerenciarUsuarios.style.display = 'inline-flex';
     if (adminMenu) adminMenu.style.display = 'block';
     // Esconde o botao "Carregar XLSX" principal do header (admin usa o overlay ou + Adicionar)
     if (btnLoad) btnLoad.style.display = 'none';
@@ -1607,8 +1639,170 @@ function setupUIForRole() {
     if (dropUser) dropUser.style.display = 'block';
     if (btnRelatorioUso) btnRelatorioUso.style.display = 'none';
     if (btnGerenciarCasas) btnGerenciarCasas.style.display = 'none';
+    if (btnGerenciarUsuarios) btnGerenciarUsuarios.style.display = 'none';
     if (adminMenu) { adminMenu.style.display = 'none'; adminMenu.classList.remove('open'); }
     if (btnLoad) btnLoad.style.display = 'none'; // usuario comum nao carrega arquivo
+  }
+}
+
+function bloquearSessaoAtual(mensagem) {
+  authFeedback = mensagem || 'Acesso não autorizado.';
+  pararRastreioDeUso();
+  pararMonitoramentoDeAcesso();
+  firebase.auth().signOut().catch(err => {
+    console.error('[DEBUG] Erro ao encerrar sessão bloqueada:', err);
+    currentUser = null;
+    isAdmin = false;
+    showLogin();
+  });
+}
+
+function registrarUsuarioNoDiretorio(user) {
+  if (!db || !user) return;
+  const ref = db.ref(`userDirectory/${user.uid}`);
+  ref.update({
+    email: user.email || '',
+    ultimoLogin: firebase.database.ServerValue.TIMESTAMP
+  }).then(() => ref.child('criadoEm').transaction(valor => (
+    valor || firebase.database.ServerValue.TIMESTAMP
+  ))).catch(err => {
+    console.warn('[DEBUG] Diretório de usuários indisponível:', err.message);
+  });
+}
+
+function iniciarMonitoramentoDeAcesso() {
+  pararMonitoramentoDeAcesso();
+  if (!db || !currentUser || isAdmin) return;
+  accessControlListener = db.ref(`config/blockedUsers/${currentUser.uid}`);
+  accessControlListener.on('value', snap => {
+    const acesso = snap.val() || {};
+    if (acesso.blocked === true) {
+      bloquearSessaoAtual('Seu acesso foi bloqueado pelo administrador.');
+    }
+  }, err => console.warn('[DEBUG] Falha ao monitorar acesso:', err.message));
+}
+
+function pararMonitoramentoDeAcesso() {
+  if (accessControlListener) {
+    accessControlListener.off();
+    accessControlListener = null;
+  }
+}
+
+function escaparHtmlSeguro(valor) {
+  return String(valor == null ? '' : valor).replace(/[&<>'"]/g, caractere => ({
+    '&': '&amp;', '<': '&lt;', '>': '&gt;', "'": '&#39;', '"': '&quot;'
+  })[caractere]);
+}
+
+async function abrirGerenciadorUsuarios() {
+  if (!isAdmin || !db) return;
+  fecharAdminMenu();
+  const modal = document.getElementById('modal-gerenciar-usuarios');
+  const lista = document.getElementById('lista-gerenciar-usuarios');
+  modal.style.display = 'flex';
+  lista.innerHTML = '<div style="padding:20px;text-align:center;color:var(--muted)">Carregando usuários...</div>';
+
+  try {
+    const lerOuVazio = caminho => db.ref(caminho).once('value')
+      .then(snap => snap.val() || {})
+      .catch(err => {
+        console.warn(`[DEBUG] Não foi possível ler ${caminho}:`, err.message);
+        return {};
+      });
+    const [diretorio, uso, bloqueados] = await Promise.all([
+      lerOuVazio('userDirectory'),
+      lerOuVazio('usageLog'),
+      lerOuVazio('config/blockedUsers')
+    ]);
+
+    const usuarios = new Map();
+    Object.entries(diretorio).forEach(([uid, dados]) => {
+      usuarios.set(uid, {
+        uid,
+        email: (dados && dados.email) || '',
+        ultimoLogin: (dados && dados.ultimoLogin) || 0
+      });
+    });
+    Object.entries(uso).forEach(([, usuariosDoDia]) => {
+      Object.entries(usuariosDoDia || {}).forEach(([uid, dados]) => {
+        const atual = usuarios.get(uid) || { uid, email: '', ultimoLogin: 0 };
+        if (dados && dados.email) atual.email = dados.email;
+        atual.ultimoLogin = Math.max(atual.ultimoLogin || 0, (dados && dados.ultimaAtividade) || 0);
+        usuarios.set(uid, atual);
+      });
+    });
+    if (currentUser) {
+      usuarios.set(currentUser.uid, {
+        ...(usuarios.get(currentUser.uid) || {}),
+        uid: currentUser.uid,
+        email: currentUser.email || '',
+        ultimoLogin: Date.now()
+      });
+    }
+
+    const linhas = Array.from(usuarios.values())
+      .filter(usuario => usuario.email)
+      .sort((a, b) => a.email.localeCompare(b.email, 'pt-BR'));
+    usuariosGerenciadosCache = Object.fromEntries(
+      linhas.map(usuario => [usuario.uid, usuario])
+    );
+    const totalBloqueados = linhas.filter(usuario => bloqueados[usuario.uid]?.blocked === true).length;
+    document.getElementById('resumo-gerenciar-usuarios').textContent =
+      `${linhas.length} usuário(s) cadastrado(s) · ${totalBloqueados} bloqueado(s)`;
+
+    if (!linhas.length) {
+      lista.innerHTML = '<div style="padding:20px;text-align:center;color:var(--muted)">Nenhum usuário identificado ainda.</div>';
+      return;
+    }
+    lista.innerHTML = linhas.map(usuario => {
+      const bloqueado = bloqueados[usuario.uid]?.blocked === true;
+      const ehAdminAtual = usuario.uid === currentUser.uid;
+      const data = usuario.ultimoLogin
+        ? new Date(usuario.ultimoLogin).toLocaleString('pt-BR')
+        : 'Sem registro de acesso';
+      return `
+        <div style="display:flex;align-items:center;gap:12px;padding:12px 4px;border-bottom:1px solid var(--border2);flex-wrap:wrap">
+          <div style="min-width:220px;flex:1">
+            <div style="font-weight:600">${escaparHtmlSeguro(usuario.email)}</div>
+            <div style="font-family:var(--mono);font-size:10px;color:var(--muted);margin-top:3px">Último acesso: ${escaparHtmlSeguro(data)}</div>
+          </div>
+          <span class="tag ${bloqueado ? 'tag-red' : 'tag-green'}">${bloqueado ? 'BLOQUEADO' : ehAdminAtual ? 'ADMIN' : 'LIBERADO'}</span>
+          <button class="${bloqueado ? 'btn-adicionar' : 'btn-fechar-modal'}" style="${!bloqueado && !ehAdminAtual ? 'color:var(--red)' : ''}" ${ehAdminAtual ? 'disabled title="O administrador não pode bloquear a própria conta"' : ''}
+            onclick="alterarAcessoUsuario('${usuario.uid}',${!bloqueado})">
+            ${bloqueado ? 'Permitir acesso' : ehAdminAtual ? 'Conta administradora' : 'Bloquear acesso'}
+          </button>
+        </div>`;
+    }).join('');
+  } catch (err) {
+    lista.innerHTML = `<div style="padding:20px;color:var(--red)">Erro ao carregar usuários: ${escaparHtmlSeguro(err.message)}</div>`;
+  }
+}
+
+function fecharGerenciadorUsuarios() {
+  document.getElementById('modal-gerenciar-usuarios').style.display = 'none';
+}
+
+async function alterarAcessoUsuario(uid, bloquear) {
+  if (!isAdmin || !db || !uid || uid === currentUser.uid) return;
+  const email = usuariosGerenciadosCache[uid]?.email || '(usuário)';
+  if (bloquear && !confirm(`Bloquear o acesso de ${email}?`)) return;
+  try {
+    const ref = db.ref(`config/blockedUsers/${uid}`);
+    if (bloquear) {
+      await ref.set({
+        blocked: true,
+        atualizadoEm: firebase.database.ServerValue.TIMESTAMP
+      });
+      toast(`Acesso de ${email} bloqueado.`, 'success');
+    } else {
+      await ref.remove();
+      toast(`Acesso de ${email} liberado.`, 'success');
+    }
+    await abrirGerenciadorUsuarios();
+  } catch (err) {
+    console.error('[DEBUG] Erro ao alterar acesso:', err);
+    toast('Erro ao alterar acesso: ' + err.message, 'error', 6000);
   }
 }
 
@@ -2115,6 +2309,12 @@ function toggleAdminMenu(event){
   if(!menu) return;
   const aberto=menu.classList.toggle('open');
   menu.querySelector('.admin-trigger')?.setAttribute('aria-expanded',aberto?'true':'false');
+}
+function fecharAdminMenu(){
+  const menu=document.getElementById('adminMenu');
+  if(!menu) return;
+  menu.classList.remove('open');
+  menu.querySelector('.admin-trigger')?.setAttribute('aria-expanded','false');
 }
 document.addEventListener('click',event=>{
   const menu=document.getElementById('adminMenu');
