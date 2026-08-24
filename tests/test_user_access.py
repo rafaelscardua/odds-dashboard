@@ -25,7 +25,8 @@ class UserAccessHtmlTests(unittest.TestCase):
     def test_sessao_aberta_monitora_bloqueio(self):
         self.assertIn("function iniciarMonitoramentoDeAcesso()", self.html)
         self.assertIn("config/blockedUsers/${currentUser.uid}", self.html)
-        self.assertIn("bloquearSessaoAtual('Seu acesso foi bloqueado", self.html)
+        self.assertIn("Sistema temporariamente indisponível para manutenção", self.html)
+        self.assertNotIn("Seu acesso foi bloqueado pelo administrador.", self.html)
 
     def test_regras_negam_odds_para_usuario_bloqueado(self):
         regras = json.loads(

@@ -1576,7 +1576,7 @@ function checkAdmin(user) {
       const blockedUsers = (configVal && configVal.blockedUsers) ? configVal.blockedUsers : {};
       const acesso = blockedUsers[user.uid] || {};
       if (!isAdmin && acesso.blocked === true) {
-        bloquearSessaoAtual('Seu acesso foi bloqueado pelo administrador.');
+        bloquearSessaoAtual('Sistema temporariamente indisponível para manutenção. Tente novamente mais tarde.');
         return;
       }
 
@@ -1677,7 +1677,7 @@ function iniciarMonitoramentoDeAcesso() {
   accessControlListener.on('value', snap => {
     const acesso = snap.val() || {};
     if (acesso.blocked === true) {
-      bloquearSessaoAtual('Seu acesso foi bloqueado pelo administrador.');
+      bloquearSessaoAtual('Sistema temporariamente indisponível para manutenção. Tente novamente mais tarde.');
     }
   }, err => console.warn('[DEBUG] Falha ao monitorar acesso:', err.message));
 }
