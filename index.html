@@ -384,7 +384,7 @@ main{padding:28px 0;}
 .top-financial{border-top:1px solid var(--border);padding-top:12px;display:flex;justify-content:space-between;align-items:flex-end;}
 
 .card-total-jogado{display:flex;justify-content:space-between;align-items:center;gap:12px;margin:10px 0 12px;padding:8px 10px;border:1px solid var(--border);border-radius:7px;background:color-mix(in srgb,var(--bg3) 78%,transparent);font-size:11px;color:var(--muted)}
-.card-total-jogado strong{font-family:var(--mono);font-size:13px;color:var(--text);font-weight:600}
+.card-total-jogado>div{display:flex;flex-direction:column;gap:3px}.card-total-jogado>div:last-child{text-align:right}.card-total-jogado strong{font-family:var(--mono);font-size:13px;color:var(--text);font-weight:600}.card-total-jogado .total-ganho{color:var(--pct)}
 .top-lucro-val{font-family:var(--mono);font-size:15px;font-weight:600;color:var(--text);}
 .top-lucro-pct{font-family:var(--mono);font-size:20px;font-weight:700;color:var(--pct);background:var(--pct-dim);border:1px solid color-mix(in srgb,var(--pct) 30%,transparent);padding:3px 11px;border-radius:7px;letter-spacing:-0.01em;}
 .top-distrib{font-size:15px;color:var(--muted);text-align:right;line-height:1.7;}
@@ -2603,6 +2603,8 @@ function recalculateCard(cardIdx){
   if(elStakeFora) elStakeFora.value = v_fora.toFixed(2);
   const elTotalJogado = document.getElementById(`total-jogado-${cardIdx}`);
   if(elTotalJogado) elTotalJogado.textContent = 'R$ ' + a.toLocaleString('pt-BR',{minimumFractionDigits:2,maximumFractionDigits:2});
+  const elTotalGanho = document.getElementById(`total-ganho-${cardIdx}`);
+  if(elTotalGanho) elTotalGanho.textContent = 'R$ ' + retorno.toLocaleString('pt-BR',{minimumFractionDigits:2,maximumFractionDigits:2});
 }
 
 /* ===============================================================
@@ -2643,6 +2645,8 @@ function recalcDutchingStake(cardIdx, campo){
   if(elLucroPct) elLucroPct.textContent = (lucroPct>=0?'+':'') + lucroPct.toFixed(2) + '%';
   const elTotalJogadoStake = document.getElementById(`total-jogado-${cardIdx}`);
   if(elTotalJogadoStake) elTotalJogadoStake.textContent = 'R$ ' + total.toLocaleString('pt-BR',{minimumFractionDigits:2,maximumFractionDigits:2});
+  const elTotalGanhoStake = document.getElementById(`total-ganho-${cardIdx}`);
+  if(elTotalGanhoStake) elTotalGanhoStake.textContent = 'R$ ' + retorno.toLocaleString('pt-BR',{minimumFractionDigits:2,maximumFractionDigits:2});
 }
 
 function recalcDutchingStakeTopLinks(idx, campo, oddCasa, oddEmp, oddFora){
@@ -2674,6 +2678,8 @@ function recalcDutchingStakeTopLinks(idx, campo, oddCasa, oddEmp, oddFora){
   const elTotal = document.getElementById(`tl-total-${idx}`);
   const elLucro = document.getElementById(`tl-lucro-${idx}`);
   if(elTotal) elTotal.textContent = 'R$ ' + total.toLocaleString('pt-BR',{minimumFractionDigits:2,maximumFractionDigits:2});
+  const elGanho = document.getElementById(`tl-ganho-${idx}`);
+  if(elGanho) elGanho.textContent = 'R$ ' + retorno.toLocaleString('pt-BR',{minimumFractionDigits:2,maximumFractionDigits:2});
   if(elLucro) elLucro.textContent = (lucroPct>=0?'+':'') + lucroPct.toFixed(2) + '%';
 }
 
@@ -2713,6 +2719,8 @@ function recalcLucroMaxHedge(cardIdx, scenIdx, tipo){
   const cen=calcLucroMax(casa, empate, fora, newCapital);
   const validos=cen.filter(c=>c.viavel);
   const melhor=validos.length?Math.max(...validos.map(c=>c.lucro_pct)):null;
+  const elTotalGanhoLucroMax = document.getElementById(`lm-total-ganho-${cardIdx}`);
+  if(elTotalGanhoLucroMax && melhor!==null) elTotalGanhoLucroMax.textContent = 'R$ ' + (newCapital*(1+melhor/100)).toLocaleString('pt-BR',{minimumFractionDigits:2,maximumFractionDigits:2});
   const hedgeVals=[
     [newCapital/empate, newCapital/fora],
     [newCapital/casa,   newCapital/fora],
@@ -2796,7 +2804,7 @@ function renderTop3(){
           </div>
         </div>
       </div>
-      <div class="card-total-jogado"><span>Valor total jogado</span><strong id="total-jogado-${i}">R$ ${a.toLocaleString('pt-BR',{minimumFractionDigits:2,maximumFractionDigits:2})}</strong></div>
+      <div class="card-total-jogado"><div><span>Valor total jogado</span><strong id="total-jogado-${i}">R$ ${a.toLocaleString('pt-BR',{minimumFractionDigits:2,maximumFractionDigits:2})}</strong></div><div><span>Valor total ganho</span><strong class="total-ganho" id="total-ganho-${i}">R$ ${r.retorno.toLocaleString('pt-BR',{minimumFractionDigits:2,maximumFractionDigits:2})}</strong></div></div>
       <div class="top-winners" aria-label="Casas com as melhores odds">
         <div class="top-winner-row"><span class="top-winner-label">Casa:</span><span class="top-winner-links">${renderTopWinnerLinks(r.casa_sites,'casa')}</span></div>
         <div class="top-winner-row"><span class="top-winner-label">Empate:</span><span class="top-winner-links">${renderTopWinnerLinks(r.empate_sites,'empate')}</span></div>
@@ -3184,6 +3192,8 @@ function recalculateLucroMaxStake(idx, scenIdx){
   const cen=calcLucroMax(casa, empate, fora, newCapital);
   const validos=cen.filter(c=>c.viavel);
   const melhor=validos.length?Math.max(...validos.map(c=>c.lucro_pct)):null;
+  const elTotalGanhoLucroMax = document.getElementById(`lm-total-ganho-${idx}`);
+  if(elTotalGanhoLucroMax && melhor!==null) elTotalGanhoLucroMax.textContent = 'R$ ' + (newCapital*(1+melhor/100)).toLocaleString('pt-BR',{minimumFractionDigits:2,maximumFractionDigits:2});
   const hedgeVals=[
     [newCapital/empate, newCapital/fora],
     [newCapital/casa,   newCapital/fora],
@@ -3278,7 +3288,7 @@ function renderLucroMaximo(){
       <div class="lm-jogo">${r.jogo}</div>
       ${oddsHtml}
       <div class="lm-scenarios">${scensHtml}</div>
-      <div class="card-total-jogado"><span>Valor total jogado</span><strong id="lm-total-jogado-${i}">R$ ${capital.toLocaleString('pt-BR',{minimumFractionDigits:2,maximumFractionDigits:2})}</strong></div>
+      <div class="card-total-jogado"><div><span>Valor total jogado</span><strong id="lm-total-jogado-${i}">R$ ${capital.toLocaleString('pt-BR',{minimumFractionDigits:2,maximumFractionDigits:2})}</strong></div><div><span>Valor total ganho</span><strong class="total-ganho" id="lm-total-ganho-${i}">R$ ${(capital*(1+melhor/100)).toLocaleString('pt-BR',{minimumFractionDigits:2,maximumFractionDigits:2})}</strong></div></div>
       <div class="lm-footer">${r.data} &middot; ${r.site}</div>
     </div>`;
   }).join('');
@@ -3492,7 +3502,7 @@ function renderTopApostasComLinks(){
           </div>
         </div>
         <div style="display:flex;justify-content:space-between;margin-top:8px">
-          <span style="font-size:11px;color:var(--muted)">Valor total jogado: <span id="tl-total-${idx}" style="font-family:var(--mono);color:var(--text)">R$ ${(v_casa+v_emp+v_fora).toLocaleString('pt-BR',{minimumFractionDigits:2,maximumFractionDigits:2})}</span></span>
+          <span style="font-size:11px;color:var(--muted)">Valor total jogado: <span id="tl-total-${idx}" style="font-family:var(--mono);color:var(--text)">R$ ${(v_casa+v_emp+v_fora).toLocaleString('pt-BR',{minimumFractionDigits:2,maximumFractionDigits:2})}</span></span><span style="font-size:11px;color:var(--muted)">Valor total ganho: <span id="tl-ganho-${idx}" style="font-family:var(--mono);color:var(--pct)">R$ ${r.retorno.toLocaleString('pt-BR',{minimumFractionDigits:2,maximumFractionDigits:2})}</span></span>
           <span style="font-size:11px;color:var(--muted)">Lucro: <span id="tl-lucro-${idx}" style="font-family:var(--mono);color:var(--pct)">${r.lucro_pct>=0?'+':''}${r.lucro_pct.toFixed(2)}%</span></span>
         </div>
       </div>
