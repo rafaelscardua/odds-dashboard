@@ -1354,10 +1354,10 @@ th .btn-icon{width:11px;height:11px;vertical-align:-1px;opacity:0.7;margin-left:
       <div style="margin-bottom:14px;padding:12px;border:1px solid var(--border2);border-radius:10px;background:rgba(20,34,53,.62)">
         <div style="font-family:var(--mono);font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);margin-bottom:10px">Resumo da estrutura</div>
         <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(105px,1fr));gap:8px">
-          <div style="padding:9px;border-radius:8px;background:rgba(91,219,213,.08)"><strong style="display:block;font-size:18px;color:var(--cyan)">42</strong><span style="font-size:11px;color:var(--muted)">implementadas</span></div>
-          <div style="padding:9px;border-radius:8px;background:rgba(52,211,153,.08)"><strong style="display:block;font-size:18px;color:var(--green)">40</strong><span style="font-size:11px;color:var(--muted)">ativas</span></div>
+          <div style="padding:9px;border-radius:8px;background:rgba(91,219,213,.08)"><strong style="display:block;font-size:18px;color:var(--cyan)">43</strong><span style="font-size:11px;color:var(--muted)">implementadas</span></div>
+          <div style="padding:9px;border-radius:8px;background:rgba(52,211,153,.08)"><strong style="display:block;font-size:18px;color:var(--green)">41</strong><span style="font-size:11px;color:var(--muted)">ativas</span></div>
           <div style="padding:9px;border-radius:8px;background:rgba(56,189,248,.08)"><strong style="display:block;font-size:18px;color:#38bdf8">24</strong><span style="font-size:11px;color:var(--muted)">API direta</span></div>
-          <div style="padding:9px;border-radius:8px;background:rgba(251,191,36,.08)"><strong style="display:block;font-size:18px;color:var(--yellow)">16</strong><span style="font-size:11px;color:var(--muted)">com navegador</span></div>
+          <div style="padding:9px;border-radius:8px;background:rgba(251,191,36,.08)"><strong style="display:block;font-size:18px;color:var(--yellow)">17</strong><span style="font-size:11px;color:var(--muted)">com navegador</span></div>
           <div style="padding:9px;border-radius:8px;background:rgba(248,113,113,.08)"><strong style="display:block;font-size:18px;color:#f87171">2</strong><span style="font-size:11px;color:var(--muted)">desativadas</span></div>
         </div>
       </div>
@@ -1405,7 +1405,7 @@ let usuariosGerenciadosCache = {};
 let hiddenTabs = {}; // { comparativo:false, toplinks:true, ... } - true = oculta para usuarios comuns
 let hiddenBets = []; // nomes excluidos de toda visualizacao e calculo
 let atualizacoesCampeonatos = {}; // { "Serie A": 1690000000000, "Libertadores": 1689000000000 }
-const BET_LIST = ['Betano','Betnacional','Bet da Sorte','Aposta Tudo','BRX','Bullsbet','Vai de Bet','Seguro.bet','BetFury','Goldebet','Lotogreen','EstrelaBet','KTO','Superbet','Bet365','Betfair','F12','Luva.bet','Multi.bet','Jogo de Ouro','Betesporte','Novibet','Ona.bet','Sportingbet','Betboo','Galera.bet','Rivalo','R7.bet','Brazino777','BetWarrior','Pix.bet','Stake','Startbet','BetMGM','1xbet','BR4','Cassino.bet','Betao','Lottu','Vera.bet','7K','Pitaco.bet'];
+const BET_LIST = ['Betano','Betnacional','Bet da Sorte','Aposta Tudo','BRX','Bullsbet','Rico.bet','Vai de Bet','Seguro.bet','BetFury','Goldebet','Lotogreen','EstrelaBet','KTO','Superbet','Bet365','Betfair','F12','Luva.bet','Multi.bet','Jogo de Ouro','Betesporte','Novibet','Ona.bet','Sportingbet','Betboo','Galera.bet','Rivalo','R7.bet','Brazino777','BetWarrior','Pix.bet','Stake','Startbet','BetMGM','1xbet','BR4','Cassino.bet','Betao','Lottu','Vera.bet','7K','Pitaco.bet'];
 const TAB_ICON_SVG = (path) => `<svg class="btn-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">${path}</svg>`;
 const TAB_LIST = [
   { key: 'comparativo',   label: TAB_ICON_SVG('<rect x="3" y="12" width="4" height="9"/><rect x="10" y="6" width="4" height="15"/><rect x="17" y="9" width="4" height="12"/>') + ' Comparativo' },
