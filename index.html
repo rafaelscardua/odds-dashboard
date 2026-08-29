@@ -382,6 +382,9 @@ main{padding:28px 0;}
 .odd-input.odd-fora{border-color:color-mix(in srgb,var(--fora) 50%,transparent);color:var(--fora);}
 .odd-input.odd-fora:focus{border-color:var(--fora);background:var(--fora-dim);box-shadow:0 0 8px var(--fora-dim);}
 .top-financial{border-top:1px solid var(--border);padding-top:12px;display:flex;justify-content:space-between;align-items:flex-end;}
+
+.card-total-jogado{display:flex;justify-content:space-between;align-items:center;gap:12px;margin:10px 0 12px;padding:8px 10px;border:1px solid var(--border);border-radius:7px;background:color-mix(in srgb,var(--bg3) 78%,transparent);font-size:11px;color:var(--muted)}
+.card-total-jogado strong{font-family:var(--mono);font-size:13px;color:var(--text);font-weight:600}
 .top-lucro-val{font-family:var(--mono);font-size:15px;font-weight:600;color:var(--text);}
 .top-lucro-pct{font-family:var(--mono);font-size:20px;font-weight:700;color:var(--pct);background:var(--pct-dim);border:1px solid color-mix(in srgb,var(--pct) 30%,transparent);padding:3px 11px;border-radius:7px;letter-spacing:-0.01em;}
 .top-distrib{font-size:15px;color:var(--muted);text-align:right;line-height:1.7;}
@@ -2598,6 +2601,8 @@ function recalculateCard(cardIdx){
   if(elStakeCasa) elStakeCasa.value = v_casa.toFixed(2);
   if(elStakeEmp)  elStakeEmp.value  = v_emp.toFixed(2);
   if(elStakeFora) elStakeFora.value = v_fora.toFixed(2);
+  const elTotalJogado = document.getElementById(`total-jogado-${cardIdx}`);
+  if(elTotalJogado) elTotalJogado.textContent = 'R$ ' + a.toLocaleString('pt-BR',{minimumFractionDigits:2,maximumFractionDigits:2});
 }
 
 /* ===============================================================
@@ -2636,6 +2641,8 @@ function recalcDutchingStake(cardIdx, campo){
   const elLucroPct = document.getElementById(`lucro-pct-${cardIdx}`);
   if(elLucroVal) elLucroVal.textContent = (lucro>=0?'+':'') + fmtDec(lucro);
   if(elLucroPct) elLucroPct.textContent = (lucroPct>=0?'+':'') + lucroPct.toFixed(2) + '%';
+  const elTotalJogadoStake = document.getElementById(`total-jogado-${cardIdx}`);
+  if(elTotalJogadoStake) elTotalJogadoStake.textContent = 'R$ ' + total.toLocaleString('pt-BR',{minimumFractionDigits:2,maximumFractionDigits:2});
 }
 
 function recalcDutchingStakeTopLinks(idx, campo, oddCasa, oddEmp, oddFora){
@@ -2701,6 +2708,8 @@ function recalcLucroMaxHedge(cardIdx, scenIdx, tipo){
     newCapital=h2*sc.h2odd;
   }
 
+  const elTotalLucroMax = document.getElementById(`lm-total-jogado-${cardIdx}`);
+  if(elTotalLucroMax) elTotalLucroMax.textContent = 'R$ ' + newCapital.toLocaleString('pt-BR',{minimumFractionDigits:2,maximumFractionDigits:2});
   const cen=calcLucroMax(casa, empate, fora, newCapital);
   const validos=cen.filter(c=>c.viavel);
   const melhor=validos.length?Math.max(...validos.map(c=>c.lucro_pct)):null;
@@ -2787,6 +2796,7 @@ function renderTop3(){
           </div>
         </div>
       </div>
+      <div class="card-total-jogado"><span>Valor total jogado</span><strong id="total-jogado-${i}">R$ ${a.toLocaleString('pt-BR',{minimumFractionDigits:2,maximumFractionDigits:2})}</strong></div>
       <div class="top-winners" aria-label="Casas com as melhores odds">
         <div class="top-winner-row"><span class="top-winner-label">Casa:</span><span class="top-winner-links">${renderTopWinnerLinks(r.casa_sites,'casa')}</span></div>
         <div class="top-winner-row"><span class="top-winner-label">Empate:</span><span class="top-winner-links">${renderTopWinnerLinks(r.empate_sites,'empate')}</span></div>
@@ -3169,6 +3179,8 @@ function recalculateLucroMaxStake(idx, scenIdx){
   const factor=1-1/sc.h1odd-1/sc.h2odd;
   if(factor<=0) return;
   const newCapital=newAlvo/factor;
+  const elTotalLucroMax = document.getElementById(`lm-total-jogado-${idx}`);
+  if(elTotalLucroMax) elTotalLucroMax.textContent = 'R$ ' + newCapital.toLocaleString('pt-BR',{minimumFractionDigits:2,maximumFractionDigits:2});
   const cen=calcLucroMax(casa, empate, fora, newCapital);
   const validos=cen.filter(c=>c.viavel);
   const melhor=validos.length?Math.max(...validos.map(c=>c.lucro_pct)):null;
@@ -3266,6 +3278,7 @@ function renderLucroMaximo(){
       <div class="lm-jogo">${r.jogo}</div>
       ${oddsHtml}
       <div class="lm-scenarios">${scensHtml}</div>
+      <div class="card-total-jogado"><span>Valor total jogado</span><strong id="lm-total-jogado-${i}">R$ ${capital.toLocaleString('pt-BR',{minimumFractionDigits:2,maximumFractionDigits:2})}</strong></div>
       <div class="lm-footer">${r.data} &middot; ${r.site}</div>
     </div>`;
   }).join('');
@@ -3479,7 +3492,7 @@ function renderTopApostasComLinks(){
           </div>
         </div>
         <div style="display:flex;justify-content:space-between;margin-top:8px">
-          <span style="font-size:11px;color:var(--muted)">Total: <span id="tl-total-${idx}" style="font-family:var(--mono);color:var(--text)">R$ ${(v_casa+v_emp+v_fora).toLocaleString('pt-BR',{minimumFractionDigits:2,maximumFractionDigits:2})}</span></span>
+          <span style="font-size:11px;color:var(--muted)">Valor total jogado: <span id="tl-total-${idx}" style="font-family:var(--mono);color:var(--text)">R$ ${(v_casa+v_emp+v_fora).toLocaleString('pt-BR',{minimumFractionDigits:2,maximumFractionDigits:2})}</span></span>
           <span style="font-size:11px;color:var(--muted)">Lucro: <span id="tl-lucro-${idx}" style="font-family:var(--mono);color:var(--pct)">${r.lucro_pct>=0?'+':''}${r.lucro_pct.toFixed(2)}%</span></span>
         </div>
       </div>
