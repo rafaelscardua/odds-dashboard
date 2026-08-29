@@ -361,6 +361,14 @@ main{padding:28px 0;}
 @media(max-width:520px){.top-card-title-row{display:block}.top-data-hora{text-align:left;padding-top:5px}.top-jogo{font-size:17px}}
 .top-winners{display:grid;gap:6px;margin-top:11px;padding-top:10px;border-top:1px solid var(--border);font-size:11px;}
 .top-winner-row{display:flex;align-items:baseline;gap:8px;min-width:0;}
+.top-bet-resumo{display:grid;grid-template-columns:minmax(0,1fr) minmax(145px,.8fr);gap:14px;margin-top:11px;padding-top:10px;border-top:1px solid var(--border)}
+.top-bet-resumo .top-winners{margin:0;padding:0;border:0}
+.top-deposit-summary{padding-left:14px;border-left:1px solid var(--border);font-size:11px;min-width:0}
+.top-deposit-title{font-family:var(--mono);color:var(--muted);text-transform:uppercase;letter-spacing:.06em;margin-bottom:6px}
+.top-deposit-row{display:flex;justify-content:space-between;gap:10px;margin-top:5px}
+.top-deposit-site{color:var(--text);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.top-deposit-value{font-family:var(--mono);color:var(--pct);white-space:nowrap}
+@media(max-width:520px){.top-bet-resumo{grid-template-columns:1fr}.top-deposit-summary{padding-left:0;padding-top:10px;border-left:0;border-top:1px dashed var(--border)}}
 .top-winner-label{flex:0 0 46px;font-family:var(--mono);color:var(--muted);}
 .top-winner-links{display:flex;flex-wrap:wrap;gap:3px 9px;min-width:0;}
 .top-winner-link{font-family:var(--mono);text-decoration:none;border-bottom:1px solid transparent;transition:border-color .15s,filter .15s;}
@@ -2605,6 +2613,8 @@ function recalculateCard(cardIdx){
   if(elTotalJogado) elTotalJogado.textContent = 'R$ ' + a.toLocaleString('pt-BR',{minimumFractionDigits:2,maximumFractionDigits:2});
   const elTotalGanho = document.getElementById(`total-ganho-${cardIdx}`);
   if(elTotalGanho) elTotalGanho.textContent = 'R$ ' + retorno.toLocaleString('pt-BR',{minimumFractionDigits:2,maximumFractionDigits:2});
+  atualizarResumoDepositos(cardIdx,v_casa,v_emp,v_fora);
+
 }
 
 /* ===============================================================
@@ -2647,6 +2657,8 @@ function recalcDutchingStake(cardIdx, campo){
   if(elTotalJogadoStake) elTotalJogadoStake.textContent = 'R$ ' + total.toLocaleString('pt-BR',{minimumFractionDigits:2,maximumFractionDigits:2});
   const elTotalGanhoStake = document.getElementById(`total-ganho-${cardIdx}`);
   if(elTotalGanhoStake) elTotalGanhoStake.textContent = 'R$ ' + retorno.toLocaleString('pt-BR',{minimumFractionDigits:2,maximumFractionDigits:2});
+  atualizarResumoDepositos(cardIdx,newCasa,newEmp,newFora);
+
 }
 
 function recalcDutchingStakeTopLinks(idx, campo, oddCasa, oddEmp, oddFora){
@@ -2764,6 +2776,25 @@ function renderTopWinnerLinks(sites,tipo){
   }).join('');
 }
 
+function sitePrincipalResultado(r,tipo){
+  const sites=deduplicarSitesOdds(r[`${tipo}_sites`]||[],`${tipo}_link`);
+  return String(sites[0]?.site||r[`${tipo}_origem`]||'Não informado').trim();
+}
+
+function renderResumoDepositos(r,stakeCasa,stakeEmpate,stakeFora){
+  const totais=new Map();
+  [[sitePrincipalResultado(r,'casa'),stakeCasa],[sitePrincipalResultado(r,'empate'),stakeEmpate],[sitePrincipalResultado(r,'fora'),stakeFora]].forEach(([site,valor])=>{
+    totais.set(site,(totais.get(site)||0)+(Number(valor)||0));
+  });
+  return [...totais.entries()].map(([site,valor])=>`<div class="top-deposit-row"><span class="top-deposit-site" title="${site}">${site}</span><span class="top-deposit-value">R$ ${valor.toLocaleString('pt-BR',{minimumFractionDigits:2,maximumFractionDigits:2})}</span></div>`).join('');
+}
+
+function atualizarResumoDepositos(cardIdx,stakeCasa,stakeEmpate,stakeFora){
+  const el=document.getElementById(`depositos-card-${cardIdx}`);
+  const jogo=allData[cardIdx];
+  if(el&&jogo) el.innerHTML=renderResumoDepositos(jogo,stakeCasa,stakeEmpate,stakeFora);
+}
+
 function renderTop3(){
   const a=parseFloat(document.getElementById('apostaInput').value)||5000;
   const ranks=['rank1','rank2','rank3'],ords=['','',''];
@@ -2805,10 +2836,13 @@ function renderTop3(){
         </div>
       </div>
       <div class="card-total-jogado"><div><span>Valor total jogado</span><strong id="total-jogado-${i}">R$ ${a.toLocaleString('pt-BR',{minimumFractionDigits:2,maximumFractionDigits:2})}</strong></div><div><span>Valor total ganho</span><strong class="total-ganho" id="total-ganho-${i}">R$ ${r.retorno.toLocaleString('pt-BR',{minimumFractionDigits:2,maximumFractionDigits:2})}</strong></div></div>
-      <div class="top-winners" aria-label="Casas com as melhores odds">
-        <div class="top-winner-row"><span class="top-winner-label">Casa:</span><span class="top-winner-links">${renderTopWinnerLinks(r.casa_sites,'casa')}</span></div>
-        <div class="top-winner-row"><span class="top-winner-label">Empate:</span><span class="top-winner-links">${renderTopWinnerLinks(r.empate_sites,'empate')}</span></div>
-        <div class="top-winner-row"><span class="top-winner-label">Fora:</span><span class="top-winner-links">${renderTopWinnerLinks(r.fora_sites,'fora')}</span></div>
+      <div class="top-bet-resumo">
+        <div class="top-winners" aria-label="Casas com as melhores odds">
+          <div class="top-winner-row"><span class="top-winner-label">Casa:</span><span class="top-winner-links">${renderTopWinnerLinks(r.casa_sites,'casa')}</span></div>
+          <div class="top-winner-row"><span class="top-winner-label">Empate:</span><span class="top-winner-links">${renderTopWinnerLinks(r.empate_sites,'empate')}</span></div>
+          <div class="top-winner-row"><span class="top-winner-label">Fora:</span><span class="top-winner-links">${renderTopWinnerLinks(r.fora_sites,'fora')}</span></div>
+        </div>
+        <div class="top-deposit-summary"><div class="top-deposit-title">Depósito por bet</div><div id="depositos-card-${i}">${renderResumoDepositos(r,r.v_casa,r.v_emp,r.v_fora)}</div></div>
       </div>
     </div>`;
   }).join('');
