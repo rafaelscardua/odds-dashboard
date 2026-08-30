@@ -343,7 +343,8 @@ main{padding:28px 0;}
 .section-title{font-size:11px;font-family:var(--mono);color:var(--muted);text-transform:uppercase;letter-spacing:0.08em;}
 .section-count{font-size:11px;font-family:var(--mono);color:var(--border2);}
 
-.top3{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:12px;margin-bottom:28px;}
+.top3{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px;margin-bottom:28px;}
+@media(max-width:900px){.top3{grid-template-columns:1fr;}}
 .top-card{background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius-lg);padding:18px 20px;position:relative;overflow:hidden;transition:transform 0.25s cubic-bezier(.2,.8,.2,1),box-shadow 0.25s,border-color .25s;box-shadow:var(--shadow-sm);}
 .top-card:hover{transform:translateY(-4px);box-shadow:var(--shadow);border-color:var(--border2);}
 .top-card::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;}
@@ -354,6 +355,8 @@ main{padding:28px 0;}
 .top-card.rank2::after{background:linear-gradient(180deg,rgba(156,163,175,0.15),transparent);}
 .top-card.rank3::before{background:linear-gradient(90deg,#92400e,#b45309);}
 .top-card.rank3::after{background:linear-gradient(180deg,rgba(146,64,14,0.15),transparent);}
+.top-card.rank4::before{background:linear-gradient(90deg,#475569,#94a3b8);}
+.top-card.rank4::after{background:linear-gradient(180deg,rgba(100,116,139,0.15),transparent);}
 .top-rank{font-size:18px;margin-bottom:6px;}
 .top-card-title-row{display:flex;align-items:flex-start;justify-content:space-between;gap:12px;margin-bottom:12px;}
 .top-jogo{font-family:var(--display);font-size:18px;font-weight:600;line-height:1.3;letter-spacing:-0.005em;min-width:0;}
@@ -897,11 +900,12 @@ th .btn-icon{width:11px;height:11px;vertical-align:-1px;opacity:0.7;margin-left:
 
     <div class="tab-panel active" id="tab-comparativo">
 
-    <div class="section-header"><span class="section-title"><svg class="btn-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M8 4h8v5a4 4 0 01-8 0V4z"/><path d="M6 6H4v2a4 4 0 004 4M18 6h2v2a4 4 0 01-4 4M12 13v4M8 20h8M9 17h6"/></svg> top 3 apostas</span></div>
+    <div class="section-header"><span class="section-title"><svg class="btn-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M8 4h8v5a4 4 0 01-8 0V4z"/><path d="M6 6H4v2a4 4 0 004 4M18 6h2v2a4 4 0 01-4 4M12 13v4M8 20h8M9 17h6"/></svg> top 4 apostas</span></div>
     <div class="top3" id="top3">
       <div class="top-card rank1"><div style="color:var(--muted);font-size:12px;text-align:center;padding:20px 0">—</div></div>
       <div class="top-card rank2"><div style="color:var(--muted);font-size:12px;text-align:center;padding:20px 0">—</div></div>
       <div class="top-card rank3"><div style="color:var(--muted);font-size:12px;text-align:center;padding:20px 0">—</div></div>
+      <div class="top-card rank4"><div style="color:var(--muted);font-size:12px;text-align:center;padding:20px 0">—</div></div>
     </div>
 
     <div class="grid2">
@@ -2244,7 +2248,7 @@ function resetUINoData() {
   document.getElementById('tagJogos').textContent = 'sem dados';
   document.getElementById('tagJogos').className = 'tag tag-gray';
   document.getElementById('logoSub').textContent = 'arbitragem · cobertura total';
-  document.getElementById('top3').innerHTML = '<div class="top-card rank1"><div style="color:var(--muted);font-size:12px;text-align:center;padding:20px 0">-</div></div><div class="top-card rank2"><div style="color:var(--muted);font-size:12px;text-align:center;padding:20px 0">-</div></div><div class="top-card rank3"><div style="color:var(--muted);font-size:12px;text-align:center;padding:20px 0">-</div></div>';
+  document.getElementById('top3').innerHTML = '<div class="top-card rank1"><div style="color:var(--muted);font-size:12px;text-align:center;padding:20px 0">-</div></div><div class="top-card rank2"><div style="color:var(--muted);font-size:12px;text-align:center;padding:20px 0">-</div></div><div class="top-card rank3"><div style="color:var(--muted);font-size:12px;text-align:center;padding:20px 0">-</div></div><div class="top-card rank4"><div style="color:var(--muted);font-size:12px;text-align:center;padding:20px 0">-</div></div>';
   document.getElementById('m-lucro').textContent = '-';
   document.getElementById('m-lucro-jogo').textContent = 'carregue o arquivo';
   document.getElementById('m-pct').textContent = '-';
@@ -2779,8 +2783,8 @@ function atualizarResumoDepositos(cardIdx,stakeCasa,stakeEmpate,stakeFora){
 
 function renderTop3(){
   const a=parseFloat(document.getElementById('apostaInput').value)||5000;
-  const ranks=['rank1','rank2','rank3'],ords=['','',''];
-  document.getElementById('top3').innerHTML=allData.slice(0,3).map((r,i)=>{
+  const ranks=['rank1','rank2','rank3','rank4'],ords=['','','',''];
+  document.getElementById('top3').innerHTML=allData.slice(0,4).map((r,i)=>{
     const lucro=r.retorno-a;
     const dataTexto=String(r.data||'').trim();
     const partesData=dataTexto.split(/\s+/);
