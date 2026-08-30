@@ -396,6 +396,15 @@ main{padding:28px 0;}
 .top-lucro-val{font-family:var(--mono);font-size:15px;font-weight:600;color:var(--text);}
 .top-lucro-pct{font-family:var(--mono);font-size:20px;font-weight:700;color:var(--pct);background:var(--pct-dim);border:1px solid color-mix(in srgb,var(--pct) 30%,transparent);padding:3px 11px;border-radius:7px;letter-spacing:-0.01em;}
 .top-distrib{font-size:15px;color:var(--muted);text-align:right;line-height:1.7;}
+.multi-stakes-wrap{min-width:0;overflow-x:auto;padding-bottom:2px}
+.multi-stakes-grid{display:grid;grid-template-columns:42px repeat(3,minmax(68px,1fr)) minmax(78px,1fr);gap:5px;align-items:center;min-width:335px}
+.multi-stakes-head{font-family:var(--mono);font-size:9px;color:var(--muted);text-transform:uppercase;letter-spacing:.04em;text-align:center;white-space:nowrap}
+.multi-stakes-label{font-size:10px;text-align:left;text-transform:uppercase;letter-spacing:.04em}
+.multi-stakes-label.casa{color:var(--casa)}.multi-stakes-label.emp{color:var(--emp)}.multi-stakes-label.fora{color:var(--fora)}
+.multi-stake-input{width:100%;min-width:0;font-family:var(--mono);font-size:11px;padding:5px 4px;background:var(--bg3);border:1px solid var(--border2);border-radius:5px;text-align:right}
+.multi-stake-input.casa{color:var(--casa);border-color:color-mix(in srgb,var(--casa) 45%,transparent)}.multi-stake-input.emp{color:var(--emp);border-color:color-mix(in srgb,var(--emp) 40%,transparent)}.multi-stake-input.fora{color:var(--fora);border-color:color-mix(in srgb,var(--fora) 45%,transparent)}
+.multi-stake-total{font-family:var(--mono);font-size:11px;text-align:right;padding:5px 4px;border-radius:5px;background:color-mix(in srgb,var(--bg3) 75%,transparent);color:var(--text);white-space:nowrap}
+@media(max-width:720px){.top-financial{display:block}.top-financial>div:first-child{display:flex;gap:10px;align-items:center;margin-bottom:10px}.multi-stakes-wrap{width:100%}}
 
 .grid2{display:grid;grid-template-columns:1fr 340px;gap:20px;align-items:start;margin-bottom:28px;}
 @media(max-width:900px){.grid2{grid-template-columns:1fr;}}
@@ -2581,85 +2590,58 @@ function renderMetrics(){
   document.getElementById('m-margem').className='metric-value '+(avgM>=0?'green':'amber');
 }
 
+function stakeInputId(tipo,cardIdx,jogador){
+  return `stake-${tipo}-${cardIdx}-${jogador}`;
+}
+
+function lerStakeJogador(cardIdx,jogador){
+  return {
+    casa:parseFloat(document.getElementById(stakeInputId('casa',cardIdx,jogador))?.value)||0,
+    emp:parseFloat(document.getElementById(stakeInputId('emp',cardIdx,jogador))?.value)||0,
+    fora:parseFloat(document.getElementById(stakeInputId('fora',cardIdx,jogador))?.value)||0,
+  };
+}
+
+function recalcularTotaisCard(cardIdx){
+  const odds={casa:parseFloat(document.getElementById(`odd-casa-${cardIdx}`)?.value)||1,emp:parseFloat(document.getElementById(`odd-emp-${cardIdx}`)?.value)||1,fora:parseFloat(document.getElementById(`odd-fora-${cardIdx}`)?.value)||1};
+  const jogadores=[1,2,3].map(j=>lerStakeJogador(cardIdx,j));
+  const totais={casa:0,emp:0,fora:0};
+  let totalGanho=0;
+  jogadores.forEach(stakes=>{
+    totais.casa+=stakes.casa; totais.emp+=stakes.emp; totais.fora+=stakes.fora;
+    if(stakes.casa+stakes.emp+stakes.fora>0) totalGanho+=Math.min(stakes.casa*odds.casa,stakes.emp*odds.emp,stakes.fora*odds.fora);
+  });
+  ['casa','emp','fora'].forEach(tipo=>{const el=document.getElementById(`stake-total-${tipo}-${cardIdx}`);if(el)el.textContent=fmtDec(totais[tipo]);});
+  const totalJogado=totais.casa+totais.emp+totais.fora;
+  const lucro=totalGanho-totalJogado;
+  const lucroPct=totalJogado>0?(lucro/totalJogado)*100:0;
+  const elLucroVal=document.getElementById(`lucro-val-${cardIdx}`),elLucroPct=document.getElementById(`lucro-pct-${cardIdx}`),elTotalJogado=document.getElementById(`total-jogado-${cardIdx}`),elTotalGanho=document.getElementById(`total-ganho-${cardIdx}`);
+  if(elLucroVal)elLucroVal.textContent=(lucro>=0?'+':'')+fmtDec(lucro);
+  if(elLucroPct)elLucroPct.textContent=(lucroPct>=0?'+':'')+lucroPct.toFixed(2)+'%';
+  if(elTotalJogado)elTotalJogado.textContent='R$ '+totalJogado.toLocaleString('pt-BR',{minimumFractionDigits:2,maximumFractionDigits:2});
+  if(elTotalGanho)elTotalGanho.textContent='R$ '+totalGanho.toLocaleString('pt-BR',{minimumFractionDigits:2,maximumFractionDigits:2});
+  atualizarResumoDepositos(cardIdx,totais.casa,totais.emp,totais.fora);
+}
+
 function recalculateCard(cardIdx){
-  const a=parseFloat(document.getElementById('apostaInput').value)||5000;
-  const casa=parseFloat(document.getElementById(`odd-casa-${cardIdx}`).value);
-  const empate=parseFloat(document.getElementById(`odd-emp-${cardIdx}`).value);
-  const fora=parseFloat(document.getElementById(`odd-fora-${cardIdx}`).value);
-
-  const dutchingTotal=a/(1/casa+1/empate+1/fora);
-  const v_casa=dutchingTotal/casa;
-  const v_emp=dutchingTotal/empate;
-  const v_fora=dutchingTotal/fora;
-
-  const retorno_casa=v_casa*casa;
-  const retorno_emp=v_emp*empate;
-  const retorno_fora=v_fora*fora;
-  const retorno=Math.min(retorno_casa,retorno_emp,retorno_fora);
-  const lucro=retorno-a;
-  const lucro_pct=(lucro/a)*100;
-
-  document.getElementById(`lucro-val-${cardIdx}`).textContent=(lucro>=0?'+':'')+fmtDec(lucro);
-  document.getElementById(`lucro-pct-${cardIdx}`).textContent=(lucro_pct>=0?'+':'')+lucro_pct.toFixed(2)+'%';
-
-  // Atualiza inputs de stake tambem
-  const elStakeCasa = document.getElementById(`stake-casa-${cardIdx}`);
-  const elStakeEmp  = document.getElementById(`stake-emp-${cardIdx}`);
-  const elStakeFora = document.getElementById(`stake-fora-${cardIdx}`);
-  if(elStakeCasa) elStakeCasa.value = v_casa.toFixed(2);
-  if(elStakeEmp)  elStakeEmp.value  = v_emp.toFixed(2);
-  if(elStakeFora) elStakeFora.value = v_fora.toFixed(2);
-  const elTotalJogado = document.getElementById(`total-jogado-${cardIdx}`);
-  if(elTotalJogado) elTotalJogado.textContent = 'R$ ' + a.toLocaleString('pt-BR',{minimumFractionDigits:2,maximumFractionDigits:2});
-  const elTotalGanho = document.getElementById(`total-ganho-${cardIdx}`);
-  if(elTotalGanho) elTotalGanho.textContent = 'R$ ' + retorno.toLocaleString('pt-BR',{minimumFractionDigits:2,maximumFractionDigits:2});
-  atualizarResumoDepositos(cardIdx,v_casa,v_emp,v_fora);
-
+  const aposta=parseFloat(document.getElementById('apostaInput').value)||5000;
+  const casa=parseFloat(document.getElementById(`odd-casa-${cardIdx}`).value),empate=parseFloat(document.getElementById(`odd-emp-${cardIdx}`).value),fora=parseFloat(document.getElementById(`odd-fora-${cardIdx}`).value);
+  const retorno=aposta/(1/casa+1/empate+1/fora);
+  const valores={casa:retorno/casa,emp:retorno/empate,fora:retorno/fora};
+  Object.entries(valores).forEach(([tipo,valor])=>{const el=document.getElementById(stakeInputId(tipo,cardIdx,1));if(el)el.value=valor.toFixed(2);});
+  recalcularTotaisCard(cardIdx);
 }
 
-/* ===============================================================
-   DUTCHING COM STAKES EDITAVEIS (Casa/Emp/Fora)
-=============================================================== */
-function recalcDutchingStake(cardIdx, campo){
-  const casa   = parseFloat(document.getElementById(`odd-casa-${cardIdx}`)?.value)  || 1;
-  const empate = parseFloat(document.getElementById(`odd-emp-${cardIdx}`)?.value)   || 1;
-  const fora   = parseFloat(document.getElementById(`odd-fora-${cardIdx}`)?.value)  || 1;
-
-  const stakeCasa = parseFloat(document.getElementById(`stake-casa-${cardIdx}`)?.value) || 0;
-  const stakeEmp  = parseFloat(document.getElementById(`stake-emp-${cardIdx}`)?.value)  || 0;
-  const stakeFora = parseFloat(document.getElementById(`stake-fora-${cardIdx}`)?.value) || 0;
-
-  let retorno;
-  if(campo==='casa')      retorno = stakeCasa * casa;
-  else if(campo==='emp')  retorno = stakeEmp  * empate;
-  else                    retorno = stakeFora * fora;
-
-  const newCasa = retorno / casa;
-  const newEmp  = retorno / empate;
-  const newFora = retorno / fora;
-  const total   = newCasa + newEmp + newFora;
-  const lucro   = retorno - total;
-  const lucroPct= total > 0 ? (lucro / total) * 100 : 0;
-
-  // Atualiza APENAS os outros dois campos (nao o que esta sendo editado)
-  const elCasa = document.getElementById(`stake-casa-${cardIdx}`);
-  const elEmp  = document.getElementById(`stake-emp-${cardIdx}`);
-  const elFora = document.getElementById(`stake-fora-${cardIdx}`);
-  if(campo!=='casa' && elCasa) elCasa.value = newCasa.toFixed(2);
-  if(campo!=='emp'  && elEmp)  elEmp.value  = newEmp.toFixed(2);
-  if(campo!=='fora' && elFora) elFora.value = newFora.toFixed(2);
-
-  const elLucroVal = document.getElementById(`lucro-val-${cardIdx}`);
-  const elLucroPct = document.getElementById(`lucro-pct-${cardIdx}`);
-  if(elLucroVal) elLucroVal.textContent = (lucro>=0?'+':'') + fmtDec(lucro);
-  if(elLucroPct) elLucroPct.textContent = (lucroPct>=0?'+':'') + lucroPct.toFixed(2) + '%';
-  const elTotalJogadoStake = document.getElementById(`total-jogado-${cardIdx}`);
-  if(elTotalJogadoStake) elTotalJogadoStake.textContent = 'R$ ' + total.toLocaleString('pt-BR',{minimumFractionDigits:2,maximumFractionDigits:2});
-  const elTotalGanhoStake = document.getElementById(`total-ganho-${cardIdx}`);
-  if(elTotalGanhoStake) elTotalGanhoStake.textContent = 'R$ ' + retorno.toLocaleString('pt-BR',{minimumFractionDigits:2,maximumFractionDigits:2});
-  atualizarResumoDepositos(cardIdx,newCasa,newEmp,newFora);
-
+function recalcDutchingStakePlayer(cardIdx,jogador,campo){
+  const odds={casa:parseFloat(document.getElementById(`odd-casa-${cardIdx}`)?.value)||1,emp:parseFloat(document.getElementById(`odd-emp-${cardIdx}`)?.value)||1,fora:parseFloat(document.getElementById(`odd-fora-${cardIdx}`)?.value)||1};
+  const atual=lerStakeJogador(cardIdx,jogador);
+  const retorno=atual[campo]*odds[campo];
+  const novos={casa:retorno/odds.casa,emp:retorno/odds.emp,fora:retorno/odds.fora};
+  ['casa','emp','fora'].forEach(tipo=>{if(tipo===campo)return;const el=document.getElementById(stakeInputId(tipo,cardIdx,jogador));if(el)el.value=novos[tipo].toFixed(2);});
+  recalcularTotaisCard(cardIdx);
 }
+
+function recalcDutchingStake(cardIdx,campo){recalcDutchingStakePlayer(cardIdx,1,campo);}
 
 function recalcDutchingStakeTopLinks(idx, campo, oddCasa, oddEmp, oddFora){
   const elCasa = document.getElementById(`tl-stake-casa-${idx}`);
@@ -2820,18 +2802,15 @@ function renderTop3(){
           <div class="top-lucro-val" id="lucro-val-${i}">${lucro>=0?'+':''}${fmtDec(lucro)}</div>
           <div class="top-lucro-pct" id="lucro-pct-${i}">${r.lucro_pct>=0?'+':''}${r.lucro_pct.toFixed(2)}%</div>
         </div>
-        <div class="top-distrib">
-          <div style="display:flex;align-items:center;gap:6px;margin-bottom:4px">
-            <input type="number" id="stake-casa-${i}" class="stake-input" step="0.01" min="0" value="${r.v_casa.toFixed(2)}" oninput="recalcDutchingStake(${i},'casa')" style="width:80px;font-family:var(--mono);font-size:13px;padding:4px 6px;background:var(--bg3);border:1.5px solid color-mix(in srgb,var(--casa) 55%,transparent);border-radius:6px;color:var(--casa);text-align:right">
-            <span style="color:var(--casa);font-size:12px">casa</span>
-          </div>
-          <div style="display:flex;align-items:center;gap:6px;margin-bottom:4px">
-            <input type="number" id="stake-emp-${i}" class="stake-input" step="0.01" min="0" value="${r.v_emp.toFixed(2)}" oninput="recalcDutchingStake(${i},'emp')" style="width:80px;font-family:var(--mono);font-size:13px;padding:4px 6px;background:var(--bg3);border:1.5px solid color-mix(in srgb,var(--emp) 45%,transparent);border-radius:6px;color:var(--emp);text-align:right">
-            <span style="color:var(--emp);font-size:12px">emp.</span>
-          </div>
-          <div style="display:flex;align-items:center;gap:6px">
-            <input type="number" id="stake-fora-${i}" class="stake-input" step="0.01" min="0" value="${r.v_fora.toFixed(2)}" oninput="recalcDutchingStake(${i},'fora')" style="width:80px;font-family:var(--mono);font-size:13px;padding:4px 6px;background:var(--bg3);border:1.5px solid color-mix(in srgb,var(--fora) 55%,transparent);border-radius:6px;color:var(--fora);text-align:right">
-            <span style="color:var(--fora);font-size:12px">fora</span>
+        <div class="multi-stakes-wrap" aria-label="Distribuição por jogador">
+          <div class="multi-stakes-grid">
+            <span></span><span class="multi-stakes-head">Jog. 1</span><span class="multi-stakes-head">Jog. 2</span><span class="multi-stakes-head">Jog. 3</span><span class="multi-stakes-head">Total</span>
+            <span class="multi-stakes-label casa">Casa</span>
+            <input type="number" id="stake-casa-${i}-1" class="multi-stake-input casa" step="0.01" min="0" value="${r.v_casa.toFixed(2)}" oninput="recalcDutchingStakePlayer(${i},1,'casa')"><input type="number" id="stake-casa-${i}-2" class="multi-stake-input casa" step="0.01" min="0" value="0.00" oninput="recalcDutchingStakePlayer(${i},2,'casa')"><input type="number" id="stake-casa-${i}-3" class="multi-stake-input casa" step="0.01" min="0" value="0.00" oninput="recalcDutchingStakePlayer(${i},3,'casa')"><span class="multi-stake-total" id="stake-total-casa-${i}">${fmtDec(r.v_casa)}</span>
+            <span class="multi-stakes-label emp">Emp.</span>
+            <input type="number" id="stake-emp-${i}-1" class="multi-stake-input emp" step="0.01" min="0" value="${r.v_emp.toFixed(2)}" oninput="recalcDutchingStakePlayer(${i},1,'emp')"><input type="number" id="stake-emp-${i}-2" class="multi-stake-input emp" step="0.01" min="0" value="0.00" oninput="recalcDutchingStakePlayer(${i},2,'emp')"><input type="number" id="stake-emp-${i}-3" class="multi-stake-input emp" step="0.01" min="0" value="0.00" oninput="recalcDutchingStakePlayer(${i},3,'emp')"><span class="multi-stake-total" id="stake-total-emp-${i}">${fmtDec(r.v_emp)}</span>
+            <span class="multi-stakes-label fora">Fora</span>
+            <input type="number" id="stake-fora-${i}-1" class="multi-stake-input fora" step="0.01" min="0" value="${r.v_fora.toFixed(2)}" oninput="recalcDutchingStakePlayer(${i},1,'fora')"><input type="number" id="stake-fora-${i}-2" class="multi-stake-input fora" step="0.01" min="0" value="0.00" oninput="recalcDutchingStakePlayer(${i},2,'fora')"><input type="number" id="stake-fora-${i}-3" class="multi-stake-input fora" step="0.01" min="0" value="0.00" oninput="recalcDutchingStakePlayer(${i},3,'fora')"><span class="multi-stake-total" id="stake-total-fora-${i}">${fmtDec(r.v_fora)}</span>
           </div>
         </div>
       </div>
