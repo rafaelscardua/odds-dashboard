@@ -379,7 +379,16 @@ main{padding:28px 0;}
 .top-winner-link.casa{color:var(--casa);}
 .top-winner-link.empate{color:var(--emp);}
 .top-winner-link.fora{color:var(--fora);}
+.top-winner-link[data-card-idx]{cursor:context-menu;}
+.top-winner-link.is-excluded{text-decoration:line-through;text-decoration-thickness:1.5px;opacity:.52;filter:saturate(.35);}
+.top-winner-link.is-excluded:hover{opacity:.82;}
+.top-winner-arrow{font-family:var(--mono);color:var(--muted);font-size:10px;}
 .top-winner-empty{color:var(--muted);}
+.bet-context-menu{position:fixed;z-index:10050;display:none;min-width:190px;padding:6px;background:var(--bg2);border:1px solid var(--border2);border-radius:8px;box-shadow:0 16px 42px rgba(0,0,0,.48);}
+.bet-context-menu.visible{display:block;}
+.bet-context-menu button{width:100%;padding:9px 11px;border:0;border-radius:6px;background:transparent;color:var(--text);font:500 11px var(--mono);text-align:left;cursor:pointer;}
+.bet-context-menu button:hover{background:rgba(239,68,68,.14);color:#fca5a5;}
+.bet-context-menu.reactivate button:hover{background:rgba(45,212,191,.14);color:#5eead4;}
 .top-odds{display:flex;gap:6px;margin-bottom:12px;flex-wrap:wrap;}
 .odd-tag{font-family:var(--mono);font-size:12px;font-weight:600;padding:4px 10px;border-radius:6px;letter-spacing:0.01em;}
 .odd-casa{background:var(--casa-dim);color:var(--casa);border:1px solid color-mix(in srgb,var(--casa) 35%,transparent);}
@@ -1400,6 +1409,9 @@ th .btn-icon{width:11px;height:11px;vertical-align:-1px;opacity:0.7;margin-left:
 </div>
 
 <div class="toast" id="toast"></div>
+<div class="bet-context-menu" id="betContextMenu" role="menu" aria-hidden="true">
+  <button type="button" id="betContextAction" onclick="executarAcaoMenuCasa()"></button>
+</div>
 
 <script>
 /* ===============================================================
@@ -2372,6 +2384,8 @@ let allSitesDataMaster=[];   // master: linhas brutas (aba 3) de TODOS os arquiv
 let allDataRawMaster=[];     // master: linhas brutas (aba 1) de TODOS os arquivos carregados
 let campeonatosCarregados=[];// nomes dos campeonatos ja carregados (na ordem de carregamento)
 let filtroCampeonatoAtual='__todos__';
+const exclusoesPorCard=new Map();
+let contextoCasaAtual=null;
 
 function nomeCampeonatoDoArquivo(filename){
   let n=filename.replace(/\.xlsx$/i,'').replace(/_sincronizado$/i,'');
@@ -2551,9 +2565,10 @@ function renderDados(dados){
 
   // Recalcula dutching para dados consolidados
   allData=dados.map(r=>{
-    const inv=1/r.casa+1/r.empate+1/r.fora;
-    return{...r,
-      v_casa:aposta/(inv*r.casa),v_emp:aposta/(inv*r.empate),v_fora:aposta/(inv*r.fora),
+    const ajustado=ajustarRegistroComExclusoes({...r});
+    const inv=1/ajustado.casa+1/ajustado.empate+1/ajustado.fora;
+    return{...ajustado,
+      v_casa:aposta/(inv*ajustado.casa),v_emp:aposta/(inv*ajustado.empate),v_fora:aposta/(inv*ajustado.fora),
       retorno:aposta/inv,lucro_pct:(aposta/inv-aposta)/aposta*100
     };
   }).sort((a,b)=>compararGanho(a,b,-1));
@@ -2751,15 +2766,196 @@ function recalcLucroMaxHedge(cardIdx, scenIdx, tipo){
 
 
 
-function renderTopWinnerLinks(sites,tipo){
+function escaparHtml(valor){
+  return String(valor??'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#039;');
+}
+
+function normalizarNomeCasa(nome){
+  return String(nome||'').trim().toLocaleLowerCase('pt-BR');
+}
+
+function chaveExclusaoCard(r){
+  return `${r.campeonato||''}|${r.jogo_limpo||normalizeJogo(r.jogo||'')}|${r.data||''}`;
+}
+
+function obterEstadoExclusao(r){
+  const chave=chaveExclusaoCard(r);
+  if(!exclusoesPorCard.has(chave)){
+    exclusoesPorCard.set(chave,{excluidas:new Set(),riscadas:{casa:new Map(),empate:new Map(),fora:new Map()}});
+  }
+  return exclusoesPorCard.get(chave);
+}
+
+function prepararOpcoesResultado(linhas,tipo){
+  const campoLink=`${tipo}_link`;
+  const porCasa=new Map();
+  (linhas||[]).forEach(linha=>{
+    const site=String(linha.site||'').trim();
+    const odd=Number(linha[tipo]);
+    if(!site||!Number.isFinite(odd)||odd<=1) return;
+    const chave=normalizarNomeCasa(site);
+    const atual=porCasa.get(chave);
+    if(!atual||odd>atual.odd) porCasa.set(chave,{...linha,site,odd,[tipo]:odd,[campoLink]:linha[campoLink]||'#'});
+  });
+  return [...porCasa.values()].sort((a,b)=>b.odd-a.odd||a.site.localeCompare(b.site,'pt-BR'));
+}
+
+function escolherResultadoCard(r,tipo,estado){
+  let opcoes=Array.isArray(r[`${tipo}_opcoes`])?r[`${tipo}_opcoes`]:[];
+  if(!opcoes.length){
+    opcoes=deduplicarSitesOdds(r[`${tipo}_sites`]||[],`${tipo}_link`).map(s=>({...s,odd:Number(r[tipo])}));
+  }
+  const disponiveis=opcoes.filter(op=>!estado.excluidas.has(normalizarNomeCasa(op.site)));
+  if(!disponiveis.length) return null;
+  const maior=Math.max(...disponiveis.map(op=>Number(op.odd)||0));
+  const sites=deduplicarSitesOdds(disponiveis.filter(op=>Math.abs((Number(op.odd)||0)-maior)<0.01),`${tipo}_link`);
+  return{odd:maior,sites};
+}
+
+function calcularEscolhasCard(r,estado=obterEstadoExclusao(r)){
+  return{
+    casa:escolherResultadoCard(r,'casa',estado),
+    empate:escolherResultadoCard(r,'empate',estado),
+    fora:escolherResultadoCard(r,'fora',estado)
+  };
+}
+
+function aplicarEscolhasRegistro(r,escolhas){
+  ['casa','empate','fora'].forEach(tipo=>{
+    const escolha=escolhas[tipo];
+    if(!escolha) return;
+    r[tipo]=escolha.odd;
+    r[`${tipo}_sites`]=escolha.sites;
+    r[`${tipo}_origem`]=escolha.sites[0]?.site||'';
+    r[`${tipo}_link`]=escolha.sites[0]?.[`${tipo}_link`]||'#';
+  });
+  return r;
+}
+
+function ajustarRegistroComExclusoes(r){
+  const escolhas=calcularEscolhasCard(r);
+  return Object.values(escolhas).every(Boolean)?aplicarEscolhasRegistro(r,escolhas):r;
+}
+
+function atualizarCardAposExclusao(cardIdx,escolhas){
+  const r=allData[cardIdx];
+  if(!r) return;
+  const totaisJogadores=[1,2,3].map(j=>{
+    const stakes=lerStakeJogador(cardIdx,j);
+    return stakes.casa+stakes.emp+stakes.fora;
+  });
+  aplicarEscolhasRegistro(r,escolhas);
+  const odds={casa:r.casa,emp:r.empate,fora:r.fora};
+  [['casa',r.casa],['emp',r.empate],['fora',r.fora]].forEach(([tipo,odd])=>{
+    const el=document.getElementById(`odd-${tipo}-${cardIdx}`);
+    if(el) el.value=Number(odd).toFixed(2);
+  });
+  [['casa',r.casa_sites],['empate',r.empate_sites],['fora',r.fora_sites]].forEach(([tipo,sites])=>{
+    const el=document.getElementById(`winner-${tipo}-${cardIdx}`);
+    if(el) el.innerHTML=renderTopWinnerLinks(sites,tipo,cardIdx,r);
+  });
+  const inv=1/odds.casa+1/odds.emp+1/odds.fora;
+  totaisJogadores.forEach((total,indice)=>{
+    const jogador=indice+1;
+    const retorno=total>0?total/inv:0;
+    const valores={casa:retorno/odds.casa,emp:retorno/odds.emp,fora:retorno/odds.fora};
+    Object.entries(valores).forEach(([tipo,valor])=>{
+      const el=document.getElementById(stakeInputId(tipo,cardIdx,jogador));
+      if(el) el.value=valor.toFixed(2);
+    });
+  });
+  const capital=parseFloat(document.getElementById('apostaInput').value)||5000;
+  r.retorno=capital/inv;
+  r.lucro_pct=(r.retorno-capital)/capital*100;
+  r.v_casa=r.retorno/r.casa;r.v_emp=r.retorno/r.empate;r.v_fora=r.retorno/r.fora;
+  recalcularTotaisCard(cardIdx);
+}
+
+function alterarExclusaoCasa(cardIdx,site,reativar){
+  const r=allData[cardIdx];
+  if(!r) return;
+  const estado=obterEstadoExclusao(r);
+  const chaveSite=normalizarNomeCasa(site);
+  if(reativar){
+    estado.excluidas.delete(chaveSite);
+    ['casa','empate','fora'].forEach(tipo=>estado.riscadas[tipo].delete(chaveSite));
+  }else{
+    const antes=calcularEscolhasCard(r,estado);
+    ['casa','empate','fora'].forEach(tipo=>{
+      const afetada=antes[tipo]?.sites.find(s=>normalizarNomeCasa(s.site)===chaveSite);
+      if(afetada) estado.riscadas[tipo].set(chaveSite,afetada);
+    });
+    estado.excluidas.add(chaveSite);
+  }
+  const escolhas=calcularEscolhasCard(r,estado);
+  if(!Object.values(escolhas).every(Boolean)){
+    if(!reativar){
+      estado.excluidas.delete(chaveSite);
+      ['casa','empate','fora'].forEach(tipo=>estado.riscadas[tipo].delete(chaveSite));
+    }
+    toast('Não existe outra casa disponível para todos os resultados deste card.','error',5000);
+    return;
+  }
+  atualizarCardAposExclusao(cardIdx,escolhas);
+  toast(reativar?`${site} reativada neste card.`:`${site} eliminada somente deste card.`,'success');
+}
+
+function fecharMenuCasa(){
+  const menu=document.getElementById('betContextMenu');
+  menu.classList.remove('visible','reactivate');
+  menu.setAttribute('aria-hidden','true');
+  contextoCasaAtual=null;
+}
+
+function abrirMenuCasa(evento,alvo){
+  evento.preventDefault();
+  contextoCasaAtual={cardIdx:Number(alvo.dataset.cardIdx),tipo:alvo.dataset.tipo,site:alvo.dataset.site,excluida:alvo.dataset.excluida==='1'};
+  const menu=document.getElementById('betContextMenu');
+  const botao=document.getElementById('betContextAction');
+  botao.textContent=contextoCasaAtual.excluida?'Retirar exclusão desta casa':'Eliminar esta casa';
+  menu.classList.toggle('reactivate',contextoCasaAtual.excluida);
+  menu.classList.add('visible');
+  menu.setAttribute('aria-hidden','false');
+  const largura=menu.offsetWidth,altura=menu.offsetHeight;
+  menu.style.left=Math.min(evento.clientX,window.innerWidth-largura-8)+'px';
+  menu.style.top=Math.min(evento.clientY,window.innerHeight-altura-8)+'px';
+}
+
+function executarAcaoMenuCasa(){
+  if(!contextoCasaAtual) return;
+  const acao=contextoCasaAtual.excluida?'reativar':'eliminar';
+  const atual={...contextoCasaAtual};
+  fecharMenuCasa();
+  if(!confirm(`Deseja ${acao} ${atual.site} somente neste card?`)) return;
+  alterarExclusaoCasa(atual.cardIdx,atual.site,atual.excluida);
+}
+
+document.addEventListener('contextmenu',evento=>{
+  const alvo=evento.target.closest('.top-winner-link[data-card-idx]');
+  if(alvo) abrirMenuCasa(evento,alvo);
+});
+document.addEventListener('click',evento=>{if(!evento.target.closest('#betContextMenu')) fecharMenuCasa();});
+document.addEventListener('keydown',evento=>{if(evento.key==='Escape') fecharMenuCasa();});
+window.addEventListener('resize',fecharMenuCasa);
+window.addEventListener('scroll',fecharMenuCasa,true);
+
+function renderTopWinnerLinks(sites,tipo,cardIdx=null,r=null){
   const vencedoras=deduplicarSitesOdds(sites||[],`${tipo}_link`);
-  if(!vencedoras.length) return '<span class="top-winner-empty">não informado</span>';
-  return vencedoras.map(s=>{
+  const estado=r?obterEstadoExclusao(r):null;
+  const riscadas=estado?[...estado.riscadas[tipo].values()]:[];
+  const dados=(site,excluida)=>cardIdx===null?'':` data-card-idx="${cardIdx}" data-tipo="${tipo}" data-site="${escaparHtml(site)}" data-excluida="${excluida?'1':'0'}"`;
+  const htmlRiscadas=riscadas.map(s=>{
+    const nome=String(s.site||'?');
+    return `<span class="top-winner-link ${tipo} is-excluded"${dados(nome,true)} title="Clique com o botão direito para reativar">${escaparHtml(nome)}</span>`;
+  }).join('');
+  const htmlAtivas=vencedoras.map(s=>{
     const nome=String(s.site||'?');
     const link=String(s[`${tipo}_link`]||'#');
-    if(!/^https?:\/\//i.test(link)) return `<span class="top-winner-link ${tipo}">${nome}</span>`;
-    return `<a class="top-winner-link ${tipo}" href="${link}" target="_blank" rel="noopener noreferrer" title="Abrir ${nome}">${nome}</a>`;
+    if(!/^https?:\/\//i.test(link)) return `<span class="top-winner-link ${tipo}"${dados(nome,false)}>${escaparHtml(nome)}</span>`;
+    return `<a class="top-winner-link ${tipo}"${dados(nome,false)} href="${escaparHtml(link)}" target="_blank" rel="noopener noreferrer" title="Abrir ${escaparHtml(nome)}">${escaparHtml(nome)}</a>`;
   }).join('');
+  if(!htmlRiscadas&&!htmlAtivas) return '<span class="top-winner-empty">não informado</span>';
+  return htmlRiscadas+(htmlRiscadas&&htmlAtivas?'<span class="top-winner-arrow">→</span>':'')+htmlAtivas;
 }
 
 function sitePrincipalResultado(r,tipo){
@@ -2821,9 +3017,9 @@ function renderTop3(){
       <div class="card-total-jogado"><div><span>Valor total jogado</span><strong id="total-jogado-${i}">R$ ${a.toLocaleString('pt-BR',{minimumFractionDigits:2,maximumFractionDigits:2})}</strong></div><div><span>Valor total ganho</span><strong class="total-ganho" id="total-ganho-${i}">R$ ${r.retorno.toLocaleString('pt-BR',{minimumFractionDigits:2,maximumFractionDigits:2})}</strong></div></div>
       <div class="top-bet-resumo">
         <div class="top-winners" aria-label="Casas com as melhores odds">
-          <div class="top-winner-row"><span class="top-winner-label">Casa:</span><span class="top-winner-links">${renderTopWinnerLinks(r.casa_sites,'casa')}</span></div>
-          <div class="top-winner-row"><span class="top-winner-label">Empate:</span><span class="top-winner-links">${renderTopWinnerLinks(r.empate_sites,'empate')}</span></div>
-          <div class="top-winner-row"><span class="top-winner-label">Fora:</span><span class="top-winner-links">${renderTopWinnerLinks(r.fora_sites,'fora')}</span></div>
+          <div class="top-winner-row"><span class="top-winner-label">Casa:</span><span class="top-winner-links" id="winner-casa-${i}">${renderTopWinnerLinks(r.casa_sites,'casa',i,r)}</span></div>
+          <div class="top-winner-row"><span class="top-winner-label">Empate:</span><span class="top-winner-links" id="winner-empate-${i}">${renderTopWinnerLinks(r.empate_sites,'empate',i,r)}</span></div>
+          <div class="top-winner-row"><span class="top-winner-label">Fora:</span><span class="top-winner-links" id="winner-fora-${i}">${renderTopWinnerLinks(r.fora_sites,'fora',i,r)}</span></div>
         </div>
         <div class="top-deposit-summary"><div class="top-deposit-title">Depósito por bet</div><div id="depositos-card-${i}">${renderResumoDepositos(r,r.v_casa,r.v_emp,r.v_fora)}</div></div>
       </div>
@@ -3375,18 +3571,26 @@ function consolidarOdds(rawData,metadadosPorJogo=new Map()){
         && (s.campeonato||'')===(grupo.campeonato||'')
         && (s.data||'')===(grupo.data||'');
     };
+    const linhasTodas=(allSitesData||[]).filter(mesmoJogo);
     const casaSites=deduplicarSitesOdds(
-      (allSitesData||[]).filter(s=>mesmoJogo(s)&&Math.abs(s.casa-maxCasa)<0.01),
+      linhasTodas.filter(s=>Math.abs(s.casa-maxCasa)<0.01),
       'casa_link'
     );
     const empateSites=deduplicarSitesOdds(
-      (allSitesData||[]).filter(s=>mesmoJogo(s)&&Math.abs(s.empate-maxEmpate)<0.01),
+      linhasTodas.filter(s=>Math.abs(s.empate-maxEmpate)<0.01),
       'empate_link'
     );
     const foraSites=deduplicarSitesOdds(
-      (allSitesData||[]).filter(s=>mesmoJogo(s)&&Math.abs(s.fora-maxFora)<0.01),
+      linhasTodas.filter(s=>Math.abs(s.fora-maxFora)<0.01),
       'fora_link'
     );
+    const opcoesComFallback=(tipo,sites,odd)=>{
+      const opcoes=prepararOpcoesResultado(linhasTodas,tipo);
+      return opcoes.length?opcoes:sites.map(s=>({...s,odd,[tipo]:odd}));
+    };
+    const casaOpcoes=opcoesComFallback('casa',casaSites,maxCasa);
+    const empateOpcoes=opcoesComFallback('empate',empateSites,maxEmpate);
+    const foraOpcoes=opcoesComFallback('fora',foraSites,maxFora);
 
     // Contar TODAS as casas que oferecem este jogo
     // A coluna SITE pode ter multiplos sites separados por " & "
@@ -3420,6 +3624,7 @@ function consolidarOdds(rawData,metadadosPorJogo=new Map()){
       casa:maxCasa,casa_origem:casaSites[0]?.site||'',casa_link:casaSites[0]?.casa_link||'#',casa_sites:casaSites,
       empate:maxEmpate,empate_origem:empateSites[0]?.site||'',empate_link:empateSites[0]?.empate_link||'#',empate_sites:empateSites,
       fora:maxFora,fora_origem:foraSites[0]?.site||'',fora_link:foraSites[0]?.fora_link||'#',fora_sites:foraSites,
+      casa_opcoes:casaOpcoes,empate_opcoes:empateOpcoes,fora_opcoes:foraOpcoes,
       site:Array.from(sitesSet).join(' & '),
       totalCasas:totalCasas
     };
