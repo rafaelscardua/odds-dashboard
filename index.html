@@ -3119,14 +3119,13 @@ function renderJogos(){
   }
 
   // Campeonato + confronto + data distinguem reencontros legitimos.
-  // Usa jogo_limpo quando disponivel (Excel gerado apos a correcao); cai pro
-  // normalizador JS antigo so se o arquivo for de uma versao anterior sem essa coluna.
+  // Revalida também o JOGO_LIMPO de arquivos antigos para aplicar aliases novos.
   const jogosMap=new Map();
   allSitesData.forEach(r=>{
-    const jogoNorm=r.jogo_limpo||normalizarNomeJogo(r.jogo);
+    const jogoNorm=normalizeJogo(r.jogo_limpo||normalizarNomeJogo(r.jogo));
     const key=chaveEvento(r.campeonato||'',jogoNorm,r.data||'');
     if(!jogosMap.has(key)){
-      jogosMap.set(key,{jogo:r.jogo,jogoNorm:jogoNorm,campeonato:r.campeonato||'',data:r.data||'',horas:new Set(),sites:new Map()});
+      jogosMap.set(key,{jogo:nomeExibicaoJogo(r.jogo,jogoNorm),jogoNorm:jogoNorm,campeonato:r.campeonato||'',data:r.data||'',horas:new Set(),sites:new Map()});
     }
     const jogoEntry=jogosMap.get(key);
     if(r.hora) jogoEntry.horas.add(r.hora);
@@ -3265,7 +3264,8 @@ function renderEstatisticas(){
   // sejam tratadas como o mesmo jogo na hora de calcular qual casa tem a maior odd.
   const jogosMap = new Map();
   allSitesData.forEach(r => {
-    const key = (r.campeonato||'') + '|' + (r.jogo_limpo || normalizarNomeJogo(r.jogo));
+    const jogoNorm=normalizeJogo(r.jogo_limpo||normalizarNomeJogo(r.jogo));
+    const key = chaveEvento(r.campeonato||'',jogoNorm,r.data||'');
     if(!jogosMap.has(key)) jogosMap.set(key, []);
     jogosMap.get(key).push(r);
   });

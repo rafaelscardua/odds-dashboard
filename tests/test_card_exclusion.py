@@ -33,6 +33,16 @@ class CardExclusionTests(unittest.TestCase):
         self.assertIn("function nomeExibicaoJogo(", self.html)
         self.assertIn("normalizeJogo(r.jogo_limpo||r.jogo||'')", self.html)
 
+    def test_aba_jogos_revalida_jogo_limpo_com_aliases_atuais(self):
+        render_jogos = self.html.split("function renderJogos(){", 1)[1].split(
+            "function toggleExpandGame", 1
+        )[0]
+        self.assertIn(
+            "normalizeJogo(r.jogo_limpo||normalizarNomeJogo(r.jogo))",
+            render_jogos,
+        )
+        self.assertIn("jogo:nomeExibicaoJogo(r.jogo,jogoNorm)", render_jogos)
+
 
 if __name__ == "__main__":
     unittest.main()
