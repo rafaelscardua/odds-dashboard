@@ -27,6 +27,12 @@ class CardExclusionTests(unittest.TestCase):
         self.assertIn("const totaisJogadores=[1,2,3].map", self.html)
         self.assertIn("recalcularTotaisCard(cardIdx)", self.html)
 
+    def test_unifica_variantes_de_cienciano_e_city_torque(self):
+        self.assertIn("'club cienciano':'cienciano'", self.html)
+        self.assertIn("'torque':'montevideo city torque'", self.html)
+        self.assertIn("function nomeExibicaoJogo(", self.html)
+        self.assertIn("normalizeJogo(r.jogo_limpo||r.jogo||'')", self.html)
+
 
 if __name__ == "__main__":
     unittest.main()

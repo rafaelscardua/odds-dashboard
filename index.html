@@ -2484,7 +2484,7 @@ function aplicarFiltroCampeonato(valor){
   const sitesFiltrado=sitesDoCampeonato.filter(r=>casaEstaAtiva(String(r['SITE']||'').trim()));
   const rawMetadados=valor==='__todos__'?allDataRawMaster:allDataRawMaster.filter(r=>r.__campeonato===valor);
   const metadadosPorJogo=new Map(rawMetadados.map(r=>{
-    const jogo=(r['JOGO_LIMPO']||normalizeJogo(r['JOGO']||'')).trim();
+    const jogo=normalizeJogo(r['JOGO_LIMPO']||r['JOGO']||'').trim();
     const data=String(r['DATA']||'').split(' ')[0]||'';
     return[chaveEvento(r.__campeonato||'',jogo,data),r];
   }));
@@ -2775,7 +2775,7 @@ function normalizarNomeCasa(nome){
 }
 
 function chaveExclusaoCard(r){
-  return `${r.campeonato||''}|${r.jogo_limpo||normalizeJogo(r.jogo||'')}|${r.data||''}`;
+  return `${r.campeonato||''}|${normalizeJogo(r.jogo_limpo||r.jogo||'')}|${r.data||''}`;
 }
 
 function obterEstadoExclusao(r){
@@ -3537,13 +3537,13 @@ function consolidarOdds(rawData,metadadosPorJogo=new Map()){
   const grupos={};
 
   rawData.forEach(r=>{
-    const jogoLimpo=(r.jogo_limpo||normalizeJogo(r.jogo||'')).trim();
+    const jogoLimpo=normalizeJogo(r.jogo_limpo||r.jogo||'').trim();
     const chave=chaveEvento(r.campeonato||'',jogoLimpo,r.data||'');
     if(!grupos[chave]){
       const meta=metadadosPorJogo.get(chave)||{};
       const dataCompleta=String(meta['DATA']||'');
       grupos[chave]={
-        jogo:meta['JOGO']||r.jogo||'',
+        jogo:nomeExibicaoJogo(meta['JOGO']||r.jogo||'',jogoLimpo),
         data:dataCompleta.split(' ')[0]||r.data||'',
         hora:dataCompleta.split(' ')[1]||r.hora||'',
         campeonato:r.campeonato||'',
@@ -3564,9 +3564,9 @@ function consolidarOdds(rawData,metadadosPorJogo=new Map()){
 
     // Procura na terceira aba (allSitesData) quais sites tem as maiores odds
     // (usa JOGO_LIMPO do Excel quando disponivel - mais confiavel que renormalizar em JS)
-    const jogoNorm=grupo.jogo_limpo||normalizeJogo(grupo.jogo);
+    const jogoNorm=normalizeJogo(grupo.jogo_limpo||grupo.jogo);
     const mesmoJogo=s=>{
-      const sNorm=s.jogo_limpo||normalizeJogo(s.jogo);
+      const sNorm=normalizeJogo(s.jogo_limpo||s.jogo);
       return sNorm===jogoNorm
         && (s.campeonato||'')===(grupo.campeonato||'')
         && (s.data||'')===(grupo.data||'');
@@ -3634,12 +3634,34 @@ function consolidarOdds(rawData,metadadosPorJogo=new Map()){
 }
 
 function normalizeJogo(jogo){
-  return (jogo||'')
+  const limpo=(jogo||'')
     .toLowerCase()
     .normalize('NFD')
-    .replace(/[-]/g,'')
+    .replace(/[̀-ͯ]/g,'')
+    .replace(/[-]/g,' ')
     .replace(/\s+/g,' ')
     .trim();
+  const aliases={
+    'club cienciano':'cienciano',
+    'clube cienciano':'cienciano',
+    'cs cienciano':'cienciano',
+    'cienciano cusco':'cienciano',
+    'club cienciano cusco':'cienciano',
+    'clube cienciano cusco':'cienciano',
+    'torque':'montevideo city torque',
+    'city torque':'montevideo city torque',
+    'torque da cidade de montevideu':'montevideo city torque'
+  };
+  const partes=limpo.split(/\s+x\s+/);
+  if(partes.length!==2) return limpo;
+  return partes.map(time=>aliases[time]||time).join(' x ');
+}
+
+function nomeExibicaoJogo(jogo,jogoNormalizado=normalizeJogo(jogo)){
+  if(jogoNormalizado==='cienciano x montevideo city torque'){
+    return 'Club Cienciano x Montevideo City Torque';
+  }
+  return jogo;
 }
 
 function renderTopApostasComLinks(){
