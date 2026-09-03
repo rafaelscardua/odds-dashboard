@@ -783,7 +783,6 @@ th .btn-icon{width:11px;height:11px;vertical-align:-1px;opacity:0.7;margin-left:
     <button class="login-btn" onclick="doLogin()">Entrar</button>
     <div class="login-error" id="loginError"></div>
     <div style="margin-top:10px;font-size:11px;color:var(--muted);text-align:center">Acesso apenas para contas autorizadas pelo administrador.</div>
-    <div id="loginUpdatesStatus" style="margin-top:16px;padding-top:14px;border-top:1px solid var(--border2);font-family:var(--mono);font-size:11px;color:var(--muted);line-height:1.8;text-align:left"></div>
   </div>
 </div>
 
@@ -2060,7 +2059,6 @@ function carregarStatusPublico() {
   if (!db) return;
   db.ref('publicStatus/atualizacoes').on('value', snap => {
     atualizacoesCampeonatos = snap.val() || {};
-    renderizarStatusAtualizacoes('loginUpdatesStatus');
     renderizarStatusAtualizacoes('appUpdatesStatus');
     atualizarResumoOperacional();
   }, err => {
@@ -3772,7 +3770,59 @@ function normalizeJogo(jogo){
     'clube cienciano cusco':'cienciano',
     'torque':'montevideo city torque',
     'city torque':'montevideo city torque',
-    'torque da cidade de montevideu':'montevideo city torque'
+    'torque da cidade de montevideu':'montevideo city torque',
+    'paris saint germain':'psg',
+    'paris st germain':'psg',
+    'sk slovan bratislava':'slovan bratislava',
+    'bayern munchen':'bayern de munique',
+    'bayern munich':'bayern de munique',
+    'fk bodo/glimt':'bodo glimt',
+    'bodo/glimt':'bodo glimt',
+    'betis':'real betis',
+    'real betis balompie':'real betis',
+    'losc lille':'lille',
+    'vfb stuttgart':'stuttgart',
+    'viking fk':'viking',
+    'viking if':'viking',
+    'sk slavia praga':'slavia prague',
+    'slavia praga':'slavia prague',
+    'rc lens':'lens',
+    'man united':'manchester united',
+    'manchester united fc':'manchester united',
+    'fc sabah':'sabah',
+    'sabah fk':'sabah',
+    'sporting cp':'sporting lisboa',
+    'sporting lisbon':'sporting lisboa',
+    'sporting':'sporting lisboa',
+    'galatasaray sk':'galatasaray',
+    'aek atenas':'aek athens',
+    'linzer ask':'lask',
+    'lask linz':'lask',
+    'club brugge':'brugge',
+    'club brugge kv':'brugge',
+    'aston villa fc':'aston villa',
+    'borussia dortmund':'dortmund',
+    'villarreal cf':'villarreal',
+    'ssc napoli':'napoli',
+    'arsenal fc':'arsenal',
+    'psv eindhoven':'psv',
+    'fc shakhtar donetsk':'shakhtar donetsk',
+    'liverpool fc':'liverpool',
+    'atletico madrid':'atletico de madrid',
+    'fenerbahce sk':'fenerbahce',
+    'fenerbahce sc':'fenerbahce',
+    'as roma':'roma',
+    'como 1907':'como',
+    'rb leipzig':'leipzig',
+    'red bull leipzig':'leipzig',
+    'fc porto':'porto',
+    'real madrid cf':'real madrid',
+    'inter':'inter de milao',
+    'inter milan':'inter de milao',
+    'internazionale':'inter de milao',
+    'internazionale milano':'inter de milao',
+    'man city':'manchester city',
+    'manchester city fc':'manchester city'
   };
   const partes=limpo.split(/\s+x\s+/);
   if(partes.length!==2) return limpo;

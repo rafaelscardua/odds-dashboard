@@ -33,6 +33,22 @@ class CardExclusionTests(unittest.TestCase):
         self.assertIn("function nomeExibicaoJogo(", self.html)
         self.assertIn("normalizeJogo(r.jogo_limpo||r.jogo||'')", self.html)
 
+    def test_unifica_variantes_da_champions(self):
+        for alias in (
+            "'psv eindhoven':'psv'",
+            "'fc shakhtar donetsk':'shakhtar donetsk'",
+            "'sk slavia praga':'slavia prague'",
+            "'rc lens':'lens'",
+            "'ssc napoli':'napoli'",
+            "'arsenal fc':'arsenal'",
+            "'sporting':'sporting lisboa'",
+        ):
+            self.assertIn(alias, self.html)
+
+    def test_login_nao_exibe_status_dos_campeonatos(self):
+        self.assertNotIn('id="loginUpdatesStatus"', self.html)
+        self.assertNotIn("renderizarStatusAtualizacoes('loginUpdatesStatus')", self.html)
+
     def test_aba_jogos_revalida_jogo_limpo_com_aliases_atuais(self):
         render_jogos = self.html.split("function renderJogos(){", 1)[1].split(
             "function toggleExpandGame", 1
