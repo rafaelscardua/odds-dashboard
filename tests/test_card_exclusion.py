@@ -45,6 +45,18 @@ class CardExclusionTests(unittest.TestCase):
         ):
             self.assertIn(alias, self.html)
 
+    def test_unifica_variantes_da_laliga(self):
+        for alias in (
+            "'getafe cf':'getafe'",
+            "'deportivo a coruna':'deportivo la coruna'",
+            "'dep la coruna':'deportivo la coruna'",
+            "'la coruna':'deportivo la coruna'",
+            "'sevilha fc':'sevilla'",
+            "'malaga cf':'malaga'",
+            "'villarreal cf':'villarreal'",
+        ):
+            self.assertIn(alias, self.html)
+
     def test_login_nao_exibe_status_dos_campeonatos(self):
         self.assertNotIn('id="loginUpdatesStatus"', self.html)
         self.assertNotIn("renderizarStatusAtualizacoes('loginUpdatesStatus')", self.html)
