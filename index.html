@@ -747,6 +747,22 @@ th .btn-icon{width:11px;height:11px;vertical-align:-1px;opacity:0.7;margin-left:
 .btn-clear{font-size:12px;padding:7px 14px;background:rgba(239,68,68,0.1);border:1px solid rgba(239,68,68,0.28);color:var(--red);border-radius:var(--radius);cursor:pointer;font-family:var(--sans);font-weight:600;margin-right:8px;transition:background .15s;}
 .btn-clear:hover{background:rgba(239,68,68,0.2);}
 #appContainer{display:none;}
+.sport-picker{display:flex;gap:4px;padding:4px;border:1px solid var(--border2);background:var(--bg3);border-radius:10px}
+.sport-option{border:0;background:transparent;color:var(--muted);padding:8px 13px;border-radius:7px;cursor:pointer;font:600 10px var(--mono);letter-spacing:.07em;text-transform:uppercase}
+.sport-option.active{background:var(--sport-accent,var(--green));color:#06131e}
+.sport-option[data-esporte="tenis"].active{background:#ec4899;color:#fff}
+.sport-option.sport-future{border-left:1px solid var(--border);cursor:not-allowed;opacity:.55}
+#futebolDashboard,#tenisDashboard{display:none}
+.tenis-intro{display:flex;justify-content:space-between;align-items:center;gap:16px;margin-bottom:18px;padding:14px 17px;border:1px solid rgba(236,72,153,.3);background:rgba(236,72,153,.07);border-radius:var(--radius)}
+.tenis-intro-title{font:600 12px var(--mono);color:#f9a8d4;letter-spacing:.07em;text-transform:uppercase}.tenis-intro-sub{font-size:11px;color:var(--muted);margin-top:4px}
+.tenis-top{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px;margin-bottom:22px}.tenis-card{background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius-lg);padding:18px 20px;position:relative;overflow:hidden;box-shadow:var(--shadow)}
+.tenis-card:before{content:"";position:absolute;inset:0 0 auto;height:3px;background:linear-gradient(90deg,#ec4899,#8b5cf6)}.tenis-title-row{display:flex;justify-content:space-between;gap:12px}.tenis-jogo{font-size:17px;font-weight:600}.tenis-data{font:10px var(--mono);color:var(--muted);white-space:nowrap}
+.tenis-odds{display:grid;grid-template-columns:1fr 1fr;gap:9px;margin:15px 0}.tenis-odd{border:1px solid #31597a;background:var(--bg3);border-radius:8px;padding:10px 12px}.tenis-odd:last-child{border-color:#8a6428}.tenis-odd span{display:block;color:var(--muted);font-size:10px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.tenis-odd b{font:700 18px var(--mono);color:var(--casa);display:inline-block;margin-top:4px}.tenis-odd:last-child b{color:var(--fora)}.tenis-casa{float:right!important;display:inline!important;color:var(--green)!important;font:9px var(--mono);margin-top:7px}
+.tenis-calc{display:grid;grid-template-columns:130px 1fr;gap:13px;align-items:center;border-top:1px solid var(--border);padding-top:13px}.tenis-margem span{font-size:10px;color:var(--muted)}.tenis-margem b{display:block;font:700 23px var(--mono);color:var(--pct);margin-top:4px}.tenis-stakes{display:grid;grid-template-columns:1fr 1fr;gap:7px}.tenis-stake{padding:8px 10px;border:1px solid var(--border);border-radius:7px;background:var(--bg3)}.tenis-stake small{display:block;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.tenis-stake strong{display:block;font:600 12px var(--mono);margin-top:4px}
+.tenis-total{display:flex;justify-content:space-between;margin-top:11px;padding:9px 11px;border:1px solid var(--border);border-radius:7px;color:var(--muted);font-size:10px}.tenis-total div:last-child{text-align:right}.tenis-total strong{display:block;color:var(--text);font:600 12px var(--mono);margin-top:3px}.tenis-total .positivo{color:var(--pct)}
+.tenis-table td,.tenis-table th{white-space:nowrap}.tenis-table .player{white-space:normal;font-weight:600}.tenis-empty{grid-column:1/-1;color:var(--muted);text-align:center;padding:48px;border:1px dashed var(--border);border-radius:var(--radius)}
+@media(max-width:880px){.tenis-top{grid-template-columns:1fr}.tenis-intro{align-items:flex-start;flex-direction:column}.sport-picker{order:-1}}
+@media(max-width:520px){.tenis-calc{grid-template-columns:1fr}.tenis-title-row{display:block}.tenis-data{display:block;margin-top:5px}}
 .waiting-box{text-align:center;padding:60px 20px;color:var(--muted);}
 .waiting-box strong{color:var(--text);font-size:16px;display:block;margin-bottom:10px;}
 .waiting-box .icon{font-size:48px;margin-bottom:16px;}
@@ -778,7 +794,8 @@ th .btn-icon{width:11px;height:11px;vertical-align:-1px;opacity:0.7;margin-left:
 <div class="drop-overlay" id="dropOverlay">
   <!-- MODO ADMIN: Upload -->
   <div id="dropAdmin" style="display:none">
-    <div class="drop-box" id="dropBox" onclick="document.getElementById('fileInput').click()">
+    <div class="overlay-sport-switch" id="overlaySportPicker"></div>
+    <div class="drop-box" id="dropBox" onclick="abrirArquivoAtual()">
       <div class="drop-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" style="width:48px;height:48px;color:var(--accent)"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg></div>
       <div class="drop-title" id="dropTitle">Carregar XLSX (Admin)</div>
       <div class="drop-sub">Arraste ou clique para selecionar os arquivos gerados pelo Python</div>
@@ -808,6 +825,7 @@ th .btn-icon{width:11px;height:11px;vertical-align:-1px;opacity:0.7;margin-left:
 </div>
 
 <input type="file" id="fileInput" accept=".xlsx" multiple style="display:none" onchange="handleFile(this)">
+<input type="file" id="tenisFileInput" accept=".xlsx" style="display:none" onchange="handleTenisFile(this)">
 
 <header>
   <div class="shell">
@@ -823,6 +841,7 @@ th .btn-icon{width:11px;height:11px;vertical-align:-1px;opacity:0.7;margin-left:
         </div>
       </div>
       <div class="header-actions">
+        <div class="sport-picker" id="headerSportPicker" aria-label="Selecionar esporte"></div>
         <div class="theme-switcher">
           <span class="theme-label">Tema</span>
           <!-- TEMAS ARQUIVADOS: para reativar, descomente estes seis botoes e siga a instrucao em setTheme().
@@ -840,7 +859,7 @@ th .btn-icon{width:11px;height:11px;vertical-align:-1px;opacity:0.7;margin-left:
           <option value="__todos__">Todos os campeonatos</option>
         </select>
         <input type="file" id="fileInputAdicionar" accept=".xlsx" multiple style="display:none" onchange="handleFile(this)">
-        <button class="btn-load" onclick="document.getElementById('fileInput').click()">
+        <button class="btn-load" id="btnCarregarPrincipal" onclick="abrirArquivoAtual()">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
           Carregar XLSX
         </button>
@@ -866,7 +885,7 @@ th .btn-icon{width:11px;height:11px;vertical-align:-1px;opacity:0.7;margin-left:
 </header>
 
 <main>
-  <div class="shell">
+  <div class="shell" id="futebolDashboard">
 
     <div class="aposta-row">
       <span class="aposta-label">Valor da aposta</span>
@@ -1319,6 +1338,49 @@ th .btn-icon{width:11px;height:11px;vertical-align:-1px;opacity:0.7;margin-left:
 
     </div><!-- /tab-historico -->
 
+  </div>
+
+  <div class="shell" id="tenisDashboard">
+    <div class="aposta-row">
+      <span class="aposta-label">Valor da aposta</span>
+      <div class="aposta-wrap"><span class="aposta-prefix">R$</span>
+        <input type="number" id="tenisApostaInput" value="5000" min="1" onchange="recalcularTenis()">
+      </div>
+      <span class="aposta-hint">distribui&#231;&#227;o autom&#225;tica entre os 2 jogadores</span>
+      <span class="aposta-label" style="margin-left:40px">Partidas capturadas</span>
+      <span class="aposta-hint" id="tenisCapturados" style="font-weight:500;color:#ec4899">0</span>
+    </div>
+    <div class="tenis-intro">
+      <div><div class="tenis-intro-title">T&#234;nis &middot; Vencedor da partida</div>
+        <div class="tenis-intro-sub">Dados e c&#225;lculos separados do futebol. Duas odds, sem empate.</div>
+      </div>
+      <div class="filters">
+        <select class="filter-input" id="tenisTorneioFiltro" onchange="renderTenis()">
+          <option value="">Todos os torneios</option><option value="Masculino">Masculino</option><option value="Feminino">Feminino</option>
+        </select>
+        <select class="filter-input" id="tenisMargemFiltro" onchange="renderTenis()">
+          <option value="">Todas as margens</option><option value="positivas">Somente positivas</option>
+        </select>
+        <button class="btn-load" id="btnCarregarTenis" onclick="document.getElementById('tenisFileInput').click()">Carregar t&#234;nis XLSX</button>
+      </div>
+    </div>
+    <div class="metrics">
+      <div class="metric"><div class="metric-label">Melhor lucro</div><div class="metric-value green" id="tm-lucro">&#8212;</div><div class="metric-sub" id="tm-lucro-jogo">aguardando dados</div></div>
+      <div class="metric"><div class="metric-label">Maior % ganho</div><div class="metric-value green" id="tm-pct">&#8212;</div><div class="metric-sub" id="tm-pct-jogo"></div></div>
+      <div class="metric"><div class="metric-label">Partidas c/ lucro</div><div class="metric-value green" id="tm-positivos">&#8212;</div><div class="metric-sub" id="tm-positivos-sub"></div></div>
+      <div class="metric"><div class="metric-label">Casas por API</div><div class="metric-value" id="tm-casas">&#8212;</div><div class="metric-sub">fontes encontradas</div></div>
+    </div>
+    <div class="tabs-nav"><button class="tab-btn active">Comparativo de t&#234;nis</button></div>
+    <div class="section-header"><span class="section-title">&#127942; top 4 arbitragens de t&#234;nis</span></div>
+    <div class="tenis-top" id="tenisTop"><div class="tenis-empty">Aguardando dados de t&#234;nis do administrador.</div></div>
+    <div class="section-header"><span class="section-title">Todas as partidas</span><span class="section-count" id="tenisTableCount"></span></div>
+    <div class="table-wrap"><div class="table-scroll">
+      <table class="tenis-table"><thead><tr>
+        <th>Partida</th><th>Torneio</th><th>Data</th><th>Hora</th><th>Casas</th>
+        <th>Odd jogador 1</th><th>Casa(s)</th><th>Odd jogador 2</th><th>Casa(s)</th>
+        <th style="text-align:right">Aposta 1</th><th style="text-align:right">Aposta 2</th><th style="text-align:right">% ganho</th>
+      </tr></thead><tbody id="tenisTableBody"><tr><td colspan="12" class="empty">Nenhum dado de t&#234;nis carregado.</td></tr></tbody></table>
+    </div><div class="table-footer"><span>Mercado: vencedor da partida</span><span>cobertura total &middot; 2 resultados</span></div></div>
   </div>
 </main>
 
@@ -2173,8 +2235,11 @@ function listenToData() {
       allDataRawMaster = val.allDataRawMaster || [];
       allSitesDataMaster = val.allSitesDataMaster || [];
       campeonatosCarregados = val.campeonatosCarregados || [];
+      tenisData = val.tenisData || [];
       atualizarSelectCampeonatos();
       aplicarFiltroCampeonato(filtroCampeonatoAtual);
+      renderTenis();
+      setEsporte(esporteAtual);
       fecharOverlay();
     } else {
       // Sem dados na nuvem
@@ -2183,6 +2248,7 @@ function listenToData() {
       campeonatosCarregados = [];
       allData = [];
       allSitesData = [];
+      tenisData = [];
       resetUINoData();
       document.getElementById('dropOverlay').classList.remove('hidden');
       if (!isAdmin) {
@@ -2223,6 +2289,7 @@ function syncToFirebase() {
     allDataRawMaster: allDataRawMaster || [],
     allSitesDataMaster: allSitesDataMaster || [],
     campeonatosCarregados: campeonatosCarregados || [],
+    tenisData: tenisData || [],
     timestamp: new Date().toISOString(),
     uploadedBy: currentUser ? currentUser.email : 'admin'
   };
@@ -2244,6 +2311,7 @@ Isso vai apagar TODOS os dados do dashboard para TODOS os usuarios. Esta acao na
         allDataRawMaster = [];
         allSitesDataMaster = [];
         campeonatosCarregados = [];
+        tenisData = [];
         atualizacoesCampeonatos = {};
         resetUINoData();
         renderizarStatusAtualizacoes('appUpdatesStatus');
@@ -2301,6 +2369,9 @@ function resetUISemCasasAtivas() {
 
 // Inicializa Firebase ao carregar
 document.addEventListener('DOMContentLoaded', function() {
+  renderizarSeletoresEsporte();
+  let salvo='futebol';try{salvo=localStorage.getItem('odds-esporte')||'futebol';}catch(e){}
+  setEsporte(salvo);
   initFirebase();
   initLoginUI();
 });
@@ -2318,6 +2389,55 @@ function initLoginUI() {
 let allData=[], chartInstance=null;
 const fmt    = n => 'R$ '+n.toLocaleString('pt-BR',{minimumFractionDigits:2,maximumFractionDigits:2});
 const fmtDec = n => 'R$ '+n.toLocaleString('pt-BR',{minimumFractionDigits:2,maximumFractionDigits:2});
+let esporteAtual='futebol';
+let tenisData=[];
+const ESPORTES={
+  futebol:{nome:'Futebol',cor:'var(--green)',dashboardId:'futebolDashboard',fileInputId:'fileInput',unidade:'jogos',quantidade:()=>allData.length},
+  tenis:{nome:'T\u00eanis',cor:'#ec4899',dashboardId:'tenisDashboard',fileInputId:'tenisFileInput',unidade:'partidas',quantidade:()=>tenisData.length}
+};
+
+function renderizarSeletoresEsporte(){
+  const botoes=Object.entries(ESPORTES).map(([id,e])=>'<button class="sport-option" style="--sport-accent:'+e.cor+'" data-esporte="'+id+'" onclick="setEsporte(\''+id+'\')">'+e.nome+'</button>').join('');
+  ['overlaySportPicker','headerSportPicker'].forEach(id=>{const el=document.getElementById(id);if(el)el.innerHTML=botoes+'<button class="sport-option sport-future" disabled>+ Esporte</button>';});
+}
+function abrirArquivoAtual(){document.getElementById(ESPORTES[esporteAtual].fileInputId)?.click();}
+function setEsporte(esporte){
+  if(!ESPORTES[esporte])esporte='futebol';
+  esporteAtual=esporte;
+  Object.entries(ESPORTES).forEach(([id,e])=>{const p=document.getElementById(e.dashboardId);if(p)p.style.display=id===esporte?'block':'none';});
+  document.querySelectorAll('.sport-option[data-esporte]').forEach(b=>b.classList.toggle('active',b.dataset.esporte===esporte));
+  const filtro=document.getElementById('filtroCampeonatoSelect');if(filtro)filtro.style.display=esporte==='futebol'&&campeonatosCarregados.length>1?'inline-block':'none';
+  const adicionar=document.getElementById('btnAdicionar');if(adicionar)adicionar.style.display=esporte==='futebol'&&isAdmin&&allDataRawMaster.length?'flex':'none';
+  const titulo=document.getElementById('dropTitle');if(titulo)titulo.textContent=esporte==='tenis'?'Carregar tenis_sincronizado.xlsx':'Carregar XLSX de futebol';
+  const tag=document.getElementById('tagJogos'),cfg=ESPORTES[esporte],q=cfg.quantidade();if(tag){tag.textContent=q?q+' '+cfg.unidade:'sem dados';tag.className=q?'tag tag-green':'tag tag-gray';}
+  if(esporte==='tenis')renderTenis();
+  try{localStorage.setItem('odds-esporte',esporte);}catch(e){}
+}
+function numeroTenis(v){if(typeof v==='number')return v;return parseFloat(String(v??'').replace(/R\$\s*/g,'').replace(/\./g,'').replace(',','.'))||0;}
+async function handleTenisFile(input){
+  if(!isAdmin){toast('Apenas administradores podem carregar dados.','error');return;}
+  const file=input.files?.[0];if(!file)return;
+  try{
+    const wb=await lerArquivoXLSX(file),aba=wb.SheetNames.find(n=>n.toLowerCase()==='melhores odds')||wb.SheetNames[0];
+    const raw=XLSX.utils.sheet_to_json(wb.Sheets[aba]),req=['TORNEIO','JOGADOR 1','JOGADOR 2','ODD JOGADOR 1','ODD JOGADOR 2'];
+    const faltando=req.filter(c=>!raw[0]||!(c in raw[0]));if(faltando.length)throw new Error('Colunas ausentes: '+faltando.join(', '));
+    tenisData=raw.map(r=>{const o1=numeroTenis(r['ODD JOGADOR 1']),o2=numeroTenis(r['ODD JOGADOR 2']),inv=o1>1&&o2>1?1/o1+1/o2:0;return{torneio:String(r.TORNEIO||''),data:String(r.DATA||''),hora:String(r.HORA||''),p1:String(r['JOGADOR 1']||''),p2:String(r['JOGADOR 2']||''),casas:numeroTenis(r.CASAS),o1,o2,casa1:String(r['CASA(S) JOGADOR 1']||''),casa2:String(r['CASA(S) JOGADOR 2']||''),margem:inv?(1/inv-1)*100:0};}).filter(r=>r.p1&&r.p2&&r.o1>1&&r.o2>1);
+    setEsporte('tenis');fecharOverlay();renderTenis();syncToFirebase();toast('T\u00eanis carregado: '+tenisData.length+' partidas','success');
+  }catch(e){toast('Erro ao ler t\u00eanis: '+e.message,'error',7000);}
+  input.value='';
+}
+function calculoTenis(r){const total=parseFloat(document.getElementById('tenisApostaInput')?.value)||5000,soma=1/r.o1+1/r.o2,retorno=total/soma;return{...r,stake1:retorno/r.o1,stake2:retorno/r.o2,retorno,lucro:retorno-total,margem:(1/soma-1)*100};}
+function cardTenis(r){const pos=r.margem>0;return '<article class="tenis-card"><div class="tenis-title-row"><div class="tenis-jogo">'+escaparHtml(r.p1)+' x '+escaparHtml(r.p2)+'</div><span class="tenis-data">'+escaparHtml(r.data)+(r.hora?' &middot; '+escaparHtml(r.hora):'')+'</span></div><div class="tenis-odds"><div class="tenis-odd"><span>'+escaparHtml(r.p1)+'</span><b>'+r.o1.toFixed(2)+'</b><span class="tenis-casa">'+escaparHtml(r.casa1)+'</span></div><div class="tenis-odd"><span>'+escaparHtml(r.p2)+'</span><b>'+r.o2.toFixed(2)+'</b><span class="tenis-casa">'+escaparHtml(r.casa2)+'</span></div></div><div class="tenis-calc"><div class="tenis-margem"><span>'+(pos?'Lucro garantido':'Margem atual')+'</span><b style="'+(pos?'':'color:var(--muted)')+'">'+(r.margem>=0?'+':'')+r.margem.toFixed(2)+'%</b></div><div class="tenis-stakes"><div class="tenis-stake"><small>'+escaparHtml(r.p1)+' &middot; '+escaparHtml(r.casa1)+'</small><strong>'+fmtDec(r.stake1)+'</strong></div><div class="tenis-stake"><small>'+escaparHtml(r.p2)+' &middot; '+escaparHtml(r.casa2)+'</small><strong>'+fmtDec(r.stake2)+'</strong></div></div></div><div class="tenis-total"><div>Valor jogado<strong>'+fmtDec(r.stake1+r.stake2)+'</strong></div><div>Retorno<strong class="'+(pos?'positivo':'')+'">'+fmtDec(r.retorno)+'</strong></div></div></article>';}
+function renderTenis(){
+  const genero=document.getElementById('tenisTorneioFiltro')?.value||'',soPos=document.getElementById('tenisMargemFiltro')?.value==='positivas';
+  const todos=tenisData.map(calculoTenis).sort((a,b)=>b.margem-a.margem),dados=todos.filter(r=>(!genero||r.torneio.includes(genero))&&(!soPos||r.margem>0)),melhor=todos[0],positivos=todos.filter(r=>r.margem>0);
+  const set=(id,v)=>{const el=document.getElementById(id);if(el)el.textContent=v;};set('tenisCapturados',tenisData.length);set('tenisTableCount',dados.length+' de '+tenisData.length);set('tm-positivos',positivos.length);set('tm-positivos-sub','de '+tenisData.length+' partidas');set('tm-casas',tenisData.length?Math.max(...tenisData.map(r=>r.casas||0)):'-');
+  if(melhor){set('tm-lucro',(melhor.lucro>=0?'+':'')+fmtDec(melhor.lucro));set('tm-lucro-jogo',melhor.p1+' x '+melhor.p2);set('tm-pct',(melhor.margem>=0?'+':'')+melhor.margem.toFixed(2)+'%');set('tm-pct-jogo',melhor.p1+' x '+melhor.p2);}
+  const top=document.getElementById('tenisTop');if(top)top.innerHTML=dados.length?dados.slice(0,4).map(cardTenis).join(''):'<div class="tenis-empty">Nenhuma partida encontrada.</div>';
+  const body=document.getElementById('tenisTableBody');if(body)body.innerHTML=dados.length?dados.map(r=>'<tr><td class="player">'+escaparHtml(r.p1)+' x '+escaparHtml(r.p2)+'</td><td>'+escaparHtml(r.torneio)+'</td><td>'+escaparHtml(r.data)+'</td><td>'+escaparHtml(r.hora)+'</td><td>'+r.casas+'</td><td>'+r.o1.toFixed(2)+'</td><td>'+escaparHtml(r.casa1)+'</td><td>'+r.o2.toFixed(2)+'</td><td>'+escaparHtml(r.casa2)+'</td><td style="text-align:right">'+fmtDec(r.stake1)+'</td><td style="text-align:right">'+fmtDec(r.stake2)+'</td><td style="text-align:right">'+(r.margem>=0?'+':'')+r.margem.toFixed(2)+'%</td></tr>').join(''):'<tr><td colspan="12" class="empty">Nenhum dado de t\u00eanis carregado.</td></tr>';
+  if(esporteAtual==='tenis'){const tag=document.getElementById('tagJogos');if(tag){tag.textContent=tenisData.length?tenisData.length+' partidas':'sem dados';tag.className=tenisData.length?'tag tag-green':'tag tag-gray';}}
+}
+function recalcularTenis(){renderTenis();}
 
 function setTheme(t){
   // Para reativar os temas arquivados, troque a linha abaixo pela linha comentada seguinte.
@@ -2468,7 +2588,7 @@ function atualizarSelectCampeonatos(){
   sel.innerHTML='<option value="__todos__">Todos os campeonatos</option>'+
     campeonatosCarregados.map(c=>`<option value="${c}">${c}</option>`).join('');
   sel.value=(atual==='__todos__'||campeonatosCarregados.includes(atual))?atual:'__todos__';
-  sel.style.display=campeonatosCarregados.length>1?'inline-block':'none';
+  sel.style.display=esporteAtual==='futebol'&&campeonatosCarregados.length>1?'inline-block':'none';
 }
 
 function mudarFiltroCampeonato(valor){
@@ -2518,9 +2638,11 @@ document.addEventListener('drop',e=>{
   const files=Array.from(e.dataTransfer.files||[]).filter(f=>f.name.endsWith('.xlsx'));
   if(files.length){
     const dt=new DataTransfer();
-    files.forEach(f=>dt.items.add(f));
-    document.getElementById('fileInput').files=dt.files;
-    handleFile(document.getElementById('fileInput'));
+    if(esporteAtual==='tenis'){
+      dt.items.add(files[0]);document.getElementById('tenisFileInput').files=dt.files;handleTenisFile(document.getElementById('tenisFileInput'));
+    }else{
+      files.forEach(f=>dt.items.add(f));document.getElementById('fileInput').files=dt.files;handleFile(document.getElementById('fileInput'));
+    }
   }
 });
 
