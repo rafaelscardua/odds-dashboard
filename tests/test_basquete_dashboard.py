@@ -32,8 +32,15 @@ class BasqueteDashboardTests(unittest.TestCase):
         self.assertIn("Comparativo de basquete", self.html)
         self.assertIn("Carregar basquete XLSX", self.html)
         self.assertIn("NBA 2026/27", self.html)
-        self.assertIn("Odd time 1", self.html)
-        self.assertIn("Odd time 2", self.html)
+        self.assertIn("Time 1", self.html)
+        self.assertIn("Time 2", self.html)
+
+    def test_tabela_compacta_mantem_detalhes_expansiveis(self):
+        self.assertIn("function linhaBasquete", self.html)
+        self.assertIn("function toggleBasketDetail", self.html)
+        self.assertIn('colspan="8"', self.html)
+        self.assertIn("basketball-odd time1", self.html)
+        self.assertIn("basketball-odd time2", self.html)
 
 
 if __name__ == "__main__":
