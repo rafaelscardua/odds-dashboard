@@ -14,7 +14,8 @@ class StatusCasasXlsxTests(unittest.TestCase):
         self.assertIn("status das casas", self.html)
         self.assertIn("statusCasasPorCampeonato", self.html)
         self.assertIn("oddsData/statusCasasPorCampeonato", self.html)
-        self.assertIn(".set(statusCasasPorCampeonato || [])", self.html)
+        self.assertIn("const statusPayload = JSON.parse(JSON.stringify(statusCasasPorCampeonato || []))", self.html)
+        self.assertIn(".set(statusPayload)", self.html)
         trecho_payload = self.html.split("const payload = {", 1)[1].split("};", 1)[0]
         self.assertNotIn("statusCasasPorCampeonato:", trecho_payload)
         self.assertIn("statusDoArquivo.push({casa,status", self.html)
@@ -27,6 +28,7 @@ class StatusCasasXlsxTests(unittest.TestCase):
         self.assertIn("'GELADEIRA'", self.html)
         self.assertIn("const rotuloStatus=", self.html)
         self.assertIn("statusDesativada==='DESATIVADA'?'DESATIVADA':'-'", self.html)
+        self.assertIn("statusArquivo==='GELADEIRA'?'GELADEIRA'", self.html)
 
     def test_lista_padrao_nao_remove_casas_desativadas_da_auditoria(self):
         self.assertIn("const SITES_PADRAO=BET_LIST;", self.html)

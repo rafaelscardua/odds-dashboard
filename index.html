@@ -2287,6 +2287,9 @@ function syncToFirebase() {
     toast('Apenas o administrador pode sincronizar dados.', 'error');
     return;
   }
+  // Preserve o status antes de gravar oddsData. Essa primeira gravacao dispara
+  // o listener em tempo real, que recebe temporariamente o objeto sem status.
+  const statusPayload = JSON.parse(JSON.stringify(statusCasasPorCampeonato || []));
   const payload = {
     allDataRawMaster: allDataRawMaster || [],
     allSitesDataMaster: allSitesDataMaster || [],
@@ -2300,7 +2303,7 @@ function syncToFirebase() {
       toast(' Dados salvos na nuvem! Todos os usuarios estao vendo agora.', 'success', 4000);
       salvarStatusPublico();
       db.ref('oddsData/statusCasasPorCampeonato')
-        .set(statusCasasPorCampeonato || [])
+        .set(statusPayload)
         .catch(err => console.warn('[DEBUG] Jogos salvos, mas o status das casas não foi salvo:', err.message));
     })
     .catch(err => toast('Erro ao salvar na nuvem: ' + err.message, 'error', 5000));
@@ -3400,7 +3403,7 @@ function renderJogos(){
         </div>`;
       }else{
         const statusArquivo=statusCasaDoArquivo(jogo.campeonato,site);
-        const statusDesativada=!casaEstaAtiva(site)?'DESATIVADA':statusArquivo;
+        const statusDesativada=statusArquivo==='GELADEIRA'?'GELADEIRA':(!casaEstaAtiva(site)?'DESATIVADA':statusArquivo);
         const rotuloStatus=statusDesativada==='GELADEIRA'?'GELADEIRA':statusDesativada==='DESATIVADA'?'DESATIVADA':'-';
         const corStatus=statusDesativada==='GELADEIRA'?'var(--amber)':statusDesativada==='DESATIVADA'?'var(--muted)':'';
         html+=`<div style="display:flex;gap:14px;padding:8px 0;align-items:center;border-left:3px solid ${statusDesativada?'rgba(148,163,184,0.28)':'rgba(239,68,68,0.12)'};padding-left:10px" class="jogos-row-detail ${cls}">
