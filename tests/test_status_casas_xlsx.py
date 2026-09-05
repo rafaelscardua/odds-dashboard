@@ -13,7 +13,11 @@ class StatusCasasXlsxTests(unittest.TestCase):
     def test_importa_e_sincroniza_status_das_casas(self):
         self.assertIn("status das casas", self.html)
         self.assertIn("statusCasasPorCampeonato", self.html)
-        self.assertIn("statusCasasPorCampeonato: statusCasasPorCampeonato || {}", self.html)
+        self.assertIn("statusCasasPorCampeonato: statusCasasPorCampeonato || []", self.html)
+        self.assertIn("statusDoArquivo.push({casa,status", self.html)
+        self.assertNotIn("statusDoArquivo[casa]", self.html)
+        self.assertIn("function normalizarStatusCasas", self.html)
+        self.assertIn("function statusCasaDoArquivo", self.html)
 
     def test_detalhe_diferencia_desativada_geladeira_e_sem_retorno(self):
         self.assertIn("'DESATIVADA'", self.html)

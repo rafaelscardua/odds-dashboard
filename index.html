@@ -2232,7 +2232,7 @@ function listenToData() {
       allDataRawMaster = val.allDataRawMaster || [];
       allSitesDataMaster = val.allSitesDataMaster || [];
       campeonatosCarregados = val.campeonatosCarregados || [];
-      statusCasasPorCampeonato = val.statusCasasPorCampeonato || {};
+      statusCasasPorCampeonato = normalizarStatusCasas(val.statusCasasPorCampeonato);
       tenisData = val.basqueteData || val.tenisData || [];
       atualizarSelectCampeonatos();
       aplicarFiltroCampeonato(filtroCampeonatoAtual);
@@ -2244,7 +2244,7 @@ function listenToData() {
       allDataRawMaster = [];
       allSitesDataMaster = [];
       campeonatosCarregados = [];
-      statusCasasPorCampeonato = {};
+      statusCasasPorCampeonato = [];
       allData = [];
       allSitesData = [];
       tenisData = [];
@@ -2288,7 +2288,7 @@ function syncToFirebase() {
     allDataRawMaster: allDataRawMaster || [],
     allSitesDataMaster: allSitesDataMaster || [],
     campeonatosCarregados: campeonatosCarregados || [],
-    statusCasasPorCampeonato: statusCasasPorCampeonato || {},
+    statusCasasPorCampeonato: statusCasasPorCampeonato || [],
     basqueteData: tenisData || [],
     timestamp: new Date().toISOString(),
     uploadedBy: currentUser ? currentUser.email : 'admin'
@@ -2311,7 +2311,7 @@ Isso vai apagar TODOS os dados do dashboard para TODOS os usuarios. Esta acao na
         allDataRawMaster = [];
         allSitesDataMaster = [];
         campeonatosCarregados = [];
-        statusCasasPorCampeonato = {};
+        statusCasasPorCampeonato = [];
         tenisData = [];
         atualizacoesCampeonatos = {};
         resetUINoData();
@@ -2510,10 +2510,29 @@ let allSitesData=[];         // view filtrada (usada pelas funcoes de render exi
 let allSitesDataMaster=[];   // master: linhas brutas (aba 3) de TODOS os arquivos carregados
 let allDataRawMaster=[];     // master: linhas brutas (aba 1) de TODOS os arquivos carregados
 let campeonatosCarregados=[];// nomes dos campeonatos ja carregados (na ordem de carregamento)
-let statusCasasPorCampeonato={};// ATIVA, DESATIVADA ou GELADEIRA vindos do XLSX
+let statusCasasPorCampeonato=[];// lista segura para Firebase; nomes com ponto ficam nos valores
 let filtroCampeonatoAtual='__todos__';
 const exclusoesPorCard=new Map();
 let contextoCasaAtual=null;
+
+function normalizarStatusCasas(valor){
+  if(!valor)return [];
+  const grupos=Array.isArray(valor)
+    ?valor.filter(Boolean)
+    :Object.entries(valor).map(([campeonato,casas])=>({campeonato,casas}));
+  return grupos.map(grupo=>{
+    const casas=Array.isArray(grupo.casas)
+      ?grupo.casas.filter(Boolean)
+      :Object.entries(grupo.casas||{}).map(([casa,dados])=>({casa,...(dados||{})}));
+    return{campeonato:String(grupo.campeonato||''),casas};
+  }).filter(grupo=>grupo.campeonato);
+}
+
+function statusCasaDoArquivo(campeonato,casa){
+  const grupo=statusCasasPorCampeonato.find(item=>item.campeonato===campeonato);
+  const registro=grupo?.casas?.find(item=>item.casa===casa);
+  return String(registro?.status||'').toUpperCase();
+}
 
 function nomeCampeonatoDoArquivo(filename){
   let n=filename.replace(/\.xlsx$/i,'').replace(/_sincronizado$/i,'');
@@ -2542,7 +2561,7 @@ async function handleFile(input){
     allDataRawMaster = [];
     allSitesDataMaster = [];
     campeonatosCarregados = [];
-    statusCasasPorCampeonato = {};
+    statusCasasPorCampeonato = [];
     atualizacoesCampeonatos = {};
   }
 
@@ -2570,16 +2589,17 @@ async function handleFile(input){
     allDataRawMaster.push(...raw);
 
     const nomeAbaStatus=wb.SheetNames.find(nome=>nome.trim().toLowerCase()==='status das casas');
-    const statusDoArquivo={};
+    const statusDoArquivo=[];
     if(nomeAbaStatus){
       XLSX.utils.sheet_to_json(wb.Sheets[nomeAbaStatus]).forEach(item=>{
         const casa=String(item.CASA||'').trim(),status=String(item.STATUS||'').trim().toUpperCase();
         if(casa&&['ATIVA','DESATIVADA','GELADEIRA'].includes(status)){
-          statusDoArquivo[casa]={status,tipo:String(item.TIPO||''),motivo:String(item.MOTIVO||'')};
+          statusDoArquivo.push({casa,status,tipo:String(item.TIPO||''),motivo:String(item.MOTIVO||'')});
         }
       });
     }
-    statusCasasPorCampeonato[campeonato]=statusDoArquivo;
+    statusCasasPorCampeonato=statusCasasPorCampeonato.filter(item=>item.campeonato!==campeonato);
+    statusCasasPorCampeonato.push({campeonato,casas:statusDoArquivo});
 
     if(wb.SheetNames.length>2){
       const wsAllSites=wb.Sheets[wb.SheetNames[2]];
@@ -3374,7 +3394,7 @@ function renderJogos(){
           <div class="jogos-odd fora ${isForaMax?'highlight':''}${isForaMax?'':''}" style="min-width:60px;text-align:center">${fora.toFixed(2)}</div>
         </div>`;
       }else{
-        const statusArquivo=statusCasasPorCampeonato?.[jogo.campeonato]?.[site]?.status||'';
+        const statusArquivo=statusCasaDoArquivo(jogo.campeonato,site);
         const statusDesativada=!casaEstaAtiva(site)?'DESATIVADA':statusArquivo;
         const rotuloStatus=statusDesativada==='GELADEIRA'?'GELADEIRA':statusDesativada==='DESATIVADA'?'DESATIVADA':'-';
         const corStatus=statusDesativada==='GELADEIRA'?'var(--amber)':statusDesativada==='DESATIVADA'?'var(--muted)':'';
