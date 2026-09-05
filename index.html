@@ -2258,6 +2258,9 @@ function listenToData() {
         document.getElementById('dropUser').style.display = 'none';
       }
     }
+  }, err => {
+    console.error('[DEBUG] Erro ao carregar oddsData:', err);
+    toast('Não foi possível recuperar os jogos salvos: ' + err.message, 'error', 8000);
   });
 }
 
@@ -2288,7 +2291,6 @@ function syncToFirebase() {
     allDataRawMaster: allDataRawMaster || [],
     allSitesDataMaster: allSitesDataMaster || [],
     campeonatosCarregados: campeonatosCarregados || [],
-    statusCasasPorCampeonato: statusCasasPorCampeonato || [],
     basqueteData: tenisData || [],
     timestamp: new Date().toISOString(),
     uploadedBy: currentUser ? currentUser.email : 'admin'
@@ -2297,6 +2299,9 @@ function syncToFirebase() {
     .then(() => {
       toast(' Dados salvos na nuvem! Todos os usuarios estao vendo agora.', 'success', 4000);
       salvarStatusPublico();
+      db.ref('oddsData/statusCasasPorCampeonato')
+        .set(statusCasasPorCampeonato || [])
+        .catch(err => console.warn('[DEBUG] Jogos salvos, mas o status das casas não foi salvo:', err.message));
     })
     .catch(err => toast('Erro ao salvar na nuvem: ' + err.message, 'error', 5000));
 }

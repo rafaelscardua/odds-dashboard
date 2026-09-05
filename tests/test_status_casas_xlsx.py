@@ -13,7 +13,10 @@ class StatusCasasXlsxTests(unittest.TestCase):
     def test_importa_e_sincroniza_status_das_casas(self):
         self.assertIn("status das casas", self.html)
         self.assertIn("statusCasasPorCampeonato", self.html)
-        self.assertIn("statusCasasPorCampeonato: statusCasasPorCampeonato || []", self.html)
+        self.assertIn("oddsData/statusCasasPorCampeonato", self.html)
+        self.assertIn(".set(statusCasasPorCampeonato || [])", self.html)
+        trecho_payload = self.html.split("const payload = {", 1)[1].split("};", 1)[0]
+        self.assertNotIn("statusCasasPorCampeonato:", trecho_payload)
         self.assertIn("statusDoArquivo.push({casa,status", self.html)
         self.assertNotIn("statusDoArquivo[casa]", self.html)
         self.assertIn("function normalizarStatusCasas", self.html)
