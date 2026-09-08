@@ -2979,7 +2979,10 @@ function chaveExclusaoCard(r){
 function obterEstadoExclusao(r){
   const chave=chaveExclusaoCard(r);
   if(!exclusoesPorCard.has(chave)){
-    exclusoesPorCard.set(chave,{excluidas:new Set(),riscadas:{casa:new Map(),empate:new Map(),fora:new Map()}});
+    exclusoesPorCard.set(chave,{
+      excluidas:{casa:new Set(),empate:new Set(),fora:new Set()},
+      riscadas:{casa:new Map(),empate:new Map(),fora:new Map()}
+    });
   }
   return exclusoesPorCard.get(chave);
 }
@@ -3003,7 +3006,7 @@ function escolherResultadoCard(r,tipo,estado){
   if(!opcoes.length){
     opcoes=deduplicarSitesOdds(r[`${tipo}_sites`]||[],`${tipo}_link`).map(s=>({...s,odd:Number(r[tipo])}));
   }
-  const disponiveis=opcoes.filter(op=>!estado.excluidas.has(normalizarNomeCasa(op.site)));
+  const disponiveis=opcoes.filter(op=>!estado.excluidas[tipo].has(normalizarNomeCasa(op.site)));
   if(!disponiveis.length) return null;
   const maior=Math.max(...disponiveis.map(op=>Number(op.odd)||0));
   const sites=deduplicarSitesOdds(disponiveis.filter(op=>Math.abs((Number(op.odd)||0)-maior)<0.01),`${tipo}_link`);
@@ -3069,33 +3072,33 @@ function atualizarCardAposExclusao(cardIdx,escolhas){
   recalcularTotaisCard(cardIdx);
 }
 
-function alterarExclusaoCasa(cardIdx,site,reativar){
+function alterarExclusaoCasa(cardIdx,tipo,site,reativar){
   const r=allData[cardIdx];
   if(!r) return;
   const estado=obterEstadoExclusao(r);
+  if(!['casa','empate','fora'].includes(tipo)) return;
   const chaveSite=normalizarNomeCasa(site);
   if(reativar){
-    estado.excluidas.delete(chaveSite);
-    ['casa','empate','fora'].forEach(tipo=>estado.riscadas[tipo].delete(chaveSite));
+    estado.excluidas[tipo].delete(chaveSite);
+    estado.riscadas[tipo].delete(chaveSite);
   }else{
     const antes=calcularEscolhasCard(r,estado);
-    ['casa','empate','fora'].forEach(tipo=>{
-      const afetada=antes[tipo]?.sites.find(s=>normalizarNomeCasa(s.site)===chaveSite);
-      if(afetada) estado.riscadas[tipo].set(chaveSite,afetada);
-    });
-    estado.excluidas.add(chaveSite);
+    const afetada=antes[tipo]?.sites.find(s=>normalizarNomeCasa(s.site)===chaveSite);
+    if(afetada) estado.riscadas[tipo].set(chaveSite,afetada);
+    estado.excluidas[tipo].add(chaveSite);
   }
   const escolhas=calcularEscolhasCard(r,estado);
   if(!Object.values(escolhas).every(Boolean)){
     if(!reativar){
-      estado.excluidas.delete(chaveSite);
-      ['casa','empate','fora'].forEach(tipo=>estado.riscadas[tipo].delete(chaveSite));
+      estado.excluidas[tipo].delete(chaveSite);
+      estado.riscadas[tipo].delete(chaveSite);
     }
-    toast('Não existe outra casa disponível para todos os resultados deste card.','error',5000);
+    toast(`Não existe outra casa disponível para ${tipo} neste card.`,'error',5000);
     return;
   }
   atualizarCardAposExclusao(cardIdx,escolhas);
-  toast(reativar?`${site} reativada neste card.`:`${site} eliminada somente deste card.`,'success');
+  const rotulo={casa:'Casa',empate:'Empate',fora:'Fora'}[tipo];
+  toast(reativar?`${site} reativada em ${rotulo}.`:`${site} eliminada somente em ${rotulo}.`,'success');
 }
 
 function fecharMenuCasa(){
@@ -3124,8 +3127,9 @@ function executarAcaoMenuCasa(){
   const acao=contextoCasaAtual.excluida?'reativar':'eliminar';
   const atual={...contextoCasaAtual};
   fecharMenuCasa();
-  if(!confirm(`Deseja ${acao} ${atual.site} somente neste card?`)) return;
-  alterarExclusaoCasa(atual.cardIdx,atual.site,atual.excluida);
+  const rotulo={casa:'Casa',empate:'Empate',fora:'Fora'}[atual.tipo]||atual.tipo;
+  if(!confirm(`Deseja ${acao} ${atual.site} somente em ${rotulo} neste card?`)) return;
+  alterarExclusaoCasa(atual.cardIdx,atual.tipo,atual.site,atual.excluida);
 }
 
 document.addEventListener('contextmenu',evento=>{

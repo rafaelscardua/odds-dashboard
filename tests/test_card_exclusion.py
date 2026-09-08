@@ -14,7 +14,7 @@ class CardExclusionTests(unittest.TestCase):
         self.assertIn("document.addEventListener('contextmenu'", self.html)
         self.assertIn("Eliminar esta casa", self.html)
         self.assertIn("Retirar exclusão desta casa", self.html)
-        self.assertIn("somente neste card", self.html)
+        self.assertIn("neste card", self.html)
         self.assertIn("data-card-idx", self.html)
         self.assertIn("is-excluded", self.html)
 
@@ -26,6 +26,19 @@ class CardExclusionTests(unittest.TestCase):
         self.assertIn("function atualizarCardAposExclusao(", self.html)
         self.assertIn("const totaisJogadores=[1,2,3].map", self.html)
         self.assertIn("recalcularTotaisCard(cardIdx)", self.html)
+
+    def test_exclusao_e_independente_por_resultado(self):
+        self.assertIn(
+            "excluidas:{casa:new Set(),empate:new Set(),fora:new Set()}", self.html
+        )
+        self.assertIn(
+            "estado.excluidas[tipo].has(normalizarNomeCasa(op.site))", self.html
+        )
+        self.assertIn("function alterarExclusaoCasa(cardIdx,tipo,site,reativar)", self.html)
+        self.assertIn(
+            "alterarExclusaoCasa(atual.cardIdx,atual.tipo,atual.site,atual.excluida)",
+            self.html,
+        )
 
     def test_unifica_variantes_de_cienciano_e_city_torque(self):
         self.assertIn("'club cienciano':'cienciano'", self.html)
