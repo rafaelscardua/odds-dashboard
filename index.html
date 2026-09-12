@@ -3582,8 +3582,6 @@ function toggleCasaBets(indice){
 }
 
 function renderEstatisticas(){
-  if(!allSitesData.length) return;
-
   // Agrupar por JOGO_LIMPO + campeonato (mesma chave usada pelo renderJogos)
   // Garante que variacoes de nome entre casas ("Operario-PR" vs "Operario Ferroviario EC PR")
   // sejam tratadas como o mesmo jogo na hora de calcular qual casa tem a maior odd.
@@ -3595,14 +3593,24 @@ function renderEstatisticas(){
     jogosMap.get(key).push(r);
   });
 
-  // Contar para cada casa
-  const stats = new Map();
+  // A estatistica deve mostrar a mesma relacao completa da aba Casas Bets.
+  // Antes, somente as casas que tinham ao menos uma linha de odd no XLSX
+  // entravam no Map; por isso casas sem retorno simplesmente desapareciam.
+  const nomesCasas=[];
+  const adicionarCasa=nome=>{
+    nome=String(nome||'').trim();
+    if(nome&&!nomesCasas.includes(nome)) nomesCasas.push(nome);
+  };
+  BET_LIST.forEach(adicionarCasa);
+  allSitesData.forEach(r=>adicionarCasa(r.site));
+  (allSitesDataMaster||[]).forEach(r=>adicionarCasa(r['SITE']));
+  (statusCasasPorCampeonato||[]).forEach(grupo=>
+    (grupo.casas||[]).forEach(item=>adicionarCasa(item.casa))
+  );
 
-  allSitesData.forEach(r => {
-    if(!stats.has(r.site)){
-      stats.set(r.site, {ganhadoras:0, ganhCasa:0, ganhEmp:0, ganhFora:0, count:0});
-    }
-  });
+  // Contar para cada casa, inclusive as que ficaram sem odds nesta captura.
+  const stats = new Map();
+  nomesCasas.forEach(site=>stats.set(site, {ganhadoras:0, ganhCasa:0, ganhEmp:0, ganhFora:0, count:0}));
 
   jogosMap.forEach((linhas) => {
     const maxCasa  = Math.max(...linhas.map(r => parseFloat(r.casa)||0));
@@ -3623,7 +3631,9 @@ function renderEstatisticas(){
   });
 
   // Ordenar por ganhadoras desc
-  const sorted = [...stats.entries()].sort((a,b) => b[1].ganhadoras - a[1].ganhadoras);
+  const sorted = [...stats.entries()].sort((a,b) =>
+    b[1].ganhadoras-a[1].ganhadoras || b[1].count-a[1].count || a[0].localeCompare(b[0],'pt-BR')
+  );
 
   const tbody = document.getElementById('estat-tbody');
   if(!sorted.length){ tbody.innerHTML='<tr><td colspan="6" style="text-align:center;color:var(--muted);padding:20px;">Sem dados.</td></tr>'; return; }
